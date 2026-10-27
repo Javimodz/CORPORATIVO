@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Panel de Administración - Casino Royal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #050b14;
+  background-image: 
+    radial-gradient(circle at 50% 10%, #1e1b4b 0%, #050b14 70%),
+    repeating-linear-gradient(45deg, rgba(245, 158, 11, 0.03) 0px, rgba(245, 158, 11, 0.03) 2px, transparent 2px, transparent 10px);
+  min-height: 100vh;
+  color: #f1f5f9;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.gold-gradient-text {
+  background: linear-gradient(135deg, #FFF5C0 0%, #F1C40F 40%, #D97706 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #050b14;
+}
+::-webkit-scrollbar-thumb {
+  background: #d97706;
+  border-radius: 4px;
+}
+</style>
+</head>
+<body class="p-2 sm:p-4 md:p-6 flex flex-col items-center justify-start min-h-screen">
+
+<div class="w-full max-w-5xl bg-slate-950/95 backdrop-blur-xl rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-amber-500/30 flex flex-col my-2">
+  
+  <!-- TOAST ALERTA FLOTANTE -->
+  <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 bg-amber-500 text-slate-950 px-4 py-2.5 rounded-full text-xs font-black shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2 max-w-[90vw] truncate">
+    <i class="fa-solid fa-crown text-sm shrink-0"></i>
+    <span id="toast-msg" class="truncate">Mensaje</span>
+  </div>
+
+  <!-- 1. PANTALLA DE LOGIN DE ADMINISTRADOR -->
+  <div id="view-login" class="p-5 sm:p-8 md:p-12 flex flex-col gap-6 max-w-md mx-auto w-full my-auto">
+    <div class="text-center">
+      <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-300 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-amber-500/20 border border-amber-200">
+        <i class="fa-solid fa-user-shield text-3xl sm:text-4xl text-slate-950"></i>
+      </div>
+      <h1 class="text-xl sm:text-2xl font-black italic gold-gradient-text tracking-wide">PANEL ADMIN VIP</h1>
+      <p class="text-[11px] sm:text-xs text-amber-300/80 mt-1 font-medium">Ingresa tu contraseña corporativa asignada</p>
+    </div>
+
+    <form onsubmit="handleAdminLogin(event)" class="flex flex-col gap-4 mt-1">
+      <div class="space-y-1">
+        <label class="block text-xs font-bold text-slate-300">Contraseña de Administrador</label>
+        <div class="relative">
+          <i class="fa-solid fa-lock absolute left-4 top-3.5 text-amber-500/60 text-xs"></i>
+          <input type="password" id="admin-pass" required placeholder="••••••" class="w-full bg-slate-900 border border-amber-500/30 rounded-xl py-3 pl-10 pr-4 text-xs text-white focus:outline-none focus:border-amber-500 transition">
+        </div>
+      </div>
+      <button type="submit" class="w-full mt-2 py-3.5 rounded-xl font-black text-slate-950 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-[0.98] transition text-xs uppercase tracking-wider">Acceder al Sistema</button>
+    </form>
+  </div>
+
+  <!-- 2. DASHBOARD ADMINISTRADOR -->
+  <div id="view-dashboard" class="hidden flex-col">
+    <!-- Header Admin -->
+    <div class="px-4 sm:px-6 py-3.5 sm:py-4 bg-slate-900/90 flex justify-between items-center text-white border-b border-amber-500/20">
+      <div class="flex items-center gap-2.5 sm:gap-3.5">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+          <i class="fa-solid fa-crown text-sm sm:text-lg"></i>
+        </div>
+        <div>
+          <h2 class="text-xs sm:text-sm font-black gold-gradient-text tracking-wide uppercase" id="admin-title-brand">ADMINISTRACIÓN VIP</h2>
+          <span class="text-[9px] sm:text-[10px] text-amber-300/70 font-medium block" id="admin-license-info">Licencia Activa ☁️</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="adminLogout()" class="bg-red-500/10 hover:bg-red-500/20 text-red-300 text-[11px] sm:text-xs px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-red-800/50 transition flex items-center gap-1.5 font-bold active:scale-95">
+          <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden sm:inline">Salir</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Menú de Pestañas Organizado -->
+    <div class="flex p-2 bg-slate-950 border-b border-amber-500/20 overflow-x-auto no-scrollbar gap-2">
+      <button onclick="switchTab('quick-charge')" id="tab-quick-charge" class="py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold bg-amber-500 text-slate-950 transition flex items-center justify-center gap-2 shrink-0 shadow">
+        <i class="fa-solid fa-bolt text-xs"></i> Cargar Cartón
+      </button>
+      <button onclick="switchTab('users')" id="tab-users" class="py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-400 hover:text-white bg-slate-900/50 border border-slate-800/50 transition flex items-center justify-center gap-2 shrink-0">
+        <i class="fa-solid fa-users text-xs"></i> Clientes
+      </button>
+      <button onclick="switchTab('agents')" id="tab-agents" class="py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-400 hover:text-white bg-slate-900/50 border border-slate-800/50 transition flex items-center justify-center gap-2 shrink-0">
+        <i class="fa-solid fa-user-tie text-xs"></i> Agentes
+      </button>
+      <button onclick="switchTab('withdrawals')" id="tab-withdrawals" class="py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-400 hover:text-white bg-slate-900/50 border border-slate-800/50 transition flex items-center justify-center gap-2 shrink-0">
+        <i class="fa-solid fa-money-bill-transfer text-xs"></i> Retiros
+      </button>
+      <button onclick="switchTab('prizes')" id="tab-prizes" class="py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-400 hover:text-white bg-slate-900/50 border border-slate-800/50 transition flex items-center justify-center gap-2 shrink-0">
+        <i class="fa-solid fa-trophy text-xs"></i> Premios
+      </button>
+      <button onclick="switchTab('custom-card')" id="tab-custom-card" class="py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-400 hover:text-white bg-slate-900/50 border border-slate-800/50 transition flex items-center justify-center gap-2 shrink-0">
+        <i class="fa-solid fa-paintbrush text-xs"></i> Cartón Custom
+      </button>
+    </div>
+
+    <div class="p-3 sm:p-5 md:p-6 flex-1 flex flex-col gap-5 max-h-[75vh] overflow-y-auto">
+      
+      <!-- SECCIÓN 0: CARGA RÁPIDA DE CARTONES ESCRIBIENDO USUARIO -->
+      <div id="section-quick-charge" class="flex flex-col gap-5">
+        <div class="bg-gradient-to-br from-slate-900 to-slate-950 p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-amber-500/30 shadow-2xl">
+          <div class="flex items-center gap-3 mb-4 pb-3 border-b border-amber-500/20">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 border border-amber-500/30">
+              <i class="fa-solid fa-ticket text-lg"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-black text-white uppercase tracking-wider">Cargar Cartones VIP por Usuario</h3>
+              <p class="text-[11px] text-slate-400">Escribe el nombre de usuario de cualquier Cliente o Agente para asignarle cartones directamente.</p>
+            </div>
+          </div>
+
+          <form onsubmit="handleDirectTicketCharge(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="space-y-1 sm:col-span-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Nombre de Usuario (Login)</label>
+              <div class="relative">
+                <span class="absolute left-3.5 top-3 text-amber-500/60 text-xs font-bold">@</span>
+                <input type="text" id="charge-username" required placeholder="usuario" oninput="checkUserTicketPreview(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-8 pr-3 text-xs text-white focus:outline-none focus:border-amber-500 font-mono">
+              </div>
+              <span id="charge-user-info" class="text-[10px] text-slate-500 block font-bold mt-1">Escribe para buscar usuario...</span>
+            </div>
+
+            <div class="space-y-1 sm:col-span-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Cantidad de Cartones</label>
+              <input type="number" id="charge-tickets-count" min="1" required placeholder="0" value="0" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white font-black focus:outline-none focus:border-amber-500">
+            </div>
+
+            <div class="sm:col-span-1 flex items-end">
+              <button type="submit" class="w-full py-2.5 rounded-xl font-black text-slate-950 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 hover:brightness-110 transition text-xs shadow-lg uppercase tracking-wider h-[42px] flex items-center justify-center gap-2">
+                <i class="fa-solid fa-plus-circle text-sm"></i> Cargar Cartones
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- CONTENIDO 1: GESTIÓN SEPARADA DE CLIENTES -->
+      <div id="section-users" class="hidden flex-col gap-5">
+        <!-- Tarjeta Crear Cliente -->
+        <div class="bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-blue-500/20 shadow-xl">
+          <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800/60">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-user-plus text-blue-400 text-xs"></i>
+              <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Crear Nuevo Cliente VIP</h3>
+            </div>
+            <span class="text-[10px] bg-blue-950 text-blue-300 font-bold px-2 py-0.5 rounded-full border border-blue-800">Sección Clientes</span>
+          </div>
+          
+          <form onsubmit="handleCreateUserRole(event, 'client')" class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-3">
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Nombre Completo del Cliente</label>
+              <input type="text" id="new-client-name" required placeholder="Nombre y Apellido" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Usuario (Login)</label>
+              <input type="text" id="new-client-username" required placeholder="usuario" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Contraseña</label>
+              <input type="password" id="new-client-pass" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="sm:col-span-3 pt-1">
+              <button type="submit" class="w-full py-2.5 rounded-xl font-black text-white bg-blue-600 hover:bg-blue-500 transition text-xs shadow-lg uppercase tracking-wider flex items-center justify-center gap-2">
+                <i class="fa-solid fa-user-check"></i> Registrar Solo Cliente
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Lista Clientes -->
+        <div class="bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl">
+          <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800/60">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-users text-blue-400 text-xs"></i>
+              <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Clientes Registrados</h3>
+            </div>
+          </div>
+
+          <!-- Vista PC -->
+          <div class="hidden md:block overflow-x-auto rounded-xl border border-slate-800 bg-slate-950">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-900 text-slate-400 uppercase text-[10px] font-bold border-b border-slate-800">
+                <tr>
+                  <th class="p-3">ID / Nombre</th>
+                  <th class="p-3">Usuario / Contraseña</th>
+                  <th class="p-3">Saldo Actual</th>
+                  <th class="p-3">Cartones</th>
+                  <th class="p-3">Fecha Creación</th>
+                  <th class="p-3 text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="table-users-body" class="divide-y divide-slate-800/60"></tbody>
+            </table>
+          </div>
+
+          <!-- Vista Celulares -->
+          <div id="cards-users-body" class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:hidden"></div>
+        </div>
+      </div>
+
+      <!-- CONTENIDO 2: GESTIÓN SEPARADA DE AGENTES -->
+      <div id="section-agents" class="hidden flex-col gap-5">
+        <!-- Tarjeta Crear Agente -->
+        <div class="bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-purple-500/20 shadow-xl">
+          <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800/60">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-user-tie text-purple-400 text-xs"></i>
+              <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Crear Nuevo Agente VIP</h3>
+            </div>
+            <span class="text-[10px] bg-purple-950 text-purple-300 font-bold px-2 py-0.5 rounded-full border border-purple-800">Sección Agentes</span>
+          </div>
+          
+          <form onsubmit="handleCreateUserRole(event, 'agent')" class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-3">
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Nombre Completo del Agente</label>
+              <input type="text" id="new-agent-name" required placeholder="Nombre y Apellido" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-purple-500">
+            </div>
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Usuario (Login)</label>
+              <input type="text" id="new-agent-username" required placeholder="usuario" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-purple-500">
+            </div>
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Contraseña</label>
+              <input type="password" id="new-agent-pass" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-purple-500">
+            </div>
+            <div class="sm:col-span-3 pt-1">
+              <button type="submit" class="w-full py-2.5 rounded-xl font-black text-white bg-purple-600 hover:bg-purple-500 transition text-xs shadow-lg uppercase tracking-wider flex items-center justify-center gap-2">
+                <i class="fa-solid fa-user-tie"></i> Registrar Solo Agente
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Lista Agentes -->
+        <div class="bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl">
+          <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800/60">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-user-gear text-purple-400 text-xs"></i>
+              <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Agentes Registrados</h3>
+            </div>
+          </div>
+
+          <!-- Vista PC -->
+          <div class="hidden md:block overflow-x-auto rounded-xl border border-slate-800 bg-slate-950">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-900 text-slate-400 uppercase text-[10px] font-bold border-b border-slate-800">
+                <tr>
+                  <th class="p-3">ID / Nombre del Agente</th>
+                  <th class="p-3">Usuario / Contraseña</th>
+                  <th class="p-3">Saldo Actual</th>
+                  <th class="p-3">Cartones Disponibles</th>
+                  <th class="p-3">Fecha Creación</th>
+                  <th class="p-3 text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="table-agents-body" class="divide-y divide-slate-800/60"></tbody>
+            </table>
+          </div>
+
+          <!-- Vista Celulares -->
+          <div id="cards-agents-body" class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:hidden"></div>
+        </div>
+      </div>
+
+      <!-- CONTENIDO 3: RETIROS -->
+      <div id="section-withdrawals" class="hidden flex-col gap-5">
+        <div class="bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl">
+          <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-800/60">
+            <i class="fa-solid fa-file-circle-plus text-emerald-400 text-xs"></i>
+            <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Retirar Premio Directo (Sin Solicitar)</h3>
+          </div>
+          
+          <form onsubmit="handleAdminDirectWithdrawal(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Usuario del Jugador</label>
+              <input type="text" id="w-input-user" required placeholder="Ej: juanperez" oninput="checkUserBalancePreview(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+              <span id="user-balance-preview" class="text-[10px] text-slate-500 block font-bold mt-0.5">Ingresa un usuario válido</span>
+            </div>
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Monto a Retirar (GS)</label>
+              <input type="number" id="w-input-amount" required placeholder="50000" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Método / Cédula / Teléfono</label>
+              <input type="text" id="w-input-details" required placeholder="Ej: 0983123456 / Tigo Money" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div class="sm:col-span-3 pt-1">
+              <button type="submit" class="w-full py-3 rounded-xl font-black text-slate-950 bg-emerald-400 hover:bg-emerald-300 transition text-xs shadow-lg uppercase tracking-wider">Procesar Retiro Directo</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl">
+          <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-800/60">
+            <i class="fa-solid fa-hand-holding-dollar text-emerald-400 text-xs"></i>
+            <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Historial de Retiros Generales</h3>
+          </div>
+
+          <!-- Vista PC -->
+          <div class="hidden md:block overflow-x-auto rounded-xl border border-slate-800 bg-slate-950">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-900 text-slate-400 uppercase text-[10px] font-bold border-b border-slate-800">
+                <tr>
+                  <th class="p-3">Cliente / Fecha</th>
+                  <th class="p-3">Monto GS</th>
+                  <th class="p-3">Detalles / Teléfono</th>
+                  <th class="p-3">Estado</th>
+                  <th class="p-3 text-center">Acción</th>
+                </tr>
+              </thead>
+              <tbody id="table-withdrawals-body" class="divide-y divide-slate-800/60"></tbody>
+            </table>
+          </div>
+
+          <!-- Vista Celulares -->
+          <div id="cards-withdrawals-body" class="grid grid-cols-1 gap-3 md:hidden"></div>
+        </div>
+      </div>
+
+      <!-- CONTENIDO 4: PREMIOS -->
+      <div id="section-prizes" class="hidden flex-col gap-5">
+        <div class="bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl">
+          <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-800/60">
+            <i class="fa-solid fa-gift text-amber-400 text-xs"></i>
+            <h3 class="text-xs font-extrabold text-white uppercase tracking-wider" id="prize-form-title">Crear o Editar Premio VIP</h3>
+          </div>
+          
+          <form onsubmit="handleSavePrize(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+            <input type="hidden" id="prize-index-edit" value="-1">
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Nombre del Premio</label>
+              <input type="text" id="prize-name" required placeholder="Ej: Corona Real" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Valor Premio (GS)</label>
+              <input type="number" id="prize-amount" required placeholder="500000" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Representación</label>
+              <select id="prize-type" onchange="togglePrizeTypeInput()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white font-bold focus:outline-none focus:border-amber-500">
+                <option value="emoji">Emoji (👑, 💎, 🏆)</option>
+                <option value="icon">Icono FontAwesome (fa-crown)</option>
+                <option value="image">URL Imagen (http/https)</option>
+              </select>
+            </div>
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Valor / Emoji / URL</label>
+              <input type="text" id="prize-val" required placeholder="👑" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div class="sm:col-span-2 md:col-span-4 flex gap-2 pt-1">
+              <button type="submit" class="flex-1 py-3 rounded-xl font-black text-slate-950 bg-amber-500 hover:bg-amber-400 transition text-xs shadow-lg uppercase tracking-wider">Guardar Premio</button>
+              <button type="button" onclick="resetPrizeForm()" class="px-4 py-3 rounded-xl font-bold text-slate-300 bg-slate-800 hover:bg-slate-700 transition text-xs">Cancelar</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl">
+          <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-800/60">
+            <i class="fa-solid fa-icons text-purple-400 text-xs"></i>
+            <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Premios Activos en el Casino</h3>
+          </div>
+          <div id="prizes-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+        </div>
+      </div>
+
+      <!-- CONTENIDO 5: CARTÓN CUSTOM & REGLAS -->
+      <div id="section-custom-card" class="hidden flex-col gap-5">
+        <div class="bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl">
+          <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-800/60">
+            <i class="fa-solid fa-sliders text-amber-400 text-xs"></i>
+            <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Ajustes Generales y Reglas del Casino</h3>
+          </div>
+          
+          <form onsubmit="handleSaveCardConfig(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Título Principal</label>
+              <input type="text" id="cfg-title" required placeholder="CASINO ROYAL" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Subtítulo</label>
+              <input type="text" id="cfg-subtitle" required placeholder="JACKPOT MILLONARIO" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Texto Premio Máximo</label>
+              <input type="text" id="cfg-max-prize" required placeholder="PREMIO MÁXIMO 5.000.000 GS" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Apuesta por Cartón (GS)</label>
+              <input type="number" id="cfg-price" required placeholder="5000" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div class="sm:col-span-2 space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Probabilidad de Ganar Global (0% al 100%)</label>
+              <input type="number" id="cfg-win-rate" min="0" max="100" required placeholder="60" value="60" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div class="sm:col-span-2 space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Reglas y Términos del Casino (Una regla por línea)</label>
+              <textarea id="cfg-rules" rows="4" placeholder="1. Raspa el cartón y descubre 3 símbolos iguales...&#10;2. Los premios chicos aparecen frecuentemente..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-amber-500"></textarea>
+            </div>
+            <div class="sm:col-span-2 pt-1">
+              <button type="submit" class="w-full py-3 rounded-xl font-black text-slate-950 bg-amber-500 hover:bg-amber-400 transition text-xs shadow-lg uppercase tracking-wider">Guardar Cambios y Reglas</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- SCRIPT DE FIREBASE MODULAR Y RESTRICCIONES DE ACCESO -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBWpmrXx2lVToxDykBWmJrA1H0Sw4TN8O4",
+    authDomain: "raspadita-delasuerte.firebaseapp.com",
+    projectId: "raspadita-delasuerte",
+    storageBucket: "raspadita-delasuerte.firebasestorage.app",
+    messagingSenderId: "144755637640",
+    appId: "1:144755637640:web:9cdd16bbcbb23214140e3d"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  let globalData = {};
+  let usersDB = {};
+  let withdrawalsDB = [];
+  let prizesDB = {};
+  let cardConfigDB = {};
+  let subAdminsDB = {};
+
+  async function initDB() {
+    try {
+      const docRef = doc(db, "sistema", "datos_globales");
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        globalData = docSnap.data();
+        usersDB = globalData.users || {};
+        withdrawalsDB = globalData.withdrawals || [];
+        prizesDB = globalData.prizes || getDefaultPrizes();
+        cardConfigDB = globalData.cardConfig || getDefaultCardConfig();
+        subAdminsDB = globalData.subAdmins || {};
+      } else {
+        prizesDB = getDefaultPrizes();
+        cardConfigDB = getDefaultCardConfig();
+        subAdminsDB = {};
+        await saveToCloud();
+      }
+    } catch (e) {
+      console.error("Error al conectar con Firebase:", e);
+      showToast("Error de conexión con el Casino", "error");
+    }
+  }
+
+  async function saveToCloud() {
+    try {
+      const docRef = doc(db, "sistema", "datos_globales");
+      await setDoc(docRef, {
+        users: usersDB,
+        withdrawals: withdrawalsDB,
+        prizes: prizesDB,
+        cardConfig: cardConfigDB,
+        subAdmins: subAdminsDB
+      });
+    } catch (e) {
+      console.error("Error al guardar en Firebase:", e);
+      showToast("Error al guardar cambios en el Casino", "error");
+    }
+  }
+
+  function getDefaultPrizes() {
+    return [
+      { id: 'p1', name: 'Premio Chico (Recarga)', type: 'emoji', val: '🎟️', color: '', prize: 5000 },
+      { id: 'p2', name: 'Premio Chico (Suerte)', type: 'emoji', val: '🍀', color: '', prize: 10000 },
+      { id: 'p3', name: 'Moneda de Oro', type: 'icon', val: 'fa-coins', color: 'text-yellow-500', prize: 20000 },
+      { id: 'p4', name: 'Corona Real', type: 'icon', val: 'fa-crown', color: 'text-yellow-400', prize: 50000 },
+      { id: 'p5', name: 'Diamante VIP', type: 'icon', val: 'fa-gem', color: 'text-amber-400', prize: 300000 },
+      { id: 'p6', name: 'Trofeo Jackpot', type: 'emoji', val: '🏆', color: '', prize: 5000000 }
+    ];
+  }
+
+  function getDefaultCardConfig() {
+    return {
+      title: 'CASINO ROYAL',
+      subtitle: 'JACKPOT MILLONARIO',
+      maxPrizeText: 'PREMIO MÁXIMO 5.000.000 GS',
+      price: 5000,
+      winRate: 60,
+      rulesText: '1. Raspa el cartón y descubre 3 símbolos iguales para ganar.\n2. Los premios chicos aparecen frecuentemente para darte más bonos.\n3. Solicita tus retiros con tu agente autorizado.'
+    };
+  }
+
+  // VALIDACIÓN DE ACCESO EXCLUSIVO DE SUB-ADMINISTRADORES CORPORATIVOS
+  window.handleAdminLogin = async function(e) {
+    e.preventDefault();
+    const passInput = document.getElementById('admin-pass').value.trim();
+
+    let matchedAdmin = null;
+    for (let key in subAdminsDB) {
+      if (subAdminsDB[key].password === passInput) {
+        matchedAdmin = subAdminsDB[key];
+        break;
+      }
+    }
+
+    if (!matchedAdmin) {
+      showToast('Contraseña no registrada en el sistema corporativo', 'error');
+      return;
+    }
+
+    const now = new Date();
+    const expDate = new Date(matchedAdmin.expiresAt);
+
+    if (now > expDate) {
+      showToast('Su licencia de administrador ha expirado. Contacte a soporte.', 'error');
+      return;
+    }
+
+    sessionStorage.setItem('admin_logged', 'true');
+    sessionStorage.setItem('admin_name', matchedAdmin.name);
+    sessionStorage.setItem('admin_expires', matchedAdmin.expiresAt);
+
+    showDashboard(matchedAdmin);
+  };
+
+  window.adminLogout = function() {
+    sessionStorage.removeItem('admin_logged');
+    sessionStorage.removeItem('admin_name');
+    sessionStorage.removeItem('admin_expires');
+    document.getElementById('view-dashboard').classList.add('hidden');
+    document.getElementById('view-login').classList.remove('hidden');
+  };
+
+  async function checkAdminAuth() {
+    await initDB();
+    if (sessionStorage.getItem('admin_logged') === 'true') {
+      const expStr = sessionStorage.getItem('admin_expires');
+      if (expStr && new Date() > new Date(expStr)) {
+        adminLogout();
+        showToast('Su sesión ha expirado por vencimiento de licencia', 'error');
+        return;
+      }
+      
+      const adminName = sessionStorage.getItem('admin_name') || 'Administrador';
+      showDashboard({ name: adminName, expiresAt: expStr });
+    }
+  }
+
+  function showDashboard(adminObj) {
+    document.getElementById('view-login').classList.add('hidden');
+    document.getElementById('view-dashboard').classList.add('flex');
+    document.getElementById('view-dashboard').classList.remove('hidden');
+
+    if (adminObj) {
+      const brandTitle = document.getElementById('admin-title-brand');
+      if (brandTitle) brandTitle.innerText = adminObj.name ? `ADMIN: ${adminObj.name.toUpperCase()}` : 'ADMINISTRACIÓN VIP';
+      
+      if (adminObj.expiresAt) {
+        const expDate = new Date(adminObj.expiresAt);
+        const timeLeft = Math.ceil((expDate - new Date()) / (1000 * 60 * 60 * 24));
+        const infoEl = document.getElementById('admin-license-info');
+        if (infoEl) infoEl.innerText = `Licencia activa — Vence en ${timeLeft > 0 ? timeLeft : 0} días ☁️`;
+      }
+    }
+
+    renderUsersTable();
+    renderAgentsTable();
+    renderWithdrawalsTable();
+    renderPrizesConfig();
+    loadCardConfigForm();
+  }
+
+  window.switchTab = function(tab) {
+    const sections = ['quick-charge', 'users', 'agents', 'withdrawals', 'prizes', 'custom-card'];
+    sections.forEach(s => {
+      const secEl = document.getElementById(`section-${s}`);
+      const tabEl = document.getElementById(`tab-${s}`);
+      if (secEl) secEl.classList.add('hidden');
+      if (tabEl) tabEl.className = "py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-400 hover:text-white bg-slate-900/50 border border-slate-800/50 transition flex items-center justify-center gap-2 shrink-0";
+    });
+
+    const activeSec = document.getElementById(`section-${tab}`);
+    const activeTab = document.getElementById(`tab-${tab}`);
+    if (activeSec) activeSec.classList.remove('hidden');
+    if (activeTab) activeTab.className = "py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold bg-amber-500 text-slate-950 transition flex items-center justify-center gap-2 shrink-0 shadow-lg shadow-amber-500/10";
+
+    if (tab === 'users') renderUsersTable();
+    if (tab === 'agents') renderAgentsTable();
+    if (tab === 'withdrawals') renderWithdrawalsTable();
+  };
+
+  // Función global para copiar textos al portapapeles
+  window.copyToClipboard = function(text, label) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast(`${label} copiado: ${text}`);
+    }).catch(() => {
+      showToast(`Error al copiar ${label}`, 'error');
+    });
+  };
+
+  // Función para alternar visibilidad de contraseña
+  window.togglePasswordVisibility = function(id) {
+    const el = document.getElementById(id);
+    const icon = document.getElementById(`icon-${id}`);
+    if (!el) return;
+    if (el.type === 'password') {
+      el.type = 'text';
+      if (icon) icon.className = 'fa-solid fa-eye-slash text-[10px]';
+    } else {
+      el.type = 'password';
+      if (icon) icon.className = 'fa-solid fa-eye text-[10px]';
+    }
+  };
+
+  window.checkUserTicketPreview = function(val) {
+    const infoEl = document.getElementById('charge-user-info');
+    const cleanUser = val.trim().toLowerCase();
+
+    if (!cleanUser) {
+      infoEl.innerText = "Escribe para buscar usuario...";
+      infoEl.className = "text-[10px] text-slate-500 block font-bold mt-1";
+      return;
+    }
+
+    if (usersDB[cleanUser]) {
+      const u = usersDB[cleanUser];
+      const isAgent = u.role === 'agent';
+      infoEl.innerHTML = `Usuario encontrado: <span class="text-white">${u.name}</span> (${isAgent ? 'AGENTE' : 'CLIENTE'}) — Cartones actuales: <span class="text-amber-400">${u.tickets || 0}</span>`;
+      infoEl.className = "text-[10px] text-emerald-400 block font-bold mt-1";
+    } else {
+      infoEl.innerText = "Usuario no encontrado en la base de datos";
+      infoEl.className = "text-[10px] text-red-400 block font-bold mt-1";
+    }
+  };
+
+  window.handleDirectTicketCharge = async function(e) {
+    e.preventDefault();
+    const usernameInput = document.getElementById('charge-username').value.trim().toLowerCase();
+    const countInput = parseInt(document.getElementById('charge-tickets-count').value);
+
+    if (!usernameInput || isNaN(countInput) || countInput <= 0) {
+      showToast('Por favor completa un usuario y cantidad válidos', 'error');
+      return;
+    }
+
+    if (!usersDB[usernameInput]) {
+      showToast('El usuario especificado no existe', 'error');
+      return;
+    }
+
+    usersDB[usernameInput].tickets = (usersDB[usernameInput].tickets || 0) + countInput;
+    await saveToCloud();
+
+    showToast(`Se agregaron ${countInput} cartones a @${usernameInput}`);
+    
+    document.getElementById('charge-username').value = '';
+    document.getElementById('charge-tickets-count').value = '5';
+    document.getElementById('charge-user-info').innerText = 'Escribe para buscar usuario...';
+    document.getElementById('charge-user-info').className = 'text-[10px] text-slate-500 block font-bold mt-1';
+
+    renderUsersTable();
+    renderAgentsTable();
+  };
+
+  window.handleCreateUserRole = async function(e, roleType) {
+    e.preventDefault();
+    const nameEl = document.getElementById(`new-${roleType}-name`);
+    const usernameEl = document.getElementById(`new-${roleType}-username`);
+    const passEl = document.getElementById(`new-${roleType}-pass`);
+
+    const name = nameEl.value.trim();
+    const username = usernameEl.value.trim().toLowerCase();
+    const pass = passEl.value;
+
+    if (usersDB[username]) {
+      showToast('El nombre de usuario ya está registrado', 'error');
+      return;
+    }
+
+    const prefix = roleType === 'agent' ? 'AGT-' : 'CLI-';
+    const userId = prefix + Math.floor(10000 + Math.random() * 90000);
+    const currentDate = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    usersDB[username] = {
+      id: userId,
+      name: name,
+      username: username,
+      password: pass,
+      role: roleType,
+      balance: 0,
+      tickets: 0,
+      createdAt: currentDate,
+      history: []
+    };
+
+    await saveToCloud();
+    showToast(`${roleType === 'agent' ? 'Agente' : 'Cliente'} ${name} registrado con éxito`);
+    
+    nameEl.value = '';
+    usernameEl.value = '';
+    passEl.value = '';
+
+    renderUsersTable();
+    renderAgentsTable();
+  };
+
+  window.deleteUserAccount = async function(usernameKey) {
+    if (!usersDB[usernameKey]) return;
+    const userName = usersDB[usernameKey].name || usernameKey;
+    const userRole = usersDB[usernameKey].role === 'agent' ? 'agente' : 'cliente';
+
+    if (confirm(`¿Estás seguro de eliminar al ${userRole} "${userName}" (@${usernameKey})?\nEsta acción no se puede deshacer.`)) {
+      delete usersDB[usernameKey];
+      await saveToCloud();
+      showToast(`Cuenta de @${usernameKey} eliminada correctamente`);
+      renderUsersTable();
+      renderAgentsTable();
+    }
+  };
+
+  function renderUsersTable() {
+    const tbody = document.getElementById('table-users-body');
+    const cardsContainer = document.getElementById('cards-users-body');
+    if (!tbody || !cardsContainer) return;
+
+    const clientKeys = Object.keys(usersDB).filter(k => usersDB[k].role === 'client');
+
+    if (clientKeys.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">No hay clientes registrados.</td></tr>`;
+      cardsContainer.innerHTML = `<div class="text-center text-slate-500 text-xs py-4 col-span-full">No hay clientes registrados.</div>`;
+      return;
+    }
+
+    tbody.innerHTML = clientKeys.map(k => {
+      const u = usersDB[k];
+      const passFieldId = `pass-client-${k}`;
+      return `
+        <tr class="hover:bg-slate-900/40 transition">
+          <td class="p-3 font-bold text-white">${u.name}<br><span class="text-[10px] text-blue-400 font-mono">${u.id}</span></td>
+          <td class="p-3">
+            <div class="flex items-center gap-1.5 font-mono text-xs">
+              <span class="text-white">@${u.username}</span>
+              <button onclick="copyToClipboard('${u.username}', 'Usuario')" class="text-amber-400 hover:text-amber-300 px-1" title="Copiar Usuario"><i class="fa-solid fa-copy text-[10px]"></i></button>
+            </div>
+            <div class="flex items-center gap-1.5 mt-1">
+              <input type="password" id="${passFieldId}" value="${u.password || ''}" readonly class="bg-transparent text-slate-400 text-xs font-mono w-24 focus:outline-none">
+              <button onclick="togglePasswordVisibility('${passFieldId}')" class="text-slate-400 hover:text-white px-1" title="Ver/Ocultar Contraseña"><i id="icon-${passFieldId}" class="fa-solid fa-eye text-[10px]"></i></button>
+              <button onclick="copyToClipboard('${u.password || ''}', 'Contraseña')" class="text-amber-400 hover:text-amber-300 px-1" title="Copiar Contraseña"><i class="fa-solid fa-key text-[10px]"></i></button>
+            </div>
+          </td>
+          <td class="p-3 font-black text-emerald-400">${(u.balance || 0).toLocaleString('es-PY')} GS</td>
+          <td class="p-3 font-black text-purple-300">${u.tickets || 0} Cartones</td>
+          <td class="p-3 text-slate-400 text-[11px]">${u.createdAt || 'N/A'}</td>
+          <td class="p-3 text-center flex items-center justify-center gap-1.5">
+            <button onclick="addTickets('${k}')" class="bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-slate-950 px-2.5 py-1 rounded-lg text-[10px] font-extrabold border border-amber-500/30 transition" title="Cargar Cartón">
+              <i class="fa-solid fa-plus text-[9px]"></i>
+            </button>
+            <button onclick="deleteUserAccount('${k}')" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-2.5 py-1 rounded-lg text-[10px] font-extrabold border border-red-500/30 transition" title="Eliminar Cliente">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    cardsContainer.innerHTML = clientKeys.map(k => {
+      const u = usersDB[k];
+      const passFieldId = `mobile-pass-client-${k}`;
+      return `
+        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 flex flex-col gap-2.5 shadow-sm">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs font-black text-white">${u.name}</div>
+              <div class="text-[10px] text-blue-400 font-mono">${u.id}</div>
+            </div>
+            <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-blue-950 text-blue-300 border border-blue-800">CLIENTE</span>
+          </div>
+          
+          <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800 text-xs flex flex-col gap-1.5 font-mono">
+            <div class="flex justify-between items-center">
+              <span class="text-slate-400">Usuario: <strong class="text-white">@${u.username}</strong></span>
+              <button onclick="copyToClipboard('${u.username}', 'Usuario')" class="bg-amber-500/10 text-amber-400 hover:bg-amber-500 hover:text-slate-950 px-2 py-1 rounded text-[10px] font-sans font-bold">Copiar User</button>
+            </div>
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-2">
+                <span class="text-slate-400">Pass:</span>
+                <input type="password" id="${passFieldId}" value="${u.password || ''}" readonly class="bg-transparent text-white text-xs w-20 focus:outline-none">
+              </div>
+              <div class="flex gap-1">
+                <button onclick="togglePasswordVisibility('${passFieldId}')" class="bg-slate-800 text-slate-300 hover:text-white px-2 py-1 rounded text-[10px]" title="Ver"><i id="icon-${passFieldId}" class="fa-solid fa-eye text-[10px]"></i></button>
+                <button onclick="copyToClipboard('${u.password || ''}', 'Contraseña')" class="bg-amber-500/10 text-amber-400 hover:bg-amber-500 hover:text-slate-950 px-2 py-1 rounded text-[10px] font-sans font-bold">Copiar Pass</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-between items-center text-xs bg-slate-900/60 p-2 rounded-lg border border-slate-800/60">
+            <div><span class="text-[10px] text-slate-400 block">Saldo Actual</span><span class="font-black text-emerald-400">${(u.balance || 0).toLocaleString('es-PY')} GS</span></div>
+            <div class="text-right"><span class="text-[10px] text-slate-400 block">Cartones</span><span class="font-black text-purple-300">${u.tickets || 0}</span></div>
+          </div>
+          <div class="text-[10px] text-slate-400">Creado: ${u.createdAt || 'N/A'}</div>
+          <div class="flex gap-2 pt-0.5">
+            <button onclick="addTickets('${k}')" class="flex-1 bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-slate-950 py-1.5 rounded-lg text-[10px] font-extrabold border border-amber-500/30 transition text-center">Cargar Cartón</button>
+            <button onclick="deleteUserAccount('${k}')" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-3 py-1.5 rounded-lg text-[10px] font-extrabold border border-red-500/30 transition text-center" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderAgentsTable() {
+    const tbody = document.getElementById('table-agents-body');
+    const cardsContainer = document.getElementById('cards-agents-body');
+    if (!tbody || !cardsContainer) return;
+
+    const agentKeys = Object.keys(usersDB).filter(k => usersDB[k].role === 'agent');
+
+    if (agentKeys.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">No hay agentes registrados.</td></tr>`;
+      cardsContainer.innerHTML = `<div class="text-center text-slate-500 text-xs py-4 col-span-full">No hay agentes registrados.</div>`;
+      return;
+    }
+
+    tbody.innerHTML = agentKeys.map(k => {
+      const a = usersDB[k];
+      const passFieldId = `pass-agent-${k}`;
+      return `
+        <tr class="hover:bg-slate-900/40 transition">
+          <td class="p-3 font-bold text-white">${a.name}<br><span class="text-[10px] text-purple-400 font-mono">${a.id}</span></td>
+          <td class="p-3">
+            <div class="flex items-center gap-1.5 font-mono text-xs">
+              <span class="text-white">@${a.username}</span>
+              <button onclick="copyToClipboard('${a.username}', 'Usuario')" class="text-amber-400 hover:text-amber-300 px-1" title="Copiar Usuario"><i class="fa-solid fa-copy text-[10px]"></i></button>
+            </div>
+            <div class="flex items-center gap-1.5 mt-1">
+              <input type="password" id="${passFieldId}" value="${a.password || ''}" readonly class="bg-transparent text-slate-400 text-xs font-mono w-24 focus:outline-none">
+              <button onclick="togglePasswordVisibility('${passFieldId}')" class="text-slate-400 hover:text-white px-1" title="Ver/Ocultar Contraseña"><i id="icon-${passFieldId}" class="fa-solid fa-eye text-[10px]"></i></button>
+              <button onclick="copyToClipboard('${a.password || ''}', 'Contraseña')" class="text-amber-400 hover:text-amber-300 px-1" title="Copiar Contraseña"><i class="fa-solid fa-key text-[10px]"></i></button>
+            </div>
+          </td>
+          <td class="p-3 font-black text-emerald-400">${(a.balance || 0).toLocaleString('es-PY')} GS</td>
+          <td class="p-3 font-black text-purple-300">${a.tickets || 0} Cartones</td>
+          <td class="p-3 text-slate-400 text-[11px]">${a.createdAt || 'N/A'}</td>
+          <td class="p-3 text-center flex items-center justify-center gap-1.5">
+            <button onclick="addTickets('${k}')" class="bg-purple-500/10 hover:bg-purple-500 text-purple-400 hover:text-slate-950 px-2.5 py-1 rounded-lg text-[10px] font-extrabold border border-purple-500/30 transition" title="Cargar Cartón">
+              <i class="fa-solid fa-plus text-[9px]"></i>
+            </button>
+            <button onclick="deleteUserAccount('${k}')" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-2.5 py-1 rounded-lg text-[10px] font-extrabold border border-red-500/30 transition" title="Eliminar Agente">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    cardsContainer.innerHTML = agentKeys.map(k => {
+      const a = usersDB[k];
+      const passFieldId = `mobile-pass-agent-${k}`;
+      return `
+        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 flex flex-col gap-2.5 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <div class="text-xs font-bold text-white">${a.name}</div>
+              <div class="text-[10px] text-purple-400 font-mono">${a.id}</div>
+            </div>
+            <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-purple-950 text-purple-300 border border-purple-800">AGENTE</span>
+          </div>
+
+          <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800 text-xs flex flex-col gap-1.5 font-mono">
+            <div class="flex justify-between items-center">
+              <span class="text-slate-400">Usuario: <strong class="text-white">@${a.username}</strong></span>
+              <button onclick="copyToClipboard('${a.username}', 'Usuario')" class="bg-purple-500/10 text-purple-300 hover:bg-purple-500 hover:text-slate-950 px-2 py-1 rounded text-[10px] font-sans font-bold">Copiar User</button>
+            </div>
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-2">
+                <span class="text-slate-400">Pass:</span>
+                <input type="password" id="${passFieldId}" value="${a.password || ''}" readonly class="bg-transparent text-white text-xs w-20 focus:outline-none">
+              </div>
+              <div class="flex gap-1">
+                <button onclick="togglePasswordVisibility('${passFieldId}')" class="bg-slate-800 text-slate-300 hover:text-white px-2 py-1 rounded text-[10px]" title="Ver"><i id="icon-${passFieldId}" class="fa-solid fa-eye text-[10px]"></i></button>
+                <button onclick="copyToClipboard('${a.password || ''}', 'Contraseña')" class="bg-purple-500/10 text-purple-300 hover:bg-purple-500 hover:text-slate-950 px-2 py-1 rounded text-[10px] font-sans font-bold">Copiar Pass</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/60 p-2 rounded-lg border border-slate-800/60 text-xs flex justify-between items-center">
+            <div><span class="text-[10px] text-slate-400 block">Saldo Actual</span><span class="font-black text-emerald-400">${(a.balance || 0).toLocaleString('es-PY')} GS</span></div>
+            <div class="text-right"><span class="text-[10px] text-slate-400 block">Cartones</span><span class="font-black text-purple-300">${a.tickets || 0}</span></div>
+          </div>
+          <div class="text-[10px] text-slate-400">Creado: ${a.createdAt || 'N/A'}</div>
+          <div class="flex gap-2 pt-0.5">
+            <button onclick="addTickets('${k}')" class="flex-1 bg-purple-500/10 hover:bg-purple-500 text-purple-400 hover:text-slate-950 py-1.5 rounded-lg text-[10px] font-extrabold border border-purple-500/30 transition text-center">Cargar Cartón</button>
+            <button onclick="deleteUserAccount('${k}')" class="flex-1 bg-red-500/10 text-red-400 hover:text-white px-3 py-1.5 rounded-lg text-[10px] font-extrabold border border-red-500/30 transition text-center" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.addTickets = async function(username) {
+    if (!usersDB[username]) return;
+    const count = prompt(`Cantidad de cartones a agregar a ${usersDB[username].name}:`, "0");
+    if (count && !isNaN(count) && parseInt(count) > 0) {
+      usersDB[username].tickets = (usersDB[username].tickets || 0) + parseInt(count);
+      await saveToCloud();
+      showToast(`Cartones asignados correctamente`);
+      renderUsersTable();
+      renderAgentsTable();
+    }
+  };
+
+  window.checkUserBalancePreview = function(val) {
+    const preview = document.getElementById('user-balance-preview');
+    const cleanUser = val.trim().toLowerCase();
+    
+    if (!cleanUser) {
+      preview.innerText = "Ingresa un usuario válido";
+      preview.className = "text-[10px] text-slate-500 block font-bold mt-0.5";
+      return;
+    }
+
+    if (usersDB[cleanUser]) {
+      const bal = usersDB[cleanUser].balance || 0;
+      preview.innerText = `Saldo disponible: ${bal.toLocaleString('es-PY')} GS`;
+      preview.className = bal > 0 ? "text-[10px] text-emerald-400 block font-bold mt-0.5" : "text-[10px] text-red-400 block font-bold mt-0.5";
+    } else {
+      preview.innerText = "Usuario no encontrado en el sistema";
+      preview.className = "text-[10px] text-red-400 block font-bold mt-0.5";
+    }
+  };
+
+  window.handleAdminDirectWithdrawal = async function(e) {
+    e.preventDefault();
+
+    const username = document.getElementById('w-input-user').value.trim().toLowerCase();
+    const amountInput = document.getElementById('w-input-amount').value;
+    const details = document.getElementById('w-input-details').value.trim();
+
+    if (!usersDB[username]) {
+      showToast('El usuario ingresado no existe en el sistema', 'error');
+      return;
+    }
+
+    const user = usersDB[username];
+    const amount = parseInt(amountInput);
+    const currentBalance = user.balance || 0;
+
+    if (currentBalance <= 0) {
+      showToast(`El usuario ${user.name} no tiene saldo disponible (0 GS)`, 'error');
+      return;
+    }
+
+    if (amount > currentBalance) {
+      showToast(`Saldo insuficiente. El usuario solo tiene ${currentBalance.toLocaleString('es-PY')} GS`, 'error');
+      return;
+    }
+
+    usersDB[username].balance -= amount;
+
+    const newWithdrawal = {
+      agent: 'ADMINISTRADOR',
+      username: user.name + ' (@' + user.username + ')',
+      amount: amount,
+      details: details,
+      status: 'RETIRADO / PROCESADO',
+      date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    withdrawalsDB.unshift(newWithdrawal);
+    await saveToCloud();
+    
+    showToast('Premio retirado y guardado en el Casino');
+    e.target.reset();
+    document.getElementById('user-balance-preview').innerText = "Ingresa un usuario válido";
+    document.getElementById('user-balance-preview').className = "text-[10px] text-slate-500 block font-bold mt-0.5";
+    
+    renderWithdrawalsTable();
+    renderUsersTable();
+  };
+
+  function renderWithdrawalsTable() {
+    const tbody = document.getElementById('table-withdrawals-body');
+    const cardsContainer = document.getElementById('cards-withdrawals-body');
+    if (!tbody || !cardsContainer) return;
+
+    if (withdrawalsDB.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">No hay retiros registrados.</td></tr>`;
+      cardsContainer.innerHTML = `<div class="text-center text-slate-500 text-xs py-4">No hay retiros registrados.</div>`;
+      return;
+    }
+
+    tbody.innerHTML = withdrawalsDB.map((w, idx) => `
+      <tr class="hover:bg-slate-900/40 transition">
+        <td class="p-3 font-bold text-white">${w.username}<br><span class="text-[10px] text-slate-400">${w.date}</span></td>
+        <td class="p-3 font-black text-amber-400">${parseInt(w.amount).toLocaleString('es-PY')} GS</td>
+        <td class="p-3 text-slate-300 font-mono text-[11px]">${w.details}</td>
+        <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-black ${w.status === 'APROBADO' || w.status.includes('RETIRADO') ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : w.status === 'RECHAZADO' ? 'bg-red-950 text-red-300 border border-red-800' : 'bg-amber-950 text-amber-300 border border-amber-800'}">${w.status}</span></td>
+        <td class="p-3 text-center">
+          ${w.status === 'PENDIENTE' ? `
+            <button onclick="processWithdrawal(${idx}, 'APROBADO')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-2 py-1 rounded-lg text-[10px] font-black transition mr-1">Aprobar</button>
+            <button onclick="processWithdrawal(${idx}, 'RECHAZADO')" class="bg-red-500 hover:bg-red-400 text-white px-2 py-1 rounded-lg text-[10px] font-black transition">Rechazar</button>
+          ` : `<span class="text-slate-500 text-[10px] font-bold">${w.agent ? 'Hecho por ' + w.agent : 'Procesado'}</span>`}
+        </td>
+      </tr>
+    `).join('');
+
+    cardsContainer.innerHTML = withdrawalsDB.map((w, idx) => `
+      <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 flex flex-col gap-2 shadow-sm">
+        <div class="flex justify-between items-start">
+          <div>
+            <div class="text-xs font-bold text-white">${w.username}</div>
+            <div class="text-[10px] text-slate-400">${w.date}</div>
+          </div>
+          <span class="px-2 py-0.5 rounded-full text-[9px] font-black ${w.status === 'APROBADO' || w.status.includes('RETIRADO') ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : w.status === 'RECHAZADO' ? 'bg-red-950 text-red-300 border border-red-800' : 'bg-amber-950 text-amber-300 border border-amber-800'}">${w.status}</span>
+        </div>
+        <div class="bg-slate-900/60 p-2 rounded-lg border border-slate-800/60 text-xs">
+          <div class="text-[10px] text-slate-400">Monto: <span class="font-black text-amber-400">${parseInt(w.amount).toLocaleString('es-PY')} GS</span></div>
+          <div class="text-[10px] text-slate-300 font-mono mt-0.5 truncate">Detalles: ${w.details}</div>
+        </div>
+        ${w.status === 'PENDIENTE' ? `
+          <div class="flex gap-2 pt-1">
+            <button onclick="processWithdrawal(${idx}, 'APROBADO')" class="flex-1 bg-emerald-500 text-slate-950 py-1.5 rounded-lg text-[10px] font-black text-center">Aprobar</button>
+            <button onclick="processWithdrawal(${idx}, 'RECHAZADO')" class="flex-1 bg-red-500 text-white py-1.5 rounded-lg text-[10px] font-black text-center">Rechazar</button>
+          </div>
+        ` : ''}
+      </div>
+    `).join('');
+  }
+
+  window.processWithdrawal = async function(idx, newStatus) {
+    if (!withdrawalsDB[idx]) return;
+    const w = withdrawalsDB[idx];
+
+    if (newStatus === 'RECHAZADO' && w.status === 'PENDIENTE') {
+      const cleanUser = w.username.toLowerCase();
+      if (usersDB[cleanUser]) {
+        usersDB[cleanUser].balance = (usersDB[cleanUser].balance || 0) + w.amount;
+      }
+    }
+
+    withdrawalsDB[idx].status = newStatus;
+    await saveToCloud();
+    showToast(`Solicitud ${newStatus.toLowerCase()}`);
+    renderWithdrawalsTable();
+    renderUsersTable();
+  };
+
+  window.togglePrizeTypeInput = function() {
+    const typeEl = document.getElementById('prize-type');
+    const inputVal = document.getElementById('prize-val');
+    if (!typeEl || !inputVal) return;
+    
+    const type = typeEl.value;
+    if (type === 'emoji') inputVal.placeholder = "👑 / 💎 / 🏆";
+    else if (type === 'icon') inputVal.placeholder = "fa-crown / fa-gem";
+    else inputVal.placeholder = "https://ejemplo.com/imagen.png";
+  };
+
+  window.handleSavePrize = async function(e) {
+    e.preventDefault();
+    const idx = parseInt(document.getElementById('prize-index-edit').value);
+    const name = document.getElementById('prize-name').value.trim();
+    const prize = parseInt(document.getElementById('prize-amount').value);
+    const type = document.getElementById('prize-type').value;
+    const val = document.getElementById('prize-val').value.trim();
+
+    const itemData = {
+      id: idx >= 0 && prizesDB[idx] ? prizesDB[idx].id : 'p_' + Date.now(),
+      name,
+      type,
+      val,
+      color: type === 'icon' ? 'text-amber-400' : '',
+      prize
+    };
+
+    if (idx >= 0 && prizesDB[idx]) prizesDB[idx] = itemData;
+    else prizesDB.push(itemData);
+
+    await saveToCloud();
+    showToast('Premio guardado en el Casino');
+    resetPrizeForm();
+    renderPrizesConfig();
+  };
+
+  window.resetPrizeForm = function() {
+    const editIdx = document.getElementById('prize-index-edit');
+    const pName = document.getElementById('prize-name');
+    const pAmount = document.getElementById('prize-amount');
+    const pVal = document.getElementById('prize-val');
+    const title = document.getElementById('prize-form-title');
+
+    if (editIdx) editIdx.value = "-1";
+    if (pName) pName.value = "";
+    if (pAmount) pAmount.value = "";
+    if (pVal) pVal.value = "";
+    if (title) title.innerText = "Crear o Editar Premio VIP";
+  };
+
+  function renderPrizesConfig() {
+    const container = document.getElementById('prizes-grid');
+    if (!container) return;
+
+    container.innerHTML = prizesDB.map((p, i) => {
+      let previewHtml = '';
+      if (p.type === 'image') previewHtml = `<img src="${p.val}" class="w-7 h-7 object-contain">`;
+      else if (p.type === 'emoji') previewHtml = `<span class="text-xl">${p.val}</span>`;
+      else previewHtml = `<i class="fa-solid ${p.val || 'fa-gem'} ${p.color || 'text-amber-400'} text-xl"></i>`;
+
+      return `
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center shrink-0">
+              ${previewHtml}
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white">${p.name}</div>
+              <div class="text-[10px] font-black text-amber-400">${p.prize.toLocaleString('es-PY')} GS</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="editPrize(${i})" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-[10px] px-2.5 py-1 rounded-lg font-bold border border-slate-700">Editar</button>
+            <button onclick="deletePrize(${i})" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 text-[10px] px-2 py-1 rounded-lg font-bold border border-slate-500/20">X</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.editPrize = function(i) {
+    const p = prizesDB[i];
+    if (!p) return;
+
+    document.getElementById('prize-index-edit').value = i;
+    document.getElementById('prize-name').value = p.name;
+    document.getElementById('prize-amount').value = p.prize;
+    document.getElementById('prize-type').value = p.type || 'icon';
+    document.getElementById('prize-val').value = p.val;
+    document.getElementById('prize-form-title').innerText = `Editando: ${p.name}`;
+  };
+
+  window.deletePrize = async function(i) {
+    if (confirm('¿Eliminar este premio?')) {
+      prizesDB.splice(i, 1);
+      await saveToCloud();
+      renderPrizesConfig();
+      showToast('Premio eliminado');
+    }
+  };
+
+  function loadCardConfigForm() {
+    const cfgTitle = document.getElementById('cfg-title');
+    const cfgSubtitle = document.getElementById('cfg-subtitle');
+    const cfgMaxPrize = document.getElementById('cfg-max-prize');
+    const cfgPrice = document.getElementById('cfg-price');
+    const cfgWinRate = document.getElementById('cfg-win-rate');
+    const cfgRules = document.getElementById('cfg-rules');
+
+    if (cfgTitle) cfgTitle.value = cardConfigDB.title || 'CASINO ROYAL';
+    if (cfgSubtitle) cfgSubtitle.value = cardConfigDB.subtitle || 'JACKPOT MILLONARIO';
+    if (cfgMaxPrize) cfgMaxPrize.value = cardConfigDB.maxPrizeText || 'PREMIO MÁXIMO 5.000.000 GS';
+    if (cfgPrice) cfgPrice.value = cardConfigDB.price || 5000;
+    if (cfgWinRate) cfgWinRate.value = cardConfigDB.winRate !== undefined ? cardConfigDB.winRate : 60;
+    if (cfgRules) cfgRules.value = cardConfigDB.rulesText || '';
+  }
+
+  window.handleSaveCardConfig = async function(e) {
+    e.preventDefault();
+    cardConfigDB = {
+      title: document.getElementById('cfg-title').value.trim(),
+      subtitle: document.getElementById('cfg-subtitle').value.trim(),
+      maxPrizeText: document.getElementById('cfg-max-prize').value.trim(),
+      price: parseInt(document.getElementById('cfg-price').value),
+      winRate: parseInt(document.getElementById('cfg-win-rate').value),
+      rulesText: document.getElementById('cfg-rules').value.trim()
+    };
+
+    await saveToCloud();
+    showToast('Configuración y reglas guardadas en el Casino');
+  };
+
+  function showToast(msg, type = 'success') {
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toast-msg');
+    if (!toast || !toastMsg) return;
+
+    toastMsg.innerText = msg;
+    toast.className = `fixed top-4 left-1/2 -translate-x-1/2 ${type === 'error' ? 'bg-red-500 text-white' : 'bg-amber-500 text-slate-950'} px-4 py-2.5 rounded-full text-xs font-black shadow-2xl opacity-100 pointer-events-auto transition-all duration-300 z-50 flex items-center gap-2 max-w-[90vw] truncate`;
+    setTimeout(() => {
+      toast.classList.add('opacity-0', 'pointer-events-none');
+    }, 2500);
+  }
+
+  window.onload = checkAdminAuth;
+</script>
+</body>
+</html>

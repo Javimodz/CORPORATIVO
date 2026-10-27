@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Panel de Agente - Casino Royal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #050b14;
+  background-image: 
+    radial-gradient(circle at 50% 10%, #1e1b4b 0%, #050b14 70%),
+    repeating-linear-gradient(45deg, rgba(245, 158, 11, 0.03) 0px, rgba(245, 158, 11, 0.03) 2px, transparent 2px, transparent 10px);
+  min-height: 100vh;
+  color: #f1f5f9;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.gold-gradient-text {
+  background: linear-gradient(135deg, #FFF5C0 0%, #F1C40F 40%, #D97706 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #050b14;
+}
+::-webkit-scrollbar-thumb {
+  background: #d97706;
+  border-radius: 4px;
+}
+</style>
+</head>
+<body class="p-2 sm:p-4 md:p-6 flex flex-col items-center justify-start min-h-screen">
+
+<div class="w-full max-w-5xl bg-slate-950/95 backdrop-blur-xl rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-amber-500/30 flex flex-col my-2">
+  
+  <!-- TOAST ALERTA FLOTANTE -->
+  <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 bg-amber-500 text-slate-950 px-4 py-2.5 rounded-full text-xs font-black shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2 max-w-[90vw] truncate">
+    <i class="fa-solid fa-crown text-sm shrink-0"></i>
+    <span id="toast-msg" class="truncate">Mensaje</span>
+  </div>
+
+  <!-- 1. PANTALLA DE LOGIN DE AGENTE -->
+  <div id="view-login" class="p-5 sm:p-8 md:p-12 flex flex-col gap-6 max-w-md mx-auto w-full my-auto">
+    <div class="text-center">
+      <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-300 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-amber-500/20 border border-amber-200">
+        <i class="fa-solid fa-headset text-3xl sm:text-4xl text-slate-950"></i>
+      </div>
+      <h1 class="text-xl sm:text-2xl font-black italic gold-gradient-text tracking-wide">PANEL DE AGENTE VIP</h1>
+      <p class="text-[11px] sm:text-xs text-amber-300/80 mt-1 font-medium">Ingresa con tu usuario y contraseña asignados</p>
+    </div>
+
+    <form onsubmit="handleAgentLogin(event)" class="flex flex-col gap-4 mt-1">
+      <div class="space-y-1">
+        <label class="block text-xs font-bold text-slate-300">Usuario de Agente</label>
+        <div class="relative">
+          <i class="fa-solid fa-user absolute left-4 top-3.5 text-amber-500/60 text-xs"></i>
+          <input type="text" id="agent-user" required placeholder="Tu usuario VIP" class="w-full bg-slate-900 border border-amber-500/30 rounded-xl py-3 pl-10 pr-4 text-xs text-white focus:outline-none focus:border-amber-500 transition">
+        </div>
+      </div>
+      <div class="space-y-1">
+        <label class="block text-xs font-bold text-slate-300">Contraseña</label>
+        <div class="relative">
+          <i class="fa-solid fa-lock absolute left-4 top-3.5 text-amber-500/60 text-xs"></i>
+          <input type="password" id="agent-pass" required placeholder="••••••" class="w-full bg-slate-900 border border-amber-500/30 rounded-xl py-3 pl-10 pr-4 text-xs text-white focus:outline-none focus:border-amber-500 transition">
+        </div>
+      </div>
+      <button type="submit" class="w-full mt-2 py-3.5 rounded-xl font-black text-slate-950 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-[0.98] transition text-xs uppercase tracking-wider">Ingresar como Agente VIP</button>
+    </form>
+  </div>
+
+  <!-- 2. DASHBOARD DE AGENTE -->
+  <div id="view-dashboard" class="hidden flex-col">
+    <!-- Header Agente -->
+    <div class="px-4 sm:px-6 py-3.5 sm:py-4 bg-slate-900/90 flex justify-between items-center text-white border-b border-amber-500/20">
+      <div class="flex items-center gap-2.5 sm:gap-3.5">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+          <i class="fa-solid fa-user-tie text-sm sm:text-lg"></i>
+        </div>
+        <div>
+          <h2 class="text-xs sm:text-sm font-black gold-gradient-text tracking-wide uppercase" id="agent-header-name">AGENTE VIP</h2>
+          <span class="text-[9px] sm:text-[10px] text-amber-300/70 font-medium block">Sincronizado con Casino Royal ☁️</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="agentLogout()" class="bg-red-500/10 hover:bg-red-500/20 text-red-300 text-[11px] sm:text-xs px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-red-800/50 transition flex items-center gap-1.5 font-bold active:scale-95">
+          <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden sm:inline">Salir</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- TARJETAS DE RESUMEN: CARTONES Y SALDO DEL AGENTE -->
+    <div class="px-4 sm:px-6 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <!-- Stock de Cartones -->
+      <div class="bg-gradient-to-br from-amber-950/50 via-slate-900 to-slate-950 border border-amber-500/40 rounded-2xl p-4 flex items-center justify-between shadow-xl">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+            <i class="fa-solid fa-ticket text-lg"></i>
+          </div>
+          <div>
+            <span class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider block">Cartones Disponibles</span>
+            <span class="text-lg sm:text-xl font-black text-amber-400" id="agent-stock-tickets">0</span>
+          </div>
+        </div>
+        <div class="text-right">
+          <span class="text-[9px] sm:text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-lg font-bold">Stock Activo</span>
+        </div>
+      </div>
+
+      <!-- Saldo Actual del Agente (Acumulado por Retiros) -->
+      <div class="bg-gradient-to-br from-emerald-950/50 via-slate-900 to-slate-950 border border-emerald-500/40 rounded-2xl p-4 flex items-center justify-between shadow-xl">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+            <i class="fa-solid fa-wallet text-lg"></i>
+          </div>
+          <div>
+            <span class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider block">Mi Saldo Actual (GS)</span>
+            <span class="text-lg sm:text-xl font-black text-emerald-400" id="agent-current-balance">0 GS</span>
+          </div>
+        </div>
+        <div class="text-right">
+          <span class="text-[9px] sm:text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-lg font-bold">Cuenta Agente</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Menú de Pestañas -->
+    <div class="flex p-2 bg-slate-950 border-b border-amber-500/20 overflow-x-auto no-scrollbar gap-2 mt-3">
+      <button onclick="switchTab('create')" id="tab-create" class="py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold bg-amber-500 text-slate-950 transition flex items-center justify-center gap-2 shrink-0 shadow-lg shadow-amber-500/10">
+        <i class="fa-solid fa-user-plus text-xs"></i> Crear Jugador
+      </button>
+      <button onclick="switchTab('clients')" id="tab-clients" class="py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-400 hover:text-white bg-slate-900/50 border border-slate-800/50 transition flex items-center justify-center gap-2 shrink-0">
+        <i class="fa-solid fa-users text-xs"></i> Clientes
+      </button>
+      <button onclick="switchTab('withdrawals')" id="tab-withdrawals" class="py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-400 hover:text-white bg-slate-900/50 border border-slate-800/50 transition flex items-center justify-center gap-2 shrink-0">
+        <i class="fa-solid fa-money-bill-transfer text-xs"></i> Retiros
+      </button>
+      <button onclick="switchTab('history')" id="tab-history" class="py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-400 hover:text-white bg-slate-900/50 border border-slate-800/50 transition flex items-center justify-center gap-2 shrink-0">
+        <i class="fa-solid fa-clock-rotate-left text-xs"></i> Historial
+      </button>
+    </div>
+
+    <div class="p-3 sm:p-5 md:p-6 flex-1 flex flex-col gap-5 max-h-[75vh] overflow-y-auto">
+      
+      <!-- SECCIÓN 1: CREAR JUGADOR -->
+      <div id="section-create" class="flex flex-col gap-5">
+        <div class="bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-amber-500/20 shadow-xl max-w-xl mx-auto w-full">
+          <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-800/60">
+            <i class="fa-solid fa-user-plus text-amber-400 text-xs"></i>
+            <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Crear Nuevo Jugador / Cliente VIP</h3>
+          </div>
+          
+          <form onsubmit="handleCreateClient(event)" class="flex flex-col gap-3.5">
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Nombre Completo</label>
+              <input type="text" id="c-name" required placeholder="Nombre y Apellido" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Usuario (Login)</label>
+              <input type="text" id="c-username" required placeholder="escriba usuario" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Contraseña</label>
+              <input type="password" id="c-pass" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div class="pt-1">
+              <button type="submit" class="w-full py-3.5 rounded-xl font-black text-slate-950 bg-amber-500 hover:bg-amber-400 transition text-xs shadow-lg uppercase tracking-wider">Registrar Cliente en el Casino</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 2: CLIENTES -->
+      <div id="section-clients" class="hidden flex-col gap-5">
+        <div class="bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl">
+          <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800/60">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-users text-amber-400 text-xs"></i>
+              <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Mis Clientes VIP (Gestión y Cartones)</h3>
+            </div>
+          </div>
+
+          <!-- Vista PC -->
+          <div class="hidden md:block overflow-x-auto rounded-xl border border-slate-800 bg-slate-950">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-900 text-slate-400 uppercase text-[10px] font-bold border-b border-slate-800">
+                <tr>
+                  <th class="p-3">ID / Nombre</th>
+                  <th class="p-3">Usuario y Pass</th>
+                  <th class="p-3">Saldo GS</th>
+                  <th class="p-3">Cartones Disponibles</th>
+                  <th class="p-3 text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="table-clients-body" class="divide-y divide-slate-800/60"></tbody>
+            </table>
+          </div>
+
+          <!-- Vista Celulares -->
+          <div id="cards-clients-body" class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:hidden"></div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 3: RETIROS -->
+      <div id="section-withdrawals" class="hidden flex-col gap-5">
+        <div class="bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl max-w-xl mx-auto w-full">
+          <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-800/60">
+            <i class="fa-solid fa-hand-holding-dollar text-emerald-400 text-xs"></i>
+            <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Retirar Premio de Cliente VIP</h3>
+          </div>
+          
+          <form onsubmit="handleAgentWithdrawal(event)" class="flex flex-col gap-3.5">
+            <div class="space-y-1 relative">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Escribir o Buscar Usuario / Nombre</label>
+              <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-500 text-xs"></i>
+                <input type="text" id="w-client-search" required autocomplete="off" placeholder="Escribe el usuario o nombre..." oninput="filterClientsDropdown('w')" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-xs text-white font-bold focus:outline-none focus:border-amber-500">
+              </div>
+              
+              <!-- Menú desplegable dinámico de sugerencias -->
+              <div id="w-dropdown-results" class="hidden absolute left-0 right-0 top-full mt-1 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-20 max-h-48 overflow-y-auto divide-y divide-slate-800"></div>
+
+              <span id="client-balance-info" class="text-[10px] text-slate-400 block font-bold mt-1">Saldo disponible: 0 GS</span>
+            </div>
+
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Monto a Retirar (GS)</label>
+              <input type="number" id="w-amount" required placeholder="50000" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div class="space-y-1">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Detalles / Teléfono / Método</label>
+              <input type="text" id="w-details" required placeholder="Ej: 0983123456 / Tigo Money" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500">
+            </div>
+            <div class="pt-1">
+              <button type="submit" class="w-full py-3.5 rounded-xl font-black text-slate-950 bg-emerald-400 hover:bg-emerald-300 transition text-xs shadow-lg uppercase tracking-wider">Procesar Retiro Directo</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 4: HISTORIAL GENERAL -->
+      <div id="section-history" class="hidden flex-col gap-6">
+        
+        <!-- Pestaña interna de Historial -->
+        <div class="flex gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800/80 max-w-sm">
+          <button onclick="switchHistorySubTab('withdrawals')" id="subtab-w" class="flex-1 py-2 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition">Historial de Retiros</button>
+          <button onclick="switchHistorySubTab('tickets')" id="subtab-t" class="flex-1 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition">Movimientos de Cartones</button>
+        </div>
+
+        <!-- 1. HISTORIAL DE RETIROS -->
+        <div id="history-box-withdrawals" class="bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl">
+          <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800/60">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-clock-rotate-left text-amber-400 text-xs"></i>
+              <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Historial de Retiros Realizados a Mis Clientes</h3>
+            </div>
+          </div>
+
+          <div class="hidden md:block overflow-x-auto rounded-xl border border-slate-800 bg-slate-950">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-900 text-slate-400 uppercase text-[10px] font-bold border-b border-slate-800">
+                <tr>
+                  <th class="p-3">Cliente</th>
+                  <th class="p-3">Monto Retirado</th>
+                  <th class="p-3">Detalles / Método</th>
+                  <th class="p-3">Fecha y Hora</th>
+                  <th class="p-3 text-center">Estado</th>
+                </tr>
+              </thead>
+              <tbody id="table-history-body" class="divide-y divide-slate-800/60"></tbody>
+            </table>
+          </div>
+          <div id="cards-history-body" class="grid grid-cols-1 gap-3 md:hidden"></div>
+        </div>
+
+        <!-- 2. HISTORIAL DE MOVIMIENTOS DE CARTONES -->
+        <div id="history-box-tickets" class="hidden bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl">
+          <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800/60">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-ticket text-amber-400 text-xs"></i>
+              <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Historial de Cargas y Retiros de Cartones VIP</h3>
+            </div>
+          </div>
+
+          <div class="hidden md:block overflow-x-auto rounded-xl border border-slate-800 bg-slate-950">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-900 text-slate-400 uppercase text-[10px] font-bold border-b border-slate-800">
+                <tr>
+                  <th class="p-3">Cliente</th>
+                  <th class="p-3">Acción</th>
+                  <th class="p-3">Cantidad</th>
+                  <th class="p-3">Fecha y Hora</th>
+                </tr>
+              </thead>
+              <tbody id="table-tickets-history-body" class="divide-y divide-slate-800/60"></tbody>
+            </table>
+          </div>
+          <div id="cards-tickets-history-body" class="grid grid-cols-1 gap-3 md:hidden"></div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- SCRIPT DE FIREBASE MODULAR (VERSIÓN 13.1.0 UNIFICADA) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBWpmrXx2lVToxDykBWmJrA1H0Sw4TN8O4",
+    authDomain: "raspadita-delasuerte.firebaseapp.com",
+    projectId: "raspadita-delasuerte",
+    storageBucket: "raspadita-delasuerte.firebasestorage.app",
+    messagingSenderId: "144755637640",
+    appId: "1:144755637640:web:9cdd16bbcbb23214140e3d"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  let globalData = {};
+  let usersDB = {};
+  let withdrawalsDB = [];
+  let ticketLogsDB = [];
+  let currentAgent = null;
+
+  window.selectedWithdrawalUser = "";
+
+  async function initDB() {
+    try {
+      const docRef = doc(db, "sistema", "datos_globales");
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        globalData = docSnap.data();
+        usersDB = globalData.users || {};
+        withdrawalsDB = globalData.withdrawals || [];
+        ticketLogsDB = globalData.ticketLogs || [];
+      }
+    } catch (e) {
+      console.error("Error al conectar con el Casino:", e);
+      showToast("Error de conexión con el Casino", "error");
+    }
+  }
+
+  async function saveToCloud() {
+    try {
+      const docRef = doc(db, "sistema", "datos_globales");
+      await setDoc(docRef, {
+        users: usersDB,
+        withdrawals: withdrawalsDB,
+        ticketLogs: ticketLogsDB
+      }, { merge: true });
+    } catch (e) {
+      console.error("Error al guardar en el Casino:", e);
+      showToast("Error al sincronizar con el Casino", "error");
+    }
+  }
+
+  window.copyUserAndPass = function(username, password) {
+    const textToCopy = `Usuario: ${username}\nContraseña: ${password}`;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        showToast(`Copiado: Usuario: ${username}`);
+      }).catch(err => {
+        fallbackCopyTextToClipboard(textToCopy, username);
+      });
+    } else {
+      fallbackCopyTextToClipboard(textToCopy, username);
+    }
+  };
+
+  function fallbackCopyTextToClipboard(text, username) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      showToast(`Copiado: Usuario: ${username}`);
+    } catch (err) {
+      showToast('Error al copiar', 'error');
+    }
+    document.body.removeChild(textArea);
+  }
+
+  window.handleAgentLogin = async function(e) {
+    e.preventDefault();
+    await initDB();
+    
+    const username = document.getElementById('agent-user').value.trim().toLowerCase();
+    const pass = document.getElementById('agent-pass').value;
+
+    if (usersDB[username] && usersDB[username].role === 'agent' && usersDB[username].password === pass) {
+      currentAgent = username;
+      sessionStorage.setItem('agent_logged', currentAgent);
+      showDashboard();
+    } else {
+      showToast('Usuario o contraseña de agente incorrectos', 'error');
+    }
+  };
+
+  window.agentLogout = function() {
+    currentAgent = null;
+    sessionStorage.removeItem('agent_logged');
+    document.getElementById('view-dashboard').classList.add('hidden');
+    document.getElementById('view-login').classList.remove('hidden');
+  };
+
+  async function checkAgentAuth() {
+    await initDB();
+    const logged = sessionStorage.getItem('agent_logged');
+    if (logged && usersDB[logged] && usersDB[logged].role === 'agent') {
+      currentAgent = logged;
+      showDashboard();
+    }
+  }
+
+  function showDashboard() {
+    document.getElementById('view-login').classList.add('hidden');
+    document.getElementById('view-dashboard').classList.remove('hidden');
+    document.getElementById('view-dashboard').classList.add('flex');
+    document.getElementById('agent-header-name').innerText = usersDB[currentAgent].name;
+    updateAgentMetrics();
+    renderClients();
+    renderAgentHistory();
+    renderTicketHistory();
+  }
+
+  function updateAgentMetrics() {
+    if (!currentAgent || !usersDB[currentAgent]) return;
+    
+    // Actualizar cartones
+    const stock = usersDB[currentAgent].tickets || 0;
+    const stockEl = document.getElementById('agent-stock-tickets');
+    if (stockEl) stockEl.innerText = stock.toLocaleString('es-PY');
+
+    // Actualizar saldo del agente acumulado en su cuenta
+    const balance = usersDB[currentAgent].balance || 0;
+    const balanceEl = document.getElementById('agent-current-balance');
+    if (balanceEl) balanceEl.innerText = balance.toLocaleString('es-PY') + " GS";
+  }
+
+  window.switchTab = function(tab) {
+    const sections = ['create', 'clients', 'withdrawals', 'history'];
+    sections.forEach(s => {
+      const secEl = document.getElementById(`section-${s}`);
+      const tabEl = document.getElementById(`tab-${s}`);
+      if (secEl) secEl.classList.add('hidden');
+      if (tabEl) tabEl.className = "py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-400 hover:text-white bg-slate-900/50 border border-slate-800/50 transition flex items-center justify-center gap-2 shrink-0";
+    });
+
+    const activeSec = document.getElementById(`section-${tab}`);
+    const activeTab = document.getElementById(`tab-${tab}`);
+    if (activeSec) activeSec.classList.remove('hidden');
+    if (activeTab) activeTab.className = "py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold bg-amber-500 text-slate-950 transition flex items-center justify-center gap-2 shrink-0 shadow-lg shadow-amber-500/10";
+
+    if (tab === 'clients') renderClients();
+    if (tab === 'history') {
+      renderAgentHistory();
+      renderTicketHistory();
+    }
+  };
+
+  window.switchHistorySubTab = function(sub) {
+    const boxW = document.getElementById('history-box-withdrawals');
+    const boxT = document.getElementById('history-box-tickets');
+    const btnW = document.getElementById('subtab-w');
+    const btnT = document.getElementById('subtab-t');
+
+    if (sub === 'withdrawals') {
+      boxW.classList.remove('hidden');
+      boxT.classList.add('hidden');
+      btnW.className = "flex-1 py-2 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition";
+      btnT.className = "flex-1 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition";
+    } else {
+      boxW.classList.add('hidden');
+      boxT.classList.remove('hidden');
+      btnT.className = "flex-1 py-2 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition";
+      btnW.className = "flex-1 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition";
+    }
+  };
+
+  function getMyClients() {
+    let myClients = {};
+    Object.keys(usersDB).forEach(k => {
+      const u = usersDB[k];
+      if (u.role === 'client' && u.createdBy === currentAgent) {
+        myClients[k] = u;
+      }
+    });
+    return myClients;
+  }
+
+  window.handleCreateClient = async function(e) {
+    e.preventDefault();
+    await initDB();
+
+    const name = document.getElementById('c-name').value.trim();
+    const username = document.getElementById('c-username').value.trim().toLowerCase();
+    const pass = document.getElementById('c-pass').value;
+
+    if (usersDB[username]) {
+      showToast('El nombre de usuario ya está en uso', 'error');
+      return;
+    }
+
+    const userId = 'HLN-' + Math.floor(10000 + Math.random() * 90000);
+    const currentDate = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    usersDB[username] = {
+      id: userId,
+      name: name,
+      username: username,
+      password: pass,
+      role: 'client',
+      createdBy: currentAgent,
+      balance: 0,
+      tickets: 0,
+      createdAt: currentDate,
+      history: []
+    };
+
+    await saveToCloud();
+    showToast(`Jugador VIP ${name} registrado`);
+    e.target.reset();
+    renderClients();
+  };
+
+  function renderClients() {
+    const tbody = document.getElementById('table-clients-body');
+    const cardsContainer = document.getElementById('cards-clients-body');
+    if (!tbody || !cardsContainer) return;
+
+    const clients = getMyClients();
+    const keys = Object.keys(clients);
+
+    if (keys.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">No tienes clientes registrados todavía.</td></tr>`;
+      cardsContainer.innerHTML = `<div class="text-center text-slate-500 text-xs py-4 col-span-full">No tienes clientes registrados todavía.</div>`;
+      return;
+    }
+
+    tbody.innerHTML = keys.map(k => {
+      const u = clients[k];
+      return `
+        <tr class="hover:bg-slate-900/40 transition">
+          <td class="p-3 font-bold text-white">${u.name}<br><span class="text-[10px] text-amber-400 font-mono">${u.id}</span></td>
+          <td class="p-3 text-slate-300 font-mono">
+            <div class="flex items-center gap-2">
+              <div>
+                <span class="block text-white font-bold">Usuario: ${u.username}</span>
+                <span class="block text-[10px] text-slate-400">Contraseña: ${u.password || '••••••'}</span>
+              </div>
+              <button onclick="copyUserAndPass('${u.username}', '${u.password || ''}')" title="Copiar usuario y contraseña" class="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500 hover:text-slate-950 text-amber-400 transition flex items-center gap-1 text-[10px] font-bold">
+                <i class="fa-solid fa-copy"></i> Copiar
+              </button>
+            </div>
+          </td>
+          <td class="p-3 font-black text-amber-400">${(u.balance || 0).toLocaleString('es-PY')} GS</td>
+          <td class="p-3 font-black text-purple-300">${u.tickets || 0} Cartones</td>
+          <td class="p-3 text-center">
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick="modifyClientTickets('${k}', 'add')" title="Cargar Cartón" class="bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-slate-950 px-2 py-1.5 rounded-lg text-[10px] font-extrabold border border-amber-500/30 transition flex items-center gap-1">
+                <i class="fa-solid fa-plus"></i> Cargar
+              </button>
+              <button onclick="modifyClientTickets('${k}', 'remove')" title="Quitar Cartón" class="bg-yellow-500/10 hover:bg-yellow-500 text-yellow-400 hover:text-slate-950 px-2 py-1.5 rounded-lg text-[10px] font-extrabold border border-yellow-500/30 transition flex items-center gap-1">
+                <i class="fa-solid fa-minus"></i> Quitar
+              </button>
+              <button onclick="deleteClient('${k}')" title="Eliminar Cliente" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-2 py-1.5 rounded-lg text-[10px] font-extrabold border border-red-500/30 transition flex items-center gap-1">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    cardsContainer.innerHTML = keys.map(k => {
+      const u = clients[k];
+      return `
+        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 flex flex-col gap-2.5 shadow-sm">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs font-black text-white">${u.name}</div>
+              <div class="text-[10px] text-amber-400 font-mono">${u.id}</div>
+              <div class="text-[10px] text-slate-300 font-mono mt-1">Usuario: <span class="text-white font-bold">${u.username}</span></div>
+              <div class="text-[10px] text-slate-400 font-mono">Contraseña: ${u.password || '••••••'}</div>
+            </div>
+            <button onclick="copyUserAndPass('${u.username}', '${u.password || ''}')" title="Copiar usuario y contraseña" class="px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500 hover:text-slate-950 text-amber-400 transition flex items-center gap-1.5 text-[10px] font-bold active:scale-95 shrink-0">
+              <i class="fa-solid fa-copy"></i> Copiar
+            </button>
+          </div>
+          <div class="flex justify-between items-center text-xs bg-slate-900/60 p-2 rounded-lg border border-slate-800/60">
+            <div><span class="text-[10px] text-slate-400 block">Saldo</span><span class="font-black text-amber-400">${(u.balance || 0).toLocaleString('es-PY')} GS</span></div>
+            <div class="text-right"><span class="text-[10px] text-slate-400 block">Cartones</span><span class="font-black text-purple-300">${u.tickets || 0}</span></div>
+          </div>
+          <div class="grid grid-cols-3 gap-1.5 pt-0.5">
+            <button onclick="modifyClientTickets('${k}', 'add')" class="bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-slate-950 py-1.5 rounded-lg text-[10px] font-extrabold border border-amber-500/30 transition text-center flex items-center justify-center gap-1">
+              <i class="fa-solid fa-plus"></i> Cargar
+            </button>
+            <button onclick="modifyClientTickets('${k}', 'remove')" class="bg-yellow-500/10 hover:bg-yellow-500 text-yellow-400 hover:text-slate-950 py-1.5 rounded-lg text-[10px] font-extrabold border border-yellow-500/30 transition text-center flex items-center justify-center gap-1">
+              <i class="fa-solid fa-minus"></i> Quitar
+            </button>
+            <button onclick="deleteClient('${k}')" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white py-1.5 rounded-lg text-[10px] font-extrabold border border-red-500/30 transition text-center flex items-center justify-center gap-1">
+              <i class="fa-solid fa-trash"></i> Borrar
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.deleteClient = async function(usernameKey) {
+    await initDB();
+
+    if (!usersDB[usernameKey] || usersDB[usernameKey].createdBy !== currentAgent) {
+      showToast('Este cliente no te pertenece o no existe', 'error');
+      return;
+    }
+
+    const clientName = usersDB[usernameKey].name;
+    const confirmDelete = confirm(`¿Estás seguro de que deseas eliminar al cliente VIP "${clientName}"? Esta acción no se puede deshacer.`);
+
+    if (confirmDelete) {
+      const clientTickets = usersDB[usernameKey].tickets || 0;
+      if (clientTickets > 0 && usersDB[currentAgent]) {
+        usersDB[currentAgent].tickets = (usersDB[currentAgent].tickets || 0) + clientTickets;
+      }
+
+      delete usersDB[usernameKey];
+
+      await saveToCloud();
+      showToast(`Cliente VIP ${clientName} eliminado correctamente`);
+      updateAgentMetrics();
+      renderClients();
+    }
+  };
+
+  window.filterClientsDropdown = function(type) {
+    const inputId = 'w-client-search';
+    const dropdownId = 'w-dropdown-results';
+    const query = document.getElementById(inputId).value.toLowerCase().trim();
+    const dropdown = document.getElementById(dropdownId);
+
+    window.selectedWithdrawalUser = "";
+    document.getElementById('client-balance-info').innerText = "Saldo disponible: 0 GS";
+    document.getElementById('client-balance-info').className = "text-[10px] text-slate-400 block font-bold mt-1";
+
+    const clients = getMyClients();
+    const keys = Object.keys(clients).filter(k => {
+      const u = clients[k];
+      return k.toLowerCase().includes(query) || u.name.toLowerCase().includes(query) || u.id.toLowerCase().includes(query);
+    });
+
+    if (query === '' || keys.length === 0) {
+      dropdown.classList.add('hidden');
+      dropdown.innerHTML = '';
+      return;
+    }
+
+    dropdown.classList.remove('hidden');
+    dropdown.innerHTML = keys.map(k => {
+      const u = clients[k];
+      return `
+        <div onclick="selectClientFromSearch('${k}', '${u.name}', '${u.username}', ${u.balance || 0})" class="p-2.5 hover:bg-slate-800 cursor-pointer flex justify-between items-center transition">
+          <div>
+            <div class="text-xs font-bold text-white">${u.name} <span class="text-amber-400 font-mono">(@${u.username})</span></div>
+            <div class="text-[9px] text-slate-400">${u.id}</div>
+          </div>
+          <div class="text-right text-[10px] font-black text-amber-400">
+            ${(u.balance || 0).toLocaleString('es-PY')} GS
+          </div>
+        </div>
+      `;
+    }).join('');
+  };
+
+  window.selectClientFromSearch = function(usernameKey, name, username, balance) {
+    window.selectedWithdrawalUser = usernameKey;
+    document.getElementById('w-client-search').value = `${name} (@${username})`;
+    document.getElementById('w-dropdown-results').classList.add('hidden');
+    
+    const infoEl = document.getElementById('client-balance-info');
+    infoEl.innerText = `Saldo disponible: ${balance.toLocaleString('es-PY')} GS`;
+    infoEl.className = balance > 0 ? "text-[10px] text-emerald-400 block font-bold mt-1" : "text-[10px] text-red-400 block font-bold mt-1";
+  };
+
+  window.handleAgentWithdrawal = async function(e) {
+    e.preventDefault();
+    await initDB();
+
+    const username = window.selectedWithdrawalUser;
+    const amountInput = document.getElementById('w-amount').value;
+    const details = document.getElementById('w-details').value.trim();
+
+    if (!username || !usersDB[username]) {
+      showToast('Selecciona o escribe un cliente válido de la lista', 'error');
+      return;
+    }
+
+    const client = usersDB[username];
+    const amount = parseInt(amountInput);
+    const currentBalance = client.balance || 0;
+
+    if (currentBalance <= 0) {
+      showToast(`El cliente ${client.name} no tiene saldo disponible (0 GS)`, 'error');
+      return;
+    }
+
+    if (amount > currentBalance) {
+      showToast(`Saldo insuficiente. El cliente solo posee ${currentBalance.toLocaleString('es-PY')} GS`, 'error');
+      return;
+    }
+
+    // 1. Descontar el monto del saldo del cliente
+    usersDB[username].balance -= amount;
+    
+    // 2. Sumar el monto retirado a la cuenta del agente actual
+    if (!usersDB[currentAgent].balance) {
+      usersDB[currentAgent].balance = 0;
+    }
+    usersDB[currentAgent].balance += amount;
+
+    // 3. Registrar en el historial de retiros
+    withdrawalsDB.unshift({
+      agent: currentAgent,
+      username: client.name + ' (@' + client.username + ')',
+      amount: amount,
+      details: details,
+      status: 'RETIRADO / PROCESADO',
+      date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    });
+
+    await saveToCloud();
+
+    showToast(`¡Retiro procesado! Se sumaron ${amount.toLocaleString('es-PY')} GS a tu cuenta`);
+    e.target.reset();
+    window.selectedWithdrawalUser = "";
+    document.getElementById('client-balance-info').innerText = "Saldo disponible: 0 GS";
+    
+    // Actualizar visualizaciones y métricas en pantalla
+    updateAgentMetrics();
+    renderClients();
+    renderAgentHistory();
+  };
+
+  function renderAgentHistory() {
+    const tbody = document.getElementById('table-history-body');
+    const cardsContainer = document.getElementById('cards-history-body');
+    if (!tbody || !cardsContainer) return;
+
+    const myWithdrawals = withdrawalsDB.filter(w => w.agent === currentAgent);
+
+    if (myWithdrawals.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">No hay retiros registrados en tu historial.</td></tr>`;
+      cardsContainer.innerHTML = `<div class="text-center text-slate-500 text-xs py-4 col-span-full">No hay retiros registrados en tu historial.</div>`;
+      return;
+    }
+
+    tbody.innerHTML = myWithdrawals.map(w => `
+      <tr class="hover:bg-slate-900/40 transition">
+        <td class="p-3 font-bold text-white">${w.username}</td>
+        <td class="p-3 font-black text-amber-400">${parseInt(w.amount).toLocaleString('es-PY')} GS</td>
+        <td class="p-3 text-slate-300 font-mono text-[11px]">${w.details}</td>
+        <td class="p-3 text-slate-400">${w.date}</td>
+        <td class="p-3 text-center"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-950 text-emerald-300 border border-emerald-800">${w.status}</span></td>
+      </tr>
+    `).join('');
+
+    cardsContainer.innerHTML = myWithdrawals.map(w => `
+      <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 flex flex-col gap-2 shadow-sm">
+        <div class="flex justify-between items-start">
+          <div class="text-xs font-bold text-white">${w.username}</div>
+          <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-950 text-emerald-300 border border-emerald-800">${w.status}</span>
+        </div>
+        <div class="bg-slate-900/60 p-2 rounded-lg border border-slate-800/60 text-xs">
+          <div class="text-[10px] text-slate-400">Monto: <span class="font-black text-amber-400">${parseInt(w.amount).toLocaleString('es-PY')} GS</span></div>
+          <div class="text-[10px] text-slate-300 font-mono mt-0.5">Método/Detalles: ${w.details}</div>
+          <div class="text-[9px] text-slate-500 mt-1">${w.date}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderTicketHistory() {
+    const tbody = document.getElementById('table-tickets-history-body');
+    const cardsContainer = document.getElementById('cards-tickets-history-body');
+    if (!tbody || !cardsContainer) return;
+
+    const myLogs = ticketLogsDB.filter(l => l.agent === currentAgent);
+
+    if (myLogs.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500">No hay movimientos de cartones registrados.</td></tr>`;
+      cardsContainer.innerHTML = `<div class="text-center text-slate-500 text-xs py-4 col-span-full">No hay movimientos de cartones registrados.</div>`;
+      return;
+    }
+
+    tbody.innerHTML = myLogs.map(l => `
+      <tr class="hover:bg-slate-900/40 transition">
+        <td class="p-3 font-bold text-white">${l.username}</td>
+        <td class="p-3">
+          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black ${l.type === 'add' ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-red-950 text-red-300 border border-red-800'}">
+            ${l.type === 'add' ? 'CARGA DE CARTÓN' : 'RETIRO DE CARTÓN'}
+          </span>
+        </td>
+        <td class="p-3 font-black ${l.type === 'add' ? 'text-amber-400' : 'text-red-400'}">${l.type === 'add' ? '+' : '-'}${l.qty} Cartones</td>
+        <td class="p-3 text-slate-400">${l.date}</td>
+      </tr>
+    `).join('');
+
+    cardsContainer.innerHTML = myLogs.map(l => `
+      <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 flex flex-col gap-2 shadow-sm">
+        <div class="flex justify-between items-start">
+          <div class="text-xs font-bold text-white">${l.username}</div>
+          <span class="px-2 py-0.5 rounded-full text-[9px] font-black ${l.type === 'add' ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-red-950 text-red-300 border border-red-800'}">
+            ${l.type === 'add' ? 'CARGA' : 'QUITAR'}
+          </span>
+        </div>
+        <div class="bg-slate-900/60 p-2 rounded-lg border border-slate-800/60 text-xs flex justify-between items-center">
+          <div>
+            <div class="text-[10px] text-slate-400">Cantidad: <span class="font-black ${l.type === 'add' ? 'text-amber-400' : 'text-red-400'}">${l.type === 'add' ? '+' : '-'}${l.qty} Cartones</span></div>
+          </div>
+          <div class="text-[9px] text-slate-500">${l.date}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  window.modifyClientTickets = async function(username, action) {
+    await initDB();
+
+    if (!usersDB[username] || usersDB[username].createdBy !== currentAgent) {
+      showToast('Este cliente no te pertenece', 'error');
+      return;
+    }
+
+    const agentData = usersDB[currentAgent];
+    const currentStock = agentData.tickets || 0;
+    const client = usersDB[username];
+    const currentClientTickets = client.tickets || 0;
+
+    let promptMsg = action === 'add' 
+      ? `Cantidad de cartones a CARGAR a ${client.name}\n(Stock disponible tuyo: ${currentStock}):`
+      : `Cantidad de cartones a QUITAR a ${client.name}\n(Cartones actuales del cliente: ${currentClientTickets}):`;
+
+    const count = prompt(promptMsg, "1");
+    
+    if (count && !isNaN(count) && parseInt(count) > 0) {
+      const qty = parseInt(count);
+      const currentDate = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      if (action === 'add') {
+        if (qty > currentStock) {
+          showToast(`Stock insuficiente. Solo tienes ${currentStock} cartones disponibles.`, 'error');
+          return;
+        }
+        usersDB[currentAgent].tickets -= qty;
+        usersDB[username].tickets = currentClientTickets + qty;
+        showToast(`¡Se cargaron ${qty} cartones a ${client.name}!`);
+      } else {
+        if (qty > currentClientTickets) {
+          showToast(`El cliente solo tiene ${currentClientTickets} cartones disponibles para quitar.`, 'error');
+          return;
+        }
+        usersDB[username].tickets = currentClientTickets - qty;
+        usersDB[currentAgent].tickets = currentStock + qty; 
+        showToast(`¡Se quitaron ${qty} cartones a ${client.name}!`);
+      }
+      
+      ticketLogsDB.unshift({
+        agent: currentAgent,
+        username: client.name + ' (@' + client.username + ')',
+        type: action,
+        qty: qty,
+        date: currentDate
+      });
+
+      await saveToCloud();
+      updateAgentMetrics();
+      renderClients();
+      renderTicketHistory();
+    }
+  };
+
+  function showToast(msg, type = 'success') {
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toast-msg');
+    if (!toast || !toastMsg) return;
+
+    toastMsg.innerText = msg;
+    toast.className = `fixed top-4 left-1/2 -translate-x-1/2 ${type === 'error' ? 'bg-red-500 text-white' : 'bg-amber-500 text-slate-950'} px-4 py-2.5 rounded-full text-xs font-black shadow-2xl opacity-100 pointer-events-auto transition-all duration-300 z-50 flex items-center gap-2 max-w-[90vw] truncate`;
+    setTimeout(() => {
+      toast.classList.add('opacity-0', 'pointer-events-none');
+    }, 2500);
+  }
+
+  window.onload = checkAgentAuth;
+</script>
+</body>
+</html>
