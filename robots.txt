@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Disallow: /Administrador.html
+Disallow: /Agentes-Online.html
+Disallow: /Javi_corporativo.html
+Disallow: /admin/
+Disallow: /sistema/
+
+Sitemap: https://raspaditadelasuerte.site/sitemap.xml
