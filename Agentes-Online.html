@@ -62,7 +62,7 @@ body {
       <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-300 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-amber-500/20 border border-amber-200">
         <i class="fa-solid fa-headset text-3xl sm:text-4xl text-slate-950"></i>
       </div>
-      <h1 class="text-xl sm:text-2xl font-black italic gold-gradient-text tracking-wide">PANEL DE AGENTE ROYAL</h1>
+      <h1 class="text-xl sm:text-2xl font-black italic gold-gradient-text tracking-wide">PANEL DE AGENTE VIP</h1>
       <p class="text-[11px] sm:text-xs text-amber-300/80 mt-1 font-medium">Ingresa con tu usuario y contraseña asignados</p>
     </div>
 
@@ -71,17 +71,17 @@ body {
         <label class="block text-xs font-bold text-slate-300">Usuario de Agente</label>
         <div class="relative">
           <i class="fa-solid fa-user absolute left-4 top-3.5 text-amber-500/60 text-xs"></i>
-          <input type="text" id="agent-user" required placeholder="Ingresa tu usuario" class="w-full bg-slate-900 border border-amber-500/30 rounded-xl py-3 pl-10 pr-4 text-xs text-white focus:outline-none focus:border-amber-500 transition">
+          <input type="text" id="agent-user" required placeholder="Tu usuario VIP" class="w-full bg-slate-900 border border-amber-500/30 rounded-xl py-3 pl-10 pr-4 text-xs text-white focus:outline-none focus:border-amber-500 transition">
         </div>
       </div>
       <div class="space-y-1">
         <label class="block text-xs font-bold text-slate-300">Contraseña</label>
         <div class="relative">
           <i class="fa-solid fa-lock absolute left-4 top-3.5 text-amber-500/60 text-xs"></i>
-          <input type="password" id="agent-pass" required placeholder="Ingresa tu contraseña" class="w-full bg-slate-900 border border-amber-500/30 rounded-xl py-3 pl-10 pr-4 text-xs text-white focus:outline-none focus:border-amber-500 transition">
+          <input type="password" id="agent-pass" required placeholder="••••••" class="w-full bg-slate-900 border border-amber-500/30 rounded-xl py-3 pl-10 pr-4 text-xs text-white focus:outline-none focus:border-amber-500 transition">
         </div>
       </div>
-      <button type="submit" class="w-full mt-2 py-3.5 rounded-xl font-black text-slate-950 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-[0.98] transition text-xs uppercase tracking-wider">Iniciar Sesion</button>
+      <button type="submit" class="w-full mt-2 py-3.5 rounded-xl font-black text-slate-950 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-[0.98] transition text-xs uppercase tracking-wider">Ingresar como Agente VIP</button>
     </form>
   </div>
 
@@ -105,53 +105,37 @@ body {
       </div>
     </div>
 
-    <!-- TARJETAS DE RESUMEN -->
-    <div class="px-4 sm:px-6 pt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
-      <!-- Stock de fichas para venta -->
+    <!-- TARJETAS DE RESUMEN: CARTONES Y SALDO DEL AGENTE -->
+    <div class="px-4 sm:px-6 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <!-- Stock de Cartones -->
       <div class="bg-gradient-to-br from-amber-950/50 via-slate-900 to-slate-950 border border-amber-500/40 rounded-2xl p-4 flex items-center justify-between shadow-xl">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
             <i class="fa-solid fa-ticket text-lg"></i>
           </div>
           <div>
-            <span class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider block">Fichas de Venta</span>
+            <span class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider block">Cartones Disponibles</span>
             <span class="text-lg sm:text-xl font-black text-amber-400" id="agent-stock-tickets">0</span>
           </div>
         </div>
         <div class="text-right">
-          <span class="text-[9px] sm:text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-lg font-bold">Stock</span>
+          <span class="text-[9px] sm:text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-lg font-bold">Stock Activo</span>
         </div>
       </div>
 
-      <!-- Stock de Cartones Canjeables (Valor 5.000 GS) -->
-      <div class="bg-gradient-to-br from-purple-950/50 via-slate-900 to-slate-950 border border-purple-500/40 rounded-2xl p-4 flex items-center justify-between shadow-xl">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-400">
-            <i class="fa-solid fa-gift text-lg"></i>
-          </div>
-          <div>
-            <span class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider block">Cartones Canjeables</span>
-            <span class="text-lg sm:text-xl font-black text-purple-400" id="agent-stock-redeemable">0</span>
-          </div>
-        </div>
-        <div class="text-right">
-          <span class="text-[9px] sm:text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2.5 py-1 rounded-lg font-bold">Canjes</span>
-        </div>
-      </div>
-
-      <!-- Saldo Actual del Agente (Retiros Pagados) -->
+      <!-- Saldo Actual del Agente (Acumulado por Retiros) -->
       <div class="bg-gradient-to-br from-emerald-950/50 via-slate-900 to-slate-950 border border-emerald-500/40 rounded-2xl p-4 flex items-center justify-between shadow-xl">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
             <i class="fa-solid fa-wallet text-lg"></i>
           </div>
           <div>
-            <span class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider block">Retiros Pagados</span>
+            <span class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider block">Mi Saldo Actual (GS)</span>
             <span class="text-lg sm:text-xl font-black text-emerald-400" id="agent-current-balance">0 GS</span>
           </div>
         </div>
         <div class="text-right">
-          <span class="text-[9px] sm:text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-lg font-bold">Retiro Procesado</span>
+          <span class="text-[9px] sm:text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-lg font-bold">Cuenta Agente</span>
         </div>
       </div>
     </div>
@@ -161,14 +145,8 @@ body {
       <button onclick="switchTab('create')" id="tab-create" class="py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold bg-amber-500 text-slate-950 transition flex items-center justify-center gap-2 shrink-0 shadow-lg shadow-amber-500/10">
         <i class="fa-solid fa-user-plus text-xs"></i> Crear Jugador
       </button>
-      <button onclick="switchTab('subagents')" id="tab-subagents" class="py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-400 hover:text-white bg-slate-900/50 border border-slate-800/50 transition flex items-center justify-center gap-2 shrink-0">
-        <i class="fa-solid fa-users-gear text-xs"></i> Subagentes
-      </button>
       <button onclick="switchTab('clients')" id="tab-clients" class="py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-400 hover:text-white bg-slate-900/50 border border-slate-800/50 transition flex items-center justify-center gap-2 shrink-0">
         <i class="fa-solid fa-users text-xs"></i> Clientes
-      </button>
-      <button onclick="switchTab('redeem')" id="tab-redeem" class="py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-400 hover:text-white bg-slate-900/50 border border-slate-800/50 transition flex items-center justify-center gap-2 shrink-0">
-        <i class="fa-solid fa-barcode text-xs"></i> Canje por Saldo
       </button>
       <button onclick="switchTab('withdrawals')" id="tab-withdrawals" class="py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-400 hover:text-white bg-slate-900/50 border border-slate-800/50 transition flex items-center justify-center gap-2 shrink-0">
         <i class="fa-solid fa-money-bill-transfer text-xs"></i> Retiros
@@ -195,64 +173,16 @@ body {
             </div>
             <div class="space-y-1">
               <label class="block text-[10px] font-bold text-slate-400 uppercase">Usuario (Login)</label>
-              <input type="text" id="c-username" required placeholder="Crea Usuario" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500">
+              <input type="text" id="c-username" required placeholder="escriba usuario" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500">
             </div>
             <div class="space-y-1">
               <label class="block text-[10px] font-bold text-slate-400 uppercase">Contraseña</label>
-              <input type="password" id="c-pass" required placeholder="Crea Contraseña" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500">
+              <input type="password" id="c-pass" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500">
             </div>
             <div class="pt-1">
-              <button type="submit" class="w-full py-3.5 rounded-xl font-black text-slate-950 bg-amber-500 hover:bg-amber-400 transition text-xs shadow-lg uppercase tracking-wider">Registrar Cliente</button>
+              <button type="submit" class="w-full py-3.5 rounded-xl font-black text-slate-950 bg-amber-500 hover:bg-amber-400 transition text-xs shadow-lg uppercase tracking-wider">Registrar Cliente en el Casino</button>
             </div>
           </form>
-        </div>
-      </div>
-
-      <!-- SECCIÓN SUBAGENTES -->
-      <div id="section-subagents" class="hidden flex-col gap-5">
-        <div class="bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-amber-500/20 shadow-xl max-w-xl mx-auto w-full mb-4">
-          <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-800/60">
-            <i class="fa-solid fa-user-gear text-amber-400 text-xs"></i>
-            <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Crear Nuevo Subagente</h3>
-          </div>
-          <form onsubmit="handleCreateSubAgent(event)" class="flex flex-col gap-3.5">
-            <div class="space-y-1">
-              <label class="block text-[10px] font-bold text-slate-400 uppercase">Nombre del Subagente</label>
-              <input type="text" id="sub-name" required placeholder="Nombre Completo" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500">
-            </div>
-            <div class="space-y-1">
-              <label class="block text-[10px] font-bold text-slate-400 uppercase">Usuario</label>
-              <input type="text" id="sub-username" required placeholder="Usuario único" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500">
-            </div>
-            <div class="space-y-1">
-              <label class="block text-[10px] font-bold text-slate-400 uppercase">Contraseña</label>
-              <input type="password" id="sub-pass" required placeholder="Contraseña" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500">
-            </div>
-            <button type="submit" class="w-full py-3.5 rounded-xl font-black text-slate-950 bg-amber-500 hover:bg-amber-400 transition text-xs shadow-lg uppercase tracking-wider">Crear Subagente</button>
-          </form>
-        </div>
-
-        <div class="bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl">
-          <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800/60">
-            <div class="flex items-center gap-2">
-              <i class="fa-solid fa-users-gear text-amber-400 text-xs"></i>
-              <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Mis Subagentes Registrados</h3>
-            </div>
-          </div>
-          <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950">
-            <table class="w-full text-left text-xs text-slate-300">
-              <thead class="bg-slate-900 text-slate-400 uppercase text-[10px] font-bold border-b border-slate-800">
-                <tr>
-                  <th class="p-3">Nombre</th>
-                  <th class="p-3">Usuario / Pass</th>
-                  <th class="p-3">Fichas Venta</th>
-                  <th class="p-3">Canjeables</th>
-                  <th class="p-3 text-center">Acciones Stock</th>
-                </tr>
-              </thead>
-              <tbody id="table-subagents-body" class="divide-y divide-slate-800/60"></tbody>
-            </table>
-          </div>
         </div>
       </div>
 
@@ -262,7 +192,7 @@ body {
           <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800/60">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-users text-amber-400 text-xs"></i>
-              <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Gestión de Clientes</h3>
+              <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Mis Clientes VIP (Gestión y Cartones)</h3>
             </div>
           </div>
 
@@ -273,9 +203,9 @@ body {
                 <tr>
                   <th class="p-3">ID / Nombre</th>
                   <th class="p-3">Usuario y Pass</th>
-                  <th class="p-3">Saldo Actual</th>
-                  <th class="p-3 text-center">Acciones de Cartón</th>
-                  <th class="p-3 text-center">Eliminar</th>
+                  <th class="p-3">Saldo GS</th>
+                  <th class="p-3">Cartones Disponibles</th>
+                  <th class="p-3 text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody id="table-clients-body" class="divide-y divide-slate-800/60"></tbody>
@@ -287,46 +217,12 @@ body {
         </div>
       </div>
 
-      <!-- SECCIÓN CANJE POR SALDO -->
-      <div id="section-redeem" class="hidden flex-col gap-5">
-        <div class="bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-purple-500/30 shadow-xl max-w-xl mx-auto w-full">
-          <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-800/60">
-            <i class="fa-solid fa-barcode text-purple-400 text-xs"></i>
-            <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Canjear Saldo por Cartones</h3>
-          </div>
-          <form onsubmit="handleAutoRedeem(event)" class="flex flex-col gap-3.5">
-            <div class="space-y-1 relative">
-              <label class="block text-[10px] font-bold text-slate-400 uppercase">Escribir Nombre de Usuario o Buscar Cliente</label>
-              <div class="relative">
-                <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-500 text-xs"></i>
-                <input type="text" id="redeem-client-search" required autocomplete="off" placeholder="Escribe el usuario del cliente..." oninput="filterRedeemClientsDropdown()" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-xs text-white font-bold focus:outline-none focus:border-purple-500">
-              </div>
-              
-              <div id="redeem-dropdown-results" class="hidden absolute left-0 right-0 top-full mt-1 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-20 max-h-48 overflow-y-auto divide-y divide-slate-800"></div>
-
-              <span id="redeem-client-info" class="text-[10px] text-slate-400 block font-bold mt-1">Saldo actual: 0 GS</span>
-            </div>
-
-            <div class="space-y-1">
-              <label class="block text-[10px] font-bold text-slate-400 uppercase">Cantidad de Cartones a Canjear</label>
-              <input type="number" id="redeem-qty" min="1" required placeholder="Ej: 1, 2, 5..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-purple-500">
-            </div>
-
-            <div class="bg-slate-950/80 p-3 rounded-xl border border-purple-500/20 text-[11px] text-slate-300">
-              <p>💡 <strong class="text-purple-400">Regla:</strong> Cada cartón vale <strong class="text-white">5.000 GS</strong>. Se descuenta del saldo del cliente y se resta de tu stock de cartones canjeables (sin afectar retiros de saldo).</p>
-            </div>
-
-            <button type="submit" class="w-full py-3.5 rounded-xl font-black text-slate-950 bg-purple-500 hover:bg-purple-400 transition text-xs shadow-lg uppercase tracking-wider">Procesar Canje de Saldo</button>
-          </form>
-        </div>
-      </div>
-
       <!-- SECCIÓN 3: RETIROS -->
       <div id="section-withdrawals" class="hidden flex-col gap-5">
         <div class="bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl max-w-xl mx-auto w-full">
           <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-800/60">
             <i class="fa-solid fa-hand-holding-dollar text-emerald-400 text-xs"></i>
-            <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Retirar Premio de Cliente VIP (Saldo Retirado)</h3>
+            <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Retirar Premio de Cliente VIP</h3>
           </div>
           
           <form onsubmit="handleAgentWithdrawal(event)" class="flex flex-col gap-3.5">
@@ -337,21 +233,22 @@ body {
                 <input type="text" id="w-client-search" required autocomplete="off" placeholder="Escribe el usuario o nombre..." oninput="filterClientsDropdown('w')" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-xs text-white font-bold focus:outline-none focus:border-amber-500">
               </div>
               
+              <!-- Menú desplegable dinámico de sugerencias -->
               <div id="w-dropdown-results" class="hidden absolute left-0 right-0 top-full mt-1 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-20 max-h-48 overflow-y-auto divide-y divide-slate-800"></div>
 
-              <span id="client-balance-info" class="text-[10px] text-slate-400 block font-bold mt-1">Saldo actual: 0 GS</span>
+              <span id="client-balance-info" class="text-[10px] text-slate-400 block font-bold mt-1">Saldo disponible: 0 GS</span>
             </div>
 
             <div class="space-y-1">
-              <label class="block text-[10px] font-bold text-slate-400 uppercase">Monto a Retirar (Saldo Retirado)</label>
-              <input type="number" id="w-amount" required placeholder="Ingresa monto" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Monto a Retirar (GS)</label>
+              <input type="number" id="w-amount" required placeholder="50000" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500">
             </div>
             <div class="space-y-1">
-              <label class="block text-[10px] font-bold text-slate-400 uppercase">Detalles</label>
-              <input type="text" id="w-details" required placeholder="Agrega detalles..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase">Detalles / Teléfono / Método</label>
+              <input type="text" id="w-details" required placeholder="Ej: 0983123456 / Tigo Money" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-500">
             </div>
             <div class="pt-1">
-              <button type="submit" class="w-full py-3.5 rounded-xl font-black text-slate-950 bg-emerald-400 hover:bg-emerald-300 transition text-xs shadow-lg uppercase tracking-wider">Procesar Retiro</button>
+              <button type="submit" class="w-full py-3.5 rounded-xl font-black text-slate-950 bg-emerald-400 hover:bg-emerald-300 transition text-xs shadow-lg uppercase tracking-wider">Procesar Retiro Directo</button>
             </div>
           </form>
         </div>
@@ -360,18 +257,18 @@ body {
       <!-- SECCIÓN 4: HISTORIAL GENERAL -->
       <div id="section-history" class="hidden flex-col gap-6">
         
-        <div class="flex gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800/80 max-w-lg overflow-x-auto">
-          <button onclick="switchHistorySubTab('withdrawals')" id="subtab-w" class="py-2 px-3 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition whitespace-nowrap">Retiros Pagados</button>
-          <button onclick="switchHistorySubTab('tickets')" id="subtab-t" class="py-2 px-3 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition whitespace-nowrap">Fichas Venta</button>
-          <button onclick="switchHistorySubTab('redeems')" id="subtab-r" class="py-2 px-3 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition whitespace-nowrap">Cartones Canjeados</button>
+        <!-- Pestaña interna de Historial -->
+        <div class="flex gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800/80 max-w-sm">
+          <button onclick="switchHistorySubTab('withdrawals')" id="subtab-w" class="flex-1 py-2 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition">Historial de Retiros</button>
+          <button onclick="switchHistorySubTab('tickets')" id="subtab-t" class="flex-1 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition">Movimientos de Cartones</button>
         </div>
 
-        <!-- 1. HISTORIAL DE RETIROS PAGADOS -->
+        <!-- 1. HISTORIAL DE RETIROS -->
         <div id="history-box-withdrawals" class="bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl">
           <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800/60">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-clock-rotate-left text-amber-400 text-xs"></i>
-              <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Historial de Saldo Retirado y Pagado</h3>
+              <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Historial de Retiros Realizados a Mis Clientes</h3>
             </div>
           </div>
 
@@ -380,7 +277,7 @@ body {
               <thead class="bg-slate-900 text-slate-400 uppercase text-[10px] font-bold border-b border-slate-800">
                 <tr>
                   <th class="p-3">Cliente</th>
-                  <th class="p-3">Saldo Retirado</th>
+                  <th class="p-3">Monto Retirado</th>
                   <th class="p-3">Detalles / Método</th>
                   <th class="p-3">Fecha y Hora</th>
                   <th class="p-3 text-center">Estado</th>
@@ -392,12 +289,12 @@ body {
           <div id="cards-history-body" class="grid grid-cols-1 gap-3 md:hidden"></div>
         </div>
 
-        <!-- 2. HISTORIAL DE MOVIMIENTOS DE CARTONES DE VENTA -->
+        <!-- 2. HISTORIAL DE MOVIMIENTOS DE CARTONES -->
         <div id="history-box-tickets" class="hidden bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl">
           <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800/60">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-ticket text-amber-400 text-xs"></i>
-              <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Historial de Cargas y Retiros de Cartones</h3>
+              <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Historial de Cargas y Retiros de Cartones VIP</h3>
             </div>
           </div>
 
@@ -405,7 +302,7 @@ body {
             <table class="w-full text-left text-xs text-slate-300">
               <thead class="bg-slate-900 text-slate-400 uppercase text-[10px] font-bold border-b border-slate-800">
                 <tr>
-                  <th class="p-3">Cliente / Subagente</th>
+                  <th class="p-3">Cliente</th>
                   <th class="p-3">Acción</th>
                   <th class="p-3">Cantidad</th>
                   <th class="p-3">Fecha y Hora</th>
@@ -417,31 +314,6 @@ body {
           <div id="cards-tickets-history-body" class="grid grid-cols-1 gap-3 md:hidden"></div>
         </div>
 
-        <!-- 3. HISTORIAL DE CARTONES CANJEADOS -->
-        <div id="history-box-redeems" class="hidden bg-slate-900/60 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl">
-          <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800/60">
-            <div class="flex items-center gap-2">
-              <i class="fa-solid fa-barcode text-purple-400 text-xs"></i>
-              <h3 class="text-xs font-extrabold text-white uppercase tracking-wider">Historial de Cartones Canjeados por Saldo</h3>
-            </div>
-          </div>
-
-          <div class="hidden md:block overflow-x-auto rounded-xl border border-slate-800 bg-slate-950">
-            <table class="w-full text-left text-xs text-slate-300">
-              <thead class="bg-slate-900 text-slate-400 uppercase text-[10px] font-bold border-b border-slate-800">
-                <tr>
-                  <th class="p-3">Cliente</th>
-                  <th class="p-3">Cartones Canjeados</th>
-                  <th class="p-3">Saldo Descontado</th>
-                  <th class="p-3">Fecha y Hora</th>
-                </tr>
-              </thead>
-              <tbody id="table-redeems-history-body" class="divide-y divide-slate-800/60"></tbody>
-            </table>
-          </div>
-          <div id="cards-redeems-history-body" class="grid grid-cols-1 gap-3 md:hidden"></div>
-        </div>
-
       </div>
 
     </div>
@@ -449,7 +321,7 @@ body {
 
 </div>
 
-<!-- SCRIPT DE FIREBASE MODULAR -->
+<!-- SCRIPT DE FIREBASE MODULAR (VERSIÓN 13.1.0 UNIFICADA) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
   import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
@@ -470,11 +342,9 @@ body {
   let usersDB = {};
   let withdrawalsDB = [];
   let ticketLogsDB = [];
-  let redeemLogsDB = [];
   let currentAgent = null;
 
   window.selectedWithdrawalUser = "";
-  window.selectedRedeemUser = "";
 
   async function initDB() {
     try {
@@ -486,7 +356,6 @@ body {
         usersDB = globalData.users || {};
         withdrawalsDB = globalData.withdrawals || [];
         ticketLogsDB = globalData.ticketLogs || [];
-        redeemLogsDB = globalData.redeemLogs || [];
       }
     } catch (e) {
       console.error("Error al conectar con el Casino:", e);
@@ -500,8 +369,7 @@ body {
       await setDoc(docRef, {
         users: usersDB,
         withdrawals: withdrawalsDB,
-        ticketLogs: ticketLogsDB,
-        redeemLogs: redeemLogsDB
+        ticketLogs: ticketLogsDB
       }, { merge: true });
     } catch (e) {
       console.error("Error al guardar en el Casino:", e);
@@ -547,7 +415,7 @@ body {
     const username = document.getElementById('agent-user').value.trim().toLowerCase();
     const pass = document.getElementById('agent-pass').value;
 
-    if (usersDB[username] && (usersDB[username].role === 'agent' || usersDB[username].role === 'subagent') && usersDB[username].password === pass) {
+    if (usersDB[username] && usersDB[username].role === 'agent' && usersDB[username].password === pass) {
       currentAgent = username;
       sessionStorage.setItem('agent_logged', currentAgent);
       showDashboard();
@@ -566,7 +434,7 @@ body {
   async function checkAgentAuth() {
     await initDB();
     const logged = sessionStorage.getItem('agent_logged');
-    if (logged && usersDB[logged] && (usersDB[logged].role === 'agent' || usersDB[logged].role === 'subagent')) {
+    if (logged && usersDB[logged] && usersDB[logged].role === 'agent') {
       currentAgent = logged;
       showDashboard();
     }
@@ -579,30 +447,26 @@ body {
     document.getElementById('agent-header-name').innerText = usersDB[currentAgent].name;
     updateAgentMetrics();
     renderClients();
-    renderSubAgents();
     renderAgentHistory();
     renderTicketHistory();
-    renderRedeemHistory();
   }
 
   function updateAgentMetrics() {
     if (!currentAgent || !usersDB[currentAgent]) return;
     
+    // Actualizar cartones
     const stock = usersDB[currentAgent].tickets || 0;
     const stockEl = document.getElementById('agent-stock-tickets');
     if (stockEl) stockEl.innerText = stock.toLocaleString('es-PY');
 
-    const redeemableStock = usersDB[currentAgent].redeemableTickets || 0;
-    const redeemableEl = document.getElementById('agent-stock-redeemable');
-    if (redeemableEl) redeemableEl.innerText = redeemableStock.toLocaleString('es-PY');
-
+    // Actualizar saldo del agente acumulado en su cuenta
     const balance = usersDB[currentAgent].balance || 0;
     const balanceEl = document.getElementById('agent-current-balance');
     if (balanceEl) balanceEl.innerText = balance.toLocaleString('es-PY') + " GS";
   }
 
   window.switchTab = function(tab) {
-    const sections = ['create', 'subagents', 'clients', 'redeem', 'withdrawals', 'history'];
+    const sections = ['create', 'clients', 'withdrawals', 'history'];
     sections.forEach(s => {
       const secEl = document.getElementById(`section-${s}`);
       const tabEl = document.getElementById(`tab-${s}`);
@@ -616,38 +480,28 @@ body {
     if (activeTab) activeTab.className = "py-2.5 px-3.5 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold bg-amber-500 text-slate-950 transition flex items-center justify-center gap-2 shrink-0 shadow-lg shadow-amber-500/10";
 
     if (tab === 'clients') renderClients();
-    if (tab === 'subagents') renderSubAgents();
     if (tab === 'history') {
       renderAgentHistory();
       renderTicketHistory();
-      renderRedeemHistory();
     }
   };
 
   window.switchHistorySubTab = function(sub) {
     const boxW = document.getElementById('history-box-withdrawals');
     const boxT = document.getElementById('history-box-tickets');
-    const boxR = document.getElementById('history-box-redeems');
     const btnW = document.getElementById('subtab-w');
     const btnT = document.getElementById('subtab-t');
-    const btnR = document.getElementById('subtab-r');
-
-    boxW.classList.add('hidden');
-    boxT.classList.add('hidden');
-    boxR.classList.add('hidden');
-    btnW.className = "py-2 px-3 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition whitespace-nowrap";
-    btnT.className = "py-2 px-3 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition whitespace-nowrap";
-    btnR.className = "py-2 px-3 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition whitespace-nowrap";
 
     if (sub === 'withdrawals') {
       boxW.classList.remove('hidden');
-      btnW.className = "py-2 px-3 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition whitespace-nowrap";
-    } else if (sub === 'tickets') {
-      boxT.classList.remove('hidden');
-      btnT.className = "py-2 px-3 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition whitespace-nowrap";
+      boxT.classList.add('hidden');
+      btnW.className = "flex-1 py-2 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition";
+      btnT.className = "flex-1 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition";
     } else {
-      boxR.classList.remove('hidden');
-      btnR.className = "py-2 px-3 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition whitespace-nowrap";
+      boxW.classList.add('hidden');
+      boxT.classList.remove('hidden');
+      btnT.className = "flex-1 py-2 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 transition";
+      btnW.className = "flex-1 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition";
     }
   };
 
@@ -660,17 +514,6 @@ body {
       }
     });
     return myClients;
-  }
-
-  function getMySubAgents() {
-    let mySubs = {};
-    Object.keys(usersDB).forEach(k => {
-      const u = usersDB[k];
-      if (u.role === 'subagent' && u.createdBy === currentAgent) {
-        mySubs[k] = u;
-      }
-    });
-    return mySubs;
   }
 
   window.handleCreateClient = async function(e) {
@@ -698,7 +541,6 @@ body {
       createdBy: currentAgent,
       balance: 0,
       tickets: 0,
-      redeemableTickets: 0,
       createdAt: currentDate,
       history: []
     };
@@ -709,121 +551,6 @@ body {
     renderClients();
   };
 
-  window.handleCreateSubAgent = async function(e) {
-    e.preventDefault();
-    await initDB();
-
-    const name = document.getElementById('sub-name').value.trim();
-    const username = document.getElementById('sub-username').value.trim().toLowerCase();
-    const pass = document.getElementById('sub-pass').value;
-
-    if (usersDB[username]) {
-      showToast('El usuario ya está en uso', 'error');
-      return;
-    }
-
-    usersDB[username] = {
-      name: name,
-      username: username,
-      password: pass,
-      role: 'subagent',
-      createdBy: currentAgent,
-      tickets: 0,
-      redeemableTickets: 0,
-      balance: 0
-    };
-
-    await saveToCloud();
-    showToast(`Subagente ${name} creado con éxito`);
-    e.target.reset();
-    renderSubAgents();
-  };
-
-  function renderSubAgents() {
-    const tbody = document.getElementById('table-subagents-body');
-    if (!tbody) return;
-
-    const subs = getMySubAgents();
-    const keys = Object.keys(subs);
-
-    if (keys.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">No tienes subagentes creados todavía.</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = keys.map(k => {
-      const u = subs[k];
-      return `
-        <tr class="hover:bg-slate-900/40 transition">
-          <td class="p-3 font-bold text-white">${u.name}</td>
-          <td class="p-3 font-mono">
-            <span class="block text-white font-bold">@${u.username}</span>
-            <span class="block text-[10px] text-slate-400">Pass: ${u.password}</span>
-          </td>
-          <td class="p-3 font-black text-amber-400">${u.tickets || 0} Fichas</td>
-          <td class="p-3 font-black text-purple-300">${u.redeemableTickets || 0} Canjeables</td>
-          <td class="p-3 text-center">
-            <div class="flex items-center justify-center gap-1.5 flex-wrap">
-              <button onclick="modifySubAgentStock('${k}', 'tickets', 'add')" class="bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-slate-950 px-2 py-1.5 rounded-lg text-[10px] font-bold border border-amber-500/30 transition">+ Venta</button>
-              <button onclick="modifySubAgentStock('${k}', 'tickets', 'remove')" class="bg-yellow-500/10 hover:bg-yellow-500 text-yellow-400 hover:text-slate-950 px-2 py-1.5 rounded-lg text-[10px] font-bold border border-yellow-500/30 transition">- Venta</button>
-              <button onclick="modifySubAgentStock('${k}', 'redeemable', 'add')" class="bg-purple-500/10 hover:bg-purple-500 text-purple-400 hover:text-slate-950 px-2 py-1.5 rounded-lg text-[10px] font-bold border border-purple-500/30 transition">+ Canje</button>
-              <button onclick="modifySubAgentStock('${k}', 'redeemable', 'remove')" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-2 py-1.5 rounded-lg text-[10px] font-bold border border-red-500/30 transition">- Canje</button>
-            </div>
-          </td>
-        </tr>
-      `;
-    }).join('');
-  }
-
-  window.modifySubAgentStock = async function(subUsername, type, action) {
-    await initDB();
-    const sub = usersDB[subUsername];
-    const agent = usersDB[currentAgent];
-
-    if (!sub || sub.createdBy !== currentAgent) {
-      showToast('Subagente no válido', 'error');
-      return;
-    }
-
-    const field = type === 'tickets' ? 'tickets' : 'redeemableTickets';
-    const labelName = type === 'tickets' ? 'Fichas de Venta' : 'Cartones Canjeables';
-    const availableStock = agent[field] || 0;
-    const subStock = sub[field] || 0;
-
-    const promptMsg = action === 'add' 
-      ? `¿Cuántos ${labelName} deseas CARGAR al subagente ${sub.name}?\n(Tu stock disponible: ${availableStock}):`
-      : `¿Cuántos ${labelName} deseas DESCONTAR al subagente ${sub.name}?\n(Stock actual del subagente: ${subStock}):`;
-
-    const count = prompt(promptMsg, "1");
-
-    if (count && !isNaN(count) && parseInt(count) > 0) {
-      const qty = parseInt(count);
-
-      if (action === 'add') {
-        if (qty > availableStock) {
-          showToast(`Stock insuficiente. Solo tienes ${availableStock} ${labelName} disponibles.`, 'error');
-          return;
-        }
-        agent[field] -= qty;
-        sub[field] = subStock + qty;
-        showToast(`¡Se cargaron ${qty} ${labelName} al subagente!`);
-      } else {
-        if (qty > subStock) {
-          showToast(`El subagente solo tiene ${subStock} ${labelName} para descontar.`, 'error');
-          return;
-        }
-        sub[field] = subStock - qty;
-        agent[field] = availableStock + qty;
-        showToast(`¡Se descontaron ${qty} ${labelName} del subagente!`);
-      }
-
-      await saveToCloud();
-      updateAgentMetrics();
-      renderSubAgents();
-    }
-  };
-
-  // VISTA CLIENTES
   function renderClients() {
     const tbody = document.getElementById('table-clients-body');
     const cardsContainer = document.getElementById('cards-clients-body');
@@ -847,22 +574,27 @@ body {
             <div class="flex items-center gap-2">
               <div>
                 <span class="block text-white font-bold">Usuario: ${u.username}</span>
-                <span class="block text-[10px] text-slate-400">Pass: ${u.password || '••••••'}</span>
+                <span class="block text-[10px] text-slate-400">Contraseña: ${u.password || '••••••'}</span>
               </div>
-              <button onclick="copyUserAndPass('${u.username}', '${u.password || ''}')" title="Copiar" class="px-2 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] font-bold">
-                <i class="fa-solid fa-copy"></i>
+              <button onclick="copyUserAndPass('${u.username}', '${u.password || ''}')" title="Copiar usuario y contraseña" class="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500 hover:text-slate-950 text-amber-400 transition flex items-center gap-1 text-[10px] font-bold">
+                <i class="fa-solid fa-copy"></i> Copiar
               </button>
             </div>
           </td>
           <td class="p-3 font-black text-amber-400">${(u.balance || 0).toLocaleString('es-PY')} GS</td>
+          <td class="p-3 font-black text-purple-300">${u.tickets || 0} Cartones</td>
           <td class="p-3 text-center">
-            <div class="flex items-center justify-center gap-1.5 flex-wrap">
-              <button onclick="modifyClientTickets('${k}', 'add')" class="bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-slate-950 px-2 py-1 rounded-lg text-[10px] font-bold border border-amber-500/30 transition">+ Cargar</button>
-              <button onclick="modifyClientTickets('${k}', 'remove')" class="bg-yellow-500/10 hover:bg-yellow-500 text-yellow-400 hover:text-slate-950 px-2 py-1 rounded-lg text-[10px] font-bold border border-yellow-500/30 transition">- Quitar</button>
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick="modifyClientTickets('${k}', 'add')" title="Cargar Cartón" class="bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-slate-950 px-2 py-1.5 rounded-lg text-[10px] font-extrabold border border-amber-500/30 transition flex items-center gap-1">
+                <i class="fa-solid fa-plus"></i> Cargar
+              </button>
+              <button onclick="modifyClientTickets('${k}', 'remove')" title="Quitar Cartón" class="bg-yellow-500/10 hover:bg-yellow-500 text-yellow-400 hover:text-slate-950 px-2 py-1.5 rounded-lg text-[10px] font-extrabold border border-yellow-500/30 transition flex items-center gap-1">
+                <i class="fa-solid fa-minus"></i> Quitar
+              </button>
+              <button onclick="deleteClient('${k}')" title="Eliminar Cliente" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-2 py-1.5 rounded-lg text-[10px] font-extrabold border border-red-500/30 transition flex items-center gap-1">
+                <i class="fa-solid fa-trash"></i>
+              </button>
             </div>
-          </td>
-          <td class="p-3 text-center">
-            <button onclick="deleteClient('${k}')" class="bg-red-950 hover:bg-red-500 text-red-300 hover:text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold border border-red-800 transition"><i class="fa-solid fa-trash"></i></button>
           </td>
         </tr>
       `;
@@ -877,18 +609,26 @@ body {
               <div class="text-xs font-black text-white">${u.name}</div>
               <div class="text-[10px] text-amber-400 font-mono">${u.id}</div>
               <div class="text-[10px] text-slate-300 font-mono mt-1">Usuario: <span class="text-white font-bold">${u.username}</span></div>
+              <div class="text-[10px] text-slate-400 font-mono">Contraseña: ${u.password || '••••••'}</div>
             </div>
-            <button onclick="copyUserAndPass('${u.username}', '${u.password || ''}')" class="px-2 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px]">
-              <i class="fa-solid fa-copy"></i>
+            <button onclick="copyUserAndPass('${u.username}', '${u.password || ''}')" title="Copiar usuario y contraseña" class="px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500 hover:text-slate-950 text-amber-400 transition flex items-center gap-1.5 text-[10px] font-bold active:scale-95 shrink-0">
+              <i class="fa-solid fa-copy"></i> Copiar
             </button>
           </div>
-          <div class="bg-slate-900/60 p-2 rounded-lg border border-slate-800/60 text-xs flex justify-between items-center">
-            <div><span class="text-[9px] text-slate-400 block">Saldo Actual</span><span class="font-black text-amber-400">${(u.balance || 0).toLocaleString()} GS</span></div>
+          <div class="flex justify-between items-center text-xs bg-slate-900/60 p-2 rounded-lg border border-slate-800/60">
+            <div><span class="text-[10px] text-slate-400 block">Saldo</span><span class="font-black text-amber-400">${(u.balance || 0).toLocaleString('es-PY')} GS</span></div>
+            <div class="text-right"><span class="text-[10px] text-slate-400 block">Cartones</span><span class="font-black text-purple-300">${u.tickets || 0}</span></div>
           </div>
           <div class="grid grid-cols-3 gap-1.5 pt-0.5">
-            <button onclick="modifyClientTickets('${k}', 'add')" class="bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-slate-950 py-1.5 rounded-lg text-[10px] font-bold border border-amber-500/30 transition text-center">+ Cargar</button>
-            <button onclick="modifyClientTickets('${k}', 'remove')" class="bg-yellow-500/10 hover:bg-yellow-500 text-yellow-400 hover:text-slate-950 py-1.5 rounded-lg text-[10px] font-bold border border-amber-500/30 transition text-center">- Quitar</button>
-            <button onclick="deleteClient('${k}')" class="bg-red-950 hover:bg-red-500 text-red-300 hover:text-white py-1.5 rounded-lg text-[10px] font-bold border border-red-800 transition text-center">Eliminar</button>
+            <button onclick="modifyClientTickets('${k}', 'add')" class="bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-slate-950 py-1.5 rounded-lg text-[10px] font-extrabold border border-amber-500/30 transition text-center flex items-center justify-center gap-1">
+              <i class="fa-solid fa-plus"></i> Cargar
+            </button>
+            <button onclick="modifyClientTickets('${k}', 'remove')" class="bg-yellow-500/10 hover:bg-yellow-500 text-yellow-400 hover:text-slate-950 py-1.5 rounded-lg text-[10px] font-extrabold border border-yellow-500/30 transition text-center flex items-center justify-center gap-1">
+              <i class="fa-solid fa-minus"></i> Quitar
+            </button>
+            <button onclick="deleteClient('${k}')" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white py-1.5 rounded-lg text-[10px] font-extrabold border border-red-500/30 transition text-center flex items-center justify-center gap-1">
+              <i class="fa-solid fa-trash"></i> Borrar
+            </button>
           </div>
         </div>
       `;
@@ -897,169 +637,28 @@ body {
 
   window.deleteClient = async function(usernameKey) {
     await initDB();
-    if (!usersDB[usernameKey] || usersDB[usernameKey].createdBy !== currentAgent) return;
-    const clientName = usersDB[usernameKey].name;
-    if (confirm(`¿Eliminar al cliente "${clientName}"?`)) {
-      delete usersDB[usernameKey];
-      await saveToCloud();
-      showToast(`Cliente eliminado`);
-      renderClients();
+
+    if (!usersDB[usernameKey] || usersDB[usernameKey].createdBy !== currentAgent) {
+      showToast('Este cliente no te pertenece o no existe', 'error');
+      return;
     }
-  };
 
-  window.modifyClientTickets = async function(username, action) {
-    await initDB();
-    const client = usersDB[username];
-    const agent = usersDB[currentAgent];
-    const currentStock = agent.tickets || 0;
-    const clientStock = client.tickets || 0;
+    const clientName = usersDB[usernameKey].name;
+    const confirmDelete = confirm(`¿Estás seguro de que deseas eliminar al cliente VIP "${clientName}"? Esta acción no se puede deshacer.`);
 
-    const promptMsg = action === 'add' 
-      ? `¿Cuántos cartones deseas CARGAR a ${client.name}?\n(Tu stock de venta disponible: ${currentStock}):`
-      : `¿Cuántos cartones deseas DESCONTAR a ${client.name}?\n(Cartones actuales del cliente: ${clientStock}):`;
-
-    const count = prompt(promptMsg, "1");
-
-    if (count && !isNaN(count) && parseInt(count) > 0) {
-      const qty = parseInt(count);
-
-      if (action === 'add') {
-        if (qty > currentStock) {
-          showToast(`Stock de venta insuficiente.`, 'error');
-          return;
-        }
-        agent.tickets -= qty;
-        client.tickets = clientStock + qty;
-        showToast(`¡Carga exitosa de ${qty} cartones!`);
-      } else {
-        if (qty > clientStock) {
-          showToast(`El cliente solo tiene ${clientStock} cartones para descontar.`, 'error');
-          return;
-        }
-        client.tickets = clientStock - qty;
-        agent.tickets = currentStock + qty;
-        showToast(`¡Se descontaron ${qty} cartones del cliente!`);
+    if (confirmDelete) {
+      const clientTickets = usersDB[usernameKey].tickets || 0;
+      if (clientTickets > 0 && usersDB[currentAgent]) {
+        usersDB[currentAgent].tickets = (usersDB[currentAgent].tickets || 0) + clientTickets;
       }
 
-      ticketLogsDB.unshift({
-        agent: currentAgent,
-        username: client.name + ' (@' + client.username + ')',
-        qty: `${action === 'add' ? '+' : '-'}${qty} Fichas Venta`,
-        date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      });
+      delete usersDB[usernameKey];
 
       await saveToCloud();
+      showToast(`Cliente VIP ${clientName} eliminado correctamente`);
       updateAgentMetrics();
       renderClients();
-      renderTicketHistory();
     }
-  };
-
-  // Autocompletado y búsqueda para Canje por Saldo
-  window.filterRedeemClientsDropdown = function() {
-    const query = document.getElementById('redeem-client-search').value.toLowerCase().trim();
-    const dropdown = document.getElementById('redeem-dropdown-results');
-
-    window.selectedRedeemUser = "";
-    document.getElementById('redeem-client-info').innerText = "Saldo actual: 0 GS";
-
-    const clients = getMyClients();
-    const keys = Object.keys(clients).filter(k => {
-      const u = clients[k];
-      return k.toLowerCase().includes(query) || u.name.toLowerCase().includes(query) || u.id.toLowerCase().includes(query);
-    });
-
-    if (query === '' || keys.length === 0) {
-      dropdown.classList.add('hidden');
-      dropdown.innerHTML = '';
-      return;
-    }
-
-    dropdown.classList.remove('hidden');
-    dropdown.innerHTML = keys.map(k => {
-      const u = clients[k];
-      return `
-        <div onclick="selectRedeemClientFromSearch('${k}', '${u.name}', '${u.username}', ${u.balance || 0})" class="p-2.5 hover:bg-slate-800 cursor-pointer flex justify-between items-center transition">
-          <div>
-            <div class="text-xs font-bold text-white">${u.name} <span class="text-purple-400 font-mono">(@${u.username})</span></div>
-            <div class="text-[9px] text-slate-400">${u.id}</div>
-          </div>
-          <div class="text-right text-[10px] font-black text-amber-400">
-            ${(u.balance || 0).toLocaleString('es-PY')} GS
-          </div>
-        </div>
-      `;
-    }).join('');
-  };
-
-  window.selectRedeemClientFromSearch = function(usernameKey, name, username, balance) {
-    window.selectedRedeemUser = usernameKey;
-    document.getElementById('redeem-client-search').value = `${name} (@${username})`;
-    document.getElementById('redeem-dropdown-results').classList.add('hidden');
-    
-    const infoEl = document.getElementById('redeem-client-info');
-    infoEl.innerText = `Saldo actual: ${balance.toLocaleString('es-PY')} GS`;
-    infoEl.className = balance > 0 ? "text-[10px] text-emerald-400 block font-bold mt-1" : "text-[10px] text-red-400 block font-bold mt-1";
-  };
-
-  window.handleAutoRedeem = async function(e) {
-    e.preventDefault();
-    await initDB();
-
-    const clientKey = window.selectedRedeemUser;
-    const qtyInput = document.getElementById('redeem-qty').value;
-
-    if (!clientKey || !usersDB[clientKey]) {
-      showToast('Selecciona o escribe un usuario válido de la lista', 'error');
-      return;
-    }
-
-    const client = usersDB[clientKey];
-    const qty = parseInt(qtyInput);
-    const costPerTicket = 5000;
-    const totalCost = qty * costPerTicket;
-    const clientBalance = client.balance || 0;
-    const agent = usersDB[currentAgent];
-    const agentRedeemableStock = agent.redeemableTickets || 0;
-
-    if (clientBalance < totalCost) {
-      showToast(`Saldo insuficiente. El cliente tiene ${clientBalance.toLocaleString()} GS y necesita ${totalCost.toLocaleString()} GS.`, 'error');
-      return;
-    }
-
-    if (agentRedeemableStock < qty) {
-      showToast(`Stock de cartones canjeables insuficiente. Tienes ${agentRedeemableStock} disponibles y se requieren ${qty}.`, 'error');
-      return;
-    }
-
-    // 1. Descontar del saldo del cliente (SIN AFECTAR RETIROS)
-    client.balance -= totalCost;
-
-    // 2. Sumar el cartón canjeable al cliente
-    client.redeemableTickets = (client.redeemableTickets || 0) + qty;
-
-    // 3. Descontar el cartón canjeable del stock del agente
-    agent.redeemableTickets -= qty;
-
-    const currentDate = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-    redeemLogsDB.unshift({
-      agent: currentAgent,
-      username: client.name + ' (@' + client.username + ')',
-      qty: qty,
-      totalCost: totalCost,
-      date: currentDate
-    });
-
-    await saveToCloud();
-    showToast(`¡Canje exitoso! Se descontaron ${totalCost.toLocaleString()} GS del saldo del cliente.`);
-    e.target.reset();
-    window.selectedRedeemUser = "";
-    document.getElementById('redeem-client-info').innerText = "Saldo actual: 0 GS";
-    
-    updateAgentMetrics();
-    renderClients();
-    renderRedeemHistory();
   };
 
   window.filterClientsDropdown = function(type) {
@@ -1069,7 +668,8 @@ body {
     const dropdown = document.getElementById(dropdownId);
 
     window.selectedWithdrawalUser = "";
-    document.getElementById('client-balance-info').innerText = "Saldo actual: 0 GS";
+    document.getElementById('client-balance-info').innerText = "Saldo disponible: 0 GS";
+    document.getElementById('client-balance-info').className = "text-[10px] text-slate-400 block font-bold mt-1";
 
     const clients = getMyClients();
     const keys = Object.keys(clients).filter(k => {
@@ -1106,7 +706,7 @@ body {
     document.getElementById('w-dropdown-results').classList.add('hidden');
     
     const infoEl = document.getElementById('client-balance-info');
-    infoEl.innerText = `Saldo actual: ${balance.toLocaleString('es-PY')} GS`;
+    infoEl.innerText = `Saldo disponible: ${balance.toLocaleString('es-PY')} GS`;
     infoEl.className = balance > 0 ? "text-[10px] text-emerald-400 block font-bold mt-1" : "text-[10px] text-red-400 block font-bold mt-1";
   };
 
@@ -1127,29 +727,43 @@ body {
     const amount = parseInt(amountInput);
     const currentBalance = client.balance || 0;
 
-    if (currentBalance <= 0 || amount > currentBalance) {
-      showToast('Saldo insuficiente en el cliente', 'error');
+    if (currentBalance <= 0) {
+      showToast(`El cliente ${client.name} no tiene saldo disponible (0 GS)`, 'error');
       return;
     }
 
-    client.balance -= amount;
-    usersDB[currentAgent].balance = (usersDB[currentAgent].balance || 0) + amount;
+    if (amount > currentBalance) {
+      showToast(`Saldo insuficiente. El cliente solo posee ${currentBalance.toLocaleString('es-PY')} GS`, 'error');
+      return;
+    }
 
+    // 1. Descontar el monto del saldo del cliente
+    usersDB[username].balance -= amount;
+    
+    // 2. Sumar el monto retirado a la cuenta del agente actual
+    if (!usersDB[currentAgent].balance) {
+      usersDB[currentAgent].balance = 0;
+    }
+    usersDB[currentAgent].balance += amount;
+
+    // 3. Registrar en el historial de retiros
     withdrawalsDB.unshift({
       agent: currentAgent,
       username: client.name + ' (@' + client.username + ')',
       amount: amount,
       details: details,
-      status: 'RETIRADO / PAGADO',
+      status: 'RETIRADO / PROCESADO',
       date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     });
 
     await saveToCloud();
-    showToast(`¡Retiro de ${amount.toLocaleString()} GS procesado con éxito!`);
+
+    showToast(`¡Retiro procesado! Se sumaron ${amount.toLocaleString('es-PY')} GS a tu cuenta`);
     e.target.reset();
     window.selectedWithdrawalUser = "";
-    document.getElementById('client-balance-info').innerText = "Saldo actual: 0 GS";
+    document.getElementById('client-balance-info').innerText = "Saldo disponible: 0 GS";
     
+    // Actualizar visualizaciones y métricas en pantalla
     updateAgentMetrics();
     renderClients();
     renderAgentHistory();
@@ -1163,15 +777,15 @@ body {
     const myWithdrawals = withdrawalsDB.filter(w => w.agent === currentAgent);
 
     if (myWithdrawals.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">No hay retiros pagados registrados.</td></tr>`;
-      cardsContainer.innerHTML = `<div class="text-center text-slate-500 text-xs py-4 col-span-full">No hay retiros pagados registrados.</div>`;
+      tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">No hay retiros registrados en tu historial.</td></tr>`;
+      cardsContainer.innerHTML = `<div class="text-center text-slate-500 text-xs py-4 col-span-full">No hay retiros registrados en tu historial.</div>`;
       return;
     }
 
     tbody.innerHTML = myWithdrawals.map(w => `
       <tr class="hover:bg-slate-900/40 transition">
         <td class="p-3 font-bold text-white">${w.username}</td>
-        <td class="p-3 font-black text-emerald-400">${parseInt(w.amount).toLocaleString('es-PY')} GS</td>
+        <td class="p-3 font-black text-amber-400">${parseInt(w.amount).toLocaleString('es-PY')} GS</td>
         <td class="p-3 text-slate-300 font-mono text-[11px]">${w.details}</td>
         <td class="p-3 text-slate-400">${w.date}</td>
         <td class="p-3 text-center"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-950 text-emerald-300 border border-emerald-800">${w.status}</span></td>
@@ -1185,8 +799,8 @@ body {
           <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-950 text-emerald-300 border border-emerald-800">${w.status}</span>
         </div>
         <div class="bg-slate-900/60 p-2 rounded-lg border border-slate-800/60 text-xs">
-          <div class="text-[10px] text-slate-400">Saldo Retirado: <span class="font-black text-emerald-400">${parseInt(w.amount).toLocaleString('es-PY')} GS</span></div>
-          <div class="text-[10px] text-slate-300 font-mono mt-0.5">Detalles: ${w.details}</div>
+          <div class="text-[10px] text-slate-400">Monto: <span class="font-black text-amber-400">${parseInt(w.amount).toLocaleString('es-PY')} GS</span></div>
+          <div class="text-[10px] text-slate-300 font-mono mt-0.5">Método/Detalles: ${w.details}</div>
           <div class="text-[9px] text-slate-500 mt-1">${w.date}</div>
         </div>
       </div>
@@ -1201,58 +815,108 @@ body {
     const myLogs = ticketLogsDB.filter(l => l.agent === currentAgent);
 
     if (myLogs.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500">No hay movimientos registrados.</td></tr>`;
-      cardsContainer.innerHTML = `<div class="text-center text-slate-500 text-xs py-4 col-span-full">No hay movimientos registrados.</div>`;
+      tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500">No hay movimientos de cartones registrados.</td></tr>`;
+      cardsContainer.innerHTML = `<div class="text-center text-slate-500 text-xs py-4 col-span-full">No hay movimientos de cartones registrados.</div>`;
       return;
     }
 
     tbody.innerHTML = myLogs.map(l => `
       <tr class="hover:bg-slate-900/40 transition">
         <td class="p-3 font-bold text-white">${l.username}</td>
-        <td class="p-3"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-950 text-amber-300 border border-amber-800">MOVIMIENTO</span></td>
-        <td class="p-3 font-black text-amber-400">${l.qty}</td>
+        <td class="p-3">
+          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black ${l.type === 'add' ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-red-950 text-red-300 border border-red-800'}">
+            ${l.type === 'add' ? 'CARGA DE CARTÓN' : 'RETIRO DE CARTÓN'}
+          </span>
+        </td>
+        <td class="p-3 font-black ${l.type === 'add' ? 'text-amber-400' : 'text-red-400'}">${l.type === 'add' ? '+' : '-'}${l.qty} Cartones</td>
         <td class="p-3 text-slate-400">${l.date}</td>
       </tr>
     `).join('');
-  }
 
-  function renderRedeemHistory() {
-    const tbody = document.getElementById('table-redeems-history-body');
-    const cardsContainer = document.getElementById('cards-redeems-history-body');
-    if (!tbody || !cardsContainer) return;
-
-    const myRedeems = redeemLogsDB.filter(r => r.agent === currentAgent);
-
-    if (myRedeems.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-500">No hay cartones canjeados registrados.</td></tr>`;
-      cardsContainer.innerHTML = `<div class="text-center text-slate-500 text-xs py-4 col-span-full">No hay cartones canjeados registrados.</div>`;
-      return;
-    }
-
-    tbody.innerHTML = myRedeems.map(r => `
-      <tr class="hover:bg-slate-900/40 transition">
-        <td class="p-3 font-bold text-white">${r.username}</td>
-        <td class="p-3 text-purple-300 font-mono font-bold">${r.qty} Cartones</td>
-        <td class="p-3 font-black text-amber-400">${r.totalCost.toLocaleString()} GS</td>
-        <td class="p-3 text-slate-400">${r.date}</td>
-      </tr>
-    `).join('');
-
-    cardsContainer.innerHTML = myRedeems.map(r => `
+    cardsContainer.innerHTML = myLogs.map(l => `
       <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 flex flex-col gap-2 shadow-sm">
         <div class="flex justify-between items-start">
-          <div class="text-xs font-bold text-white">${r.username}</div>
-          <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-purple-950 text-purple-300 border border-purple-800">CANJEADO POR SALDO</span>
+          <div class="text-xs font-bold text-white">${l.username}</div>
+          <span class="px-2 py-0.5 rounded-full text-[9px] font-black ${l.type === 'add' ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-red-950 text-red-300 border border-red-800'}">
+            ${l.type === 'add' ? 'CARGA' : 'QUITAR'}
+          </span>
         </div>
         <div class="bg-slate-900/60 p-2 rounded-lg border border-slate-800/60 text-xs flex justify-between items-center">
           <div>
-            <div class="text-[10px] text-slate-400">Cartones: <span class="text-purple-300 font-bold">${r.qty}</span></div>
-            <div class="text-[10px] text-slate-300 mt-0.5">Saldo Descontado: <span class="font-black text-amber-400">${r.totalCost.toLocaleString()} GS</span></div>
+            <div class="text-[10px] text-slate-400">Cantidad: <span class="font-black ${l.type === 'add' ? 'text-amber-400' : 'text-red-400'}">${l.type === 'add' ? '+' : '-'}${l.qty} Cartones</span></div>
           </div>
-          <div class="text-[9px] text-slate-500">${r.date}</div>
+          <div class="text-[9px] text-slate-500">${l.date}</div>
         </div>
       </div>
     `).join('');
+  }
+
+  window.modifyClientTickets = async function(username, action) {
+    await initDB();
+
+    if (!usersDB[username] || usersDB[username].createdBy !== currentAgent) {
+      showToast('Este cliente no te pertenece', 'error');
+      return;
+    }
+
+    const agentData = usersDB[currentAgent];
+    const currentStock = agentData.tickets || 0;
+    const client = usersDB[username];
+    const currentClientTickets = client.tickets || 0;
+
+    let promptMsg = action === 'add' 
+      ? `Cantidad de cartones a CARGAR a ${client.name}\n(Stock disponible tuyo: ${currentStock}):`
+      : `Cantidad de cartones a QUITAR a ${client.name}\n(Cartones actuales del cliente: ${currentClientTickets}):`;
+
+    const count = prompt(promptMsg, "1");
+    
+    if (count && !isNaN(count) && parseInt(count) > 0) {
+      const qty = parseInt(count);
+      const currentDate = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      if (action === 'add') {
+        if (qty > currentStock) {
+          showToast(`Stock insuficiente. Solo tienes ${currentStock} cartones disponibles.`, 'error');
+          return;
+        }
+        usersDB[currentAgent].tickets -= qty;
+        usersDB[username].tickets = currentClientTickets + qty;
+        showToast(`¡Se cargaron ${qty} cartones a ${client.name}!`);
+      } else {
+        if (qty > currentClientTickets) {
+          showToast(`El cliente solo tiene ${currentClientTickets} cartones disponibles para quitar.`, 'error');
+          return;
+        }
+        usersDB[username].tickets = currentClientTickets - qty;
+        usersDB[currentAgent].tickets = currentStock + qty; 
+        showToast(`¡Se quitaron ${qty} cartones a ${client.name}!`);
+      }
+      
+      ticketLogsDB.unshift({
+        agent: currentAgent,
+        username: client.name + ' (@' + client.username + ')',
+        type: action,
+        qty: qty,
+        date: currentDate
+      });
+
+      await saveToCloud();
+      updateAgentMetrics();
+      renderClients();
+      renderTicketHistory();
+    }
+  };
+
+  function showToast(msg, type = 'success') {
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toast-msg');
+    if (!toast || !toastMsg) return;
+
+    toastMsg.innerText = msg;
+    toast.className = `fixed top-4 left-1/2 -translate-x-1/2 ${type === 'error' ? 'bg-red-500 text-white' : 'bg-amber-500 text-slate-950'} px-4 py-2.5 rounded-full text-xs font-black shadow-2xl opacity-100 pointer-events-auto transition-all duration-300 z-50 flex items-center gap-2 max-w-[90vw] truncate`;
+    setTimeout(() => {
+      toast.classList.add('opacity-0', 'pointer-events-none');
+    }, 2500);
   }
 
   window.onload = checkAgentAuth;
