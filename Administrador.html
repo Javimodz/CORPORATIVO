@@ -56,13 +56,32 @@ body {
     <span id="toast-msg" class="truncate">Mensaje</span>
   </div>
 
+  <!-- MODAL PARA VER SUBAGENTES DE UN AGENTE -->
+  <div id="modal-subagents" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-amber-500/30 rounded-2xl max-w-lg w-full p-5 shadow-2xl flex flex-col gap-4">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+        <div>
+          <h3 class="text-sm font-black text-amber-400 uppercase tracking-wide" id="modal-agent-title">Subagentes del Agente</h3>
+          <p class="text-[10px] text-slate-400">Stock en tiempo real y cartones utilizados por cada subagente.</p>
+        </div>
+        <button onclick="closeSubAgentsModal()" class="w-8 h-8 rounded-xl bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center text-xs font-bold">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div id="modal-subagents-content" class="max-h-60 overflow-y-auto space-y-2 pr-1"></div>
+
+      <button onclick="closeSubAgentsModal()" class="w-full py-2.5 rounded-xl font-black text-slate-950 bg-amber-500 hover:bg-amber-400 text-xs transition">Cerrar</button>
+    </div>
+  </div>
+
   <!-- 1. PANTALLA DE LOGIN DE ADMINISTRADOR -->
   <div id="view-login" class="p-5 sm:p-8 md:p-12 flex flex-col gap-6 max-w-md mx-auto w-full my-auto">
     <div class="text-center">
       <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-300 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-amber-500/20 border border-amber-200">
         <i class="fa-solid fa-user-shield text-3xl sm:text-4xl text-slate-950"></i>
       </div>
-      <h1 class="text-xl sm:text-2xl font-black italic gold-gradient-text tracking-wide">PANEL ADMIN VIP</h1>
+      <h1 class="text-xl sm:text-2xl font-black italic gold-gradient-text tracking-wide">PANEL ADMINISTRADOR ROYAL</h1>
       <p class="text-[11px] sm:text-xs text-amber-300/80 mt-1 font-medium">Ingresa tu contraseña corporativa asignada</p>
     </div>
 
@@ -71,7 +90,7 @@ body {
         <label class="block text-xs font-bold text-slate-300">Contraseña de Administrador</label>
         <div class="relative">
           <i class="fa-solid fa-lock absolute left-4 top-3.5 text-amber-500/60 text-xs"></i>
-          <input type="password" id="admin-pass" required placeholder="••••••" class="w-full bg-slate-900 border border-amber-500/30 rounded-xl py-3 pl-10 pr-4 text-xs text-white focus:outline-none focus:border-amber-500 transition">
+          <input type="password" id="admin-pass" required placeholder="Ingresa tu contraseña" class="w-full bg-slate-900 border border-amber-500/30 rounded-xl py-3 pl-10 pr-4 text-xs text-white focus:outline-none focus:border-amber-500 transition">
         </div>
       </div>
       <button type="submit" class="w-full mt-2 py-3.5 rounded-xl font-black text-slate-950 bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-[0.98] transition text-xs uppercase tracking-wider">Acceder al Sistema</button>
@@ -273,8 +292,9 @@ body {
                   <th class="p-3">ID / Nombre del Agente</th>
                   <th class="p-3">Usuario / Contraseña</th>
                   <th class="p-3">Saldo Actual</th>
-                  <th class="p-3">Cartones Disponibles</th>
-                  <th class="p-3">Fecha Creación</th>
+                  <th class="p-3">Cartones de Venta (Cargados / Usados)</th>
+                  <th class="p-3">Canjeables (Cargados / Usados)</th>
+                  <th class="p-3 text-center">Subagentes</th>
                   <th class="p-3 text-center">Acciones</th>
                 </tr>
               </thead>
@@ -453,6 +473,8 @@ body {
   let globalData = {};
   let usersDB = {};
   let withdrawalsDB = [];
+  let ticketLogsDB = [];
+  let redeemLogsDB = [];
   let prizesDB = {};
   let cardConfigDB = {};
   let subAdminsDB = {};
@@ -466,6 +488,8 @@ body {
         globalData = docSnap.data();
         usersDB = globalData.users || {};
         withdrawalsDB = globalData.withdrawals || [];
+        ticketLogsDB = globalData.ticketLogs || [];
+        redeemLogsDB = globalData.redeemLogs || [];
         prizesDB = globalData.prizes || getDefaultPrizes();
         cardConfigDB = globalData.cardConfig || getDefaultCardConfig();
         subAdminsDB = globalData.subAdmins || {};
@@ -487,6 +511,8 @@ body {
       await setDoc(docRef, {
         users: usersDB,
         withdrawals: withdrawalsDB,
+        ticketLogs: ticketLogsDB,
+        redeemLogs: redeemLogsDB,
         prizes: prizesDB,
         cardConfig: cardConfigDB,
         subAdmins: subAdminsDB
@@ -519,7 +545,6 @@ body {
     };
   }
 
-  // VALIDACIÓN DE ACCESO EXCLUSIVO DE SUB-ADMINISTRADORES CORPORATIVOS
   window.handleAdminLogin = async function(e) {
     e.preventDefault();
     const passInput = document.getElementById('admin-pass').value.trim();
@@ -618,7 +643,6 @@ body {
     if (tab === 'withdrawals') renderWithdrawalsTable();
   };
 
-  // Función global para copiar textos al portapapeles
   window.copyToClipboard = function(text, label) {
     navigator.clipboard.writeText(text).then(() => {
       showToast(`${label} copiado: ${text}`);
@@ -627,7 +651,6 @@ body {
     });
   };
 
-  // Función para alternar visibilidad de contraseña
   window.togglePasswordVisibility = function(id) {
     const el = document.getElementById(id);
     const icon = document.getElementById(`icon-${id}`);
@@ -718,6 +741,7 @@ body {
       role: roleType,
       balance: 0,
       tickets: 0,
+      redeemableTickets: 0,
       createdAt: currentDate,
       history: []
     };
@@ -844,7 +868,7 @@ body {
     const agentKeys = Object.keys(usersDB).filter(k => usersDB[k].role === 'agent');
 
     if (agentKeys.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">No hay agentes registrados.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-500">No hay agentes registrados.</td></tr>`;
       cardsContainer.innerHTML = `<div class="text-center text-slate-500 text-xs py-4 col-span-full">No hay agentes registrados.</div>`;
       return;
     }
@@ -852,6 +876,57 @@ body {
     tbody.innerHTML = agentKeys.map(k => {
       const a = usersDB[k];
       const passFieldId = `pass-agent-${k}`;
+      
+      // Calcular en tiempo real cuántos cartones de venta distribuyó este agente a sus clientes y subagentes
+      let ventaUsada = 0;
+      let canjeablesUsados = 0;
+      
+      Object.keys(usersDB).forEach(subK => {
+        const u = usersDB[subK];
+        if (u.createdBy === a.username) {
+          // Si el subusuario usó o tiene cartones cargados desde este agente
+          // Sumamos los cartones que pasaron a sus clientes/subagentes
+          // Nota: El stock actual del agente baja cuando carga a otros, o podemos calcular sumando lo que tienen sus subordinados
+        }
+      });
+
+      // Cálculo exacto en tiempo real basado en logs y stock actual:
+      // Cuántos cartones de venta entregó a clientes/subagentes: 
+      // Buscamos en ticketLogsDB cuantos movimientos hizo este agente
+      let ticketsCargadosTotales = a.totalTicketsLoaded || 0; 
+      // O podemos contar sumando los cartones de sus clientes directos:
+      let ventaEntregadaClientes = 0;
+      let canjeablesUsadosClientes = 0;
+
+      Object.keys(usersDB).forEach(subKey => {
+        const sub = usersDB[subKey];
+        if (sub.createdBy === a.username) {
+          if (sub.role === 'client') {
+            ventaEntregadaClientes += (sub.tickets || 0);
+          } else if (sub.role === 'subagent') {
+            ventaEntregadaClientes += (sub.tickets || 0);
+            canjeablesUsados += (sub.redeemableTickets || 0);
+          }
+        }
+      });
+
+      // Cartones canjeados utilizados por los clientes de este agente (según redeemLogsDB)
+      let totalCanjeadosReal = 0;
+      redeemLogsDB.forEach(r => {
+        if (r.agent === a.username) {
+          totalCanjeadosReal += r.qty;
+        }
+      });
+
+      // Contar subagentes
+      let subAgentsCount = 0;
+      Object.keys(usersDB).forEach(subKey => {
+        const sub = usersDB[subKey];
+        if (sub.role === 'subagent' && sub.createdBy === a.username) {
+          subAgentsCount++;
+        }
+      });
+
       return `
         <tr class="hover:bg-slate-900/40 transition">
           <td class="p-3 font-bold text-white">${a.name}<br><span class="text-[10px] text-purple-400 font-mono">${a.id}</span></td>
@@ -867,15 +942,31 @@ body {
             </div>
           </td>
           <td class="p-3 font-black text-emerald-400">${(a.balance || 0).toLocaleString('es-PY')} GS</td>
-          <td class="p-3 font-black text-purple-300">${a.tickets || 0} Cartones</td>
-          <td class="p-3 text-slate-400 text-[11px]">${a.createdAt || 'N/A'}</td>
-          <td class="p-3 text-center flex items-center justify-center gap-1.5">
-            <button onclick="addTickets('${k}')" class="bg-purple-500/10 hover:bg-purple-500 text-purple-400 hover:text-slate-950 px-2.5 py-1 rounded-lg text-[10px] font-extrabold border border-purple-500/30 transition" title="Cargar Cartón">
-              <i class="fa-solid fa-plus text-[9px]"></i>
+          <td class="p-3">
+            <div class="text-[11px] font-bold text-amber-400">Stock Actual: ${a.tickets || 0}</div>
+            <div class="text-[10px] text-slate-400">Entregados/Usados: <strong class="text-white">${ventaEntregadaClientes}</strong></div>
+          </td>
+          <td class="p-3">
+            <div class="text-[11px] font-bold text-purple-300">Stock Actual: ${a.redeemableTickets || 0}</div>
+            <div class="text-[10px] text-slate-400">Canjeados (Clientes): <strong class="text-purple-300">${totalCanjeadosReal}</strong></div>
+          </td>
+          <td class="p-3 text-center">
+            <button onclick="viewAgentSubAgents('${a.username}', '${a.name}')" class="bg-purple-500/20 hover:bg-purple-500 text-purple-300 hover:text-slate-950 px-2.5 py-1 rounded-lg text-[10px] font-black border border-purple-500/40 transition">
+              Ver (${subAgentsCount})
             </button>
-            <button onclick="deleteUserAccount('${k}')" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-2.5 py-1 rounded-lg text-[10px] font-extrabold border border-red-500/30 transition" title="Eliminar Agente">
-              <i class="fa-solid fa-trash"></i>
-            </button>
+          </td>
+          <td class="p-3 text-center">
+            <div class="flex items-center justify-center gap-1.5 flex-wrap">
+              <button onclick="addTickets('${k}')" class="bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-slate-950 px-2.5 py-1 rounded-lg text-[10px] font-extrabold border border-amber-500/30 transition" title="Cargar Fichas Venta">
+                + Venta
+              </button>
+              <button onclick="addRedeemableTickets('${k}')" class="bg-purple-500/10 hover:bg-purple-500 text-purple-300 hover:text-slate-950 px-2.5 py-1 rounded-lg text-[10px] font-extrabold border border-purple-500/30 transition" title="Cargar Cartón Canjeable">
+                + Canjeable
+              </button>
+              <button onclick="deleteUserAccount('${k}')" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-2 py-1 rounded-lg text-[10px] font-extrabold border border-red-500/30 transition" title="Eliminar Agente">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
           </td>
         </tr>
       `;
@@ -884,6 +975,30 @@ body {
     cardsContainer.innerHTML = agentKeys.map(k => {
       const a = usersDB[k];
       const passFieldId = `mobile-pass-agent-${k}`;
+      
+      let ventaEntregadaClientes = 0;
+      Object.keys(usersDB).forEach(subKey => {
+        const sub = usersDB[subKey];
+        if (sub.createdBy === a.username) {
+          ventaEntregadaClientes += (sub.tickets || 0);
+        }
+      });
+
+      let totalCanjeadosReal = 0;
+      redeemLogsDB.forEach(r => {
+        if (r.agent === a.username) {
+          totalCanjeadosReal += r.qty;
+        }
+      });
+
+      let subAgentsCount = 0;
+      Object.keys(usersDB).forEach(subKey => {
+        const sub = usersDB[subKey];
+        if (sub.role === 'subagent' && sub.createdBy === a.username) {
+          subAgentsCount++;
+        }
+      });
+
       return `
         <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 flex flex-col gap-2.5 shadow-sm">
           <div class="flex justify-between items-start">
@@ -913,12 +1028,21 @@ body {
 
           <div class="bg-slate-900/60 p-2 rounded-lg border border-slate-800/60 text-xs flex justify-between items-center">
             <div><span class="text-[10px] text-slate-400 block">Saldo Actual</span><span class="font-black text-emerald-400">${(a.balance || 0).toLocaleString('es-PY')} GS</span></div>
-            <div class="text-right"><span class="text-[10px] text-slate-400 block">Cartones</span><span class="font-black text-purple-300">${a.tickets || 0}</span></div>
+            <div class="text-right">
+              <span class="text-[10px] text-amber-400 block">Venta (Stock: ${a.tickets || 0} | Usados: ${ventaEntregadaClientes})</span>
+              <span class="text-[10px] text-purple-300 block">Canjeables (Stock: ${a.redeemableTickets || 0} | Usados: ${totalCanjeadosReal})</span>
+            </div>
           </div>
-          <div class="text-[10px] text-slate-400">Creado: ${a.createdAt || 'N/A'}</div>
-          <div class="flex gap-2 pt-0.5">
-            <button onclick="addTickets('${k}')" class="flex-1 bg-purple-500/10 hover:bg-purple-500 text-purple-400 hover:text-slate-950 py-1.5 rounded-lg text-[10px] font-extrabold border border-purple-500/30 transition text-center">Cargar Cartón</button>
-            <button onclick="deleteUserAccount('${k}')" class="flex-1 bg-red-500/10 text-red-400 hover:text-white px-3 py-1.5 rounded-lg text-[10px] font-extrabold border border-red-500/30 transition text-center" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+
+          <div class="flex justify-between items-center bg-slate-900/40 p-2 rounded-lg border border-slate-800/60 text-xs">
+            <span class="text-slate-400">Subagentes:</span>
+            <button onclick="viewAgentSubAgents('${a.username}', '${a.name}')" class="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-lg text-[10px] font-bold">Ver Lista (${subAgentsCount})</button>
+          </div>
+
+          <div class="grid grid-cols-3 gap-1.5 pt-0.5">
+            <button onclick="addTickets('${k}')" class="bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-slate-950 py-1.5 rounded-lg text-[10px] font-bold border border-amber-500/30 transition text-center">+ Venta</button>
+            <button onclick="addRedeemableTickets('${k}')" class="bg-purple-500/10 hover:bg-purple-500 text-purple-300 hover:text-slate-950 py-1.5 rounded-lg text-[10px] font-bold border border-purple-500/30 transition text-center">+ Canjeable</button>
+            <button onclick="deleteUserAccount('${k}')" class="bg-red-500/10 hover:bg-red-500 text-red-300 hover:text-white py-1.5 rounded-lg text-[10px] font-bold border border-red-800 transition text-center">Eliminar</button>
           </div>
         </div>
       `;
@@ -927,14 +1051,90 @@ body {
 
   window.addTickets = async function(username) {
     if (!usersDB[username]) return;
-    const count = prompt(`Cantidad de cartones a agregar a ${usersDB[username].name}:`, "0");
+    const count = prompt(`Cantidad de fichas de venta a agregar a ${usersDB[username].name}:`, "0");
     if (count && !isNaN(count) && parseInt(count) > 0) {
       usersDB[username].tickets = (usersDB[username].tickets || 0) + parseInt(count);
       await saveToCloud();
-      showToast(`Cartones asignados correctamente`);
-      renderUsersTable();
+      showToast(`Fichas de venta asignadas correctamente`);
       renderAgentsTable();
     }
+  };
+
+  window.addRedeemableTickets = async function(username) {
+    if (!usersDB[username]) return;
+    const count = prompt(`Cantidad de cartones canjeables (5.000 GS c/u) a agregar al agente ${usersDB[username].name}:`, "0");
+    if (count && !isNaN(count) && parseInt(count) > 0) {
+      usersDB[username].redeemableTickets = (usersDB[username].redeemableTickets || 0) + parseInt(count);
+      await saveToCloud();
+      showToast(`Cartones canjeables asignados correctamente`);
+      renderAgentsTable();
+    }
+  };
+
+  // Ver Subagentes de un Agente en Modal con sus cartones usados
+  window.viewAgentSubAgents = function(agentUsername, agentName) {
+    const modal = document.getElementById('modal-subagents');
+    const titleEl = document.getElementById('modal-agent-title');
+    const contentEl = document.getElementById('modal-subagents-content');
+
+    titleEl.innerText = `Subagentes de: ${agentName} (@${agentUsername})`;
+    
+    let subList = [];
+    Object.keys(usersDB).forEach(k => {
+      const u = usersDB[k];
+      if (u.role === 'subagent' && u.createdBy === agentUsername) {
+        subList.push(u);
+      }
+    });
+
+    if (subList.length === 0) {
+      contentEl.innerHTML = `<div class="p-4 text-center text-slate-500 text-xs">Este agente no tiene subagentes registrados.</div>`;
+    } else {
+      contentEl.innerHTML = subList.map(sub => {
+        // Calcular cartones usados por este subagente en tiempo real
+        let subClientesCount = 0;
+        let cartonesAsignadosAClientes = 0;
+        Object.keys(usersDB).forEach(cliK => {
+          const cli = usersDB[cliK];
+          if (cli.role === 'client' && cli.createdBy === sub.username) {
+            subClientesCount++;
+            cartonesAsignadosAClientes += (cli.tickets || 0);
+          }
+        });
+
+        return `
+          <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 flex flex-col gap-2 text-xs">
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="font-bold text-white text-sm">${sub.name}</div>
+                <div class="text-[10px] text-amber-400 font-mono">@${sub.username} | Pass: ${sub.password}</div>
+              </div>
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-purple-950 text-purple-300 border border-purple-800">SUBAGENTE</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 bg-slate-900/60 p-2 rounded-lg border border-slate-800/60">
+              <div>
+                <span class="text-[10px] text-slate-400 block">Stock Actual Venta:</span>
+                <span class="font-black text-amber-400 text-sm">${sub.tickets || 0}</span>
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 block">Stock Canjeables:</span>
+                <span class="font-black text-purple-300 text-sm">${sub.redeemableTickets || 0}</span>
+              </div>
+            </div>
+            <div class="text-[10px] text-slate-300 flex justify-between">
+              <span>Clientes creados: <strong>${subClientesCount}</strong></span>
+              <span>Cartones distribuidos a clientes: <strong class="text-amber-400">${cartonesAsignadosAClientes}</strong></span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    modal.classList.remove('hidden');
+  };
+
+  window.closeSubAgentsModal = function() {
+    document.getElementById('modal-subagents').classList.add('hidden');
   };
 
   window.checkUserBalancePreview = function(val) {
