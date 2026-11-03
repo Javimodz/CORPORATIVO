@@ -128,11 +128,24 @@ body {
 .animate-stamp {
   animation: stampPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #090d16;
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #d97706;
+  border-radius: 4px;
+}
 </style>
 </head>
 <body class="flex items-center justify-center p-2 min-h-screen">
 
-<div class="w-full max-w-md bg-slate-900/95 rounded-3xl overflow-hidden shadow-2xl border border-amber-500/30 flex flex-col my-auto">
+<div class="w-full max-w-md bg-slate-900/95 rounded-3xl overflow-hidden shadow-2xl border border-amber-500/30 flex flex-col my-auto relative">
   
   <!-- ALERTA TOAST -->
   <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 bg-amber-500 text-slate-950 px-4 py-2 rounded-full text-xs font-black shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2">
@@ -155,7 +168,7 @@ body {
       <span>SALA DE JUEGOS EXCLUSIVA</span>
     </div>
 
-    <form id="form-login" onsubmit="handleLogin(event)" class="flex flex-col gap-3">
+    <form id="form-login" onsubmit="handleLoginWithTerms(event)" class="flex flex-col gap-3">
       <div>
         <label class="block text-[11px] font-bold text-slate-400 mb-1">Usuario</label>
         <div class="relative">
@@ -170,11 +183,25 @@ body {
           <input type="password" id="login-password" required placeholder="Ingresa tu contraseña" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-9 pr-3 text-xs text-white focus:outline-none focus:border-amber-500">
         </div>
       </div>
+
+      <!-- CHECKBOX DE TÉRMINOS Y CONDICIONES Y POLÍTICA ANTI-TRAMPAS -->
+      <div class="flex items-start gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 mt-1">
+        <input type="checkbox" id="accept-terms" required class="mt-0.5 accent-amber-500 rounded cursor-pointer">
+        <label for="accept-terms" class="text-[10px] text-slate-300 leading-tight cursor-pointer select-none">
+          Acepto los <button type="button" onclick="toggleTermsModal(true)" class="text-amber-400 font-bold underline hover:text-amber-300">Términos y Condiciones</button> y la Política Anti-Trampas (acepto el bloqueo incondicional de saldo y reporte legal en caso de fraude o amenazas).
+        </label>
+      </div>
+
       <button type="submit" class="w-full mt-2 py-3.5 rounded-xl font-black text-slate-950 btn-gold shadow-lg active:scale-[0.98] transition uppercase tracking-wider">Acceder al Casino</button>
     </form>
 
     <div class="text-center text-[10px] text-slate-500 mt-2">
       <i class="fa-solid fa-shield-halved mr-1 text-amber-500"></i> Acceso restringido. Solicita tus credenciales a tu agente.
+    </div>
+
+    <!-- PIE DE PÁGINA CORPORATIVO -->
+    <div class="text-center text-[9px] text-slate-500 border-t border-slate-800 pt-3 mt-1 leading-relaxed">
+      Raspadita de la suerte casino Royal es operado por Cordyline Ltd todos los derechos reservados.
     </div>
   </div>
 
@@ -240,6 +267,16 @@ body {
         <i class="fa-solid fa-clock-rotate-left"></i>
       </div>
       <div id="history-list" class="flex flex-col gap-2 max-h-48 overflow-y-auto pr-1"></div>
+    </div>
+
+    <!-- ENLACE Y PIE EN DASHBOARD -->
+    <div class="text-center pt-2">
+      <button onclick="toggleTermsModal(true)" class="text-[10px] text-slate-400 hover:text-amber-400 transition underline block mx-auto mb-2">
+        Ver Términos y Condiciones / Política Anti-Trampas
+      </button>
+      <div class="text-[9px] text-slate-500 border-t border-slate-800 pt-2 leading-relaxed">
+        Raspadita de la suerte casino Royal es operado por Cordyline Ltd todos los derechos reservados.
+      </div>
     </div>
   </div>
 
@@ -320,10 +357,100 @@ body {
           <span>🎲 Siguiente Juego </span>
         </button>
       </div>
+
+      <!-- PIE CORPORATIVO EN VISTA DE JUEGO -->
+      <div class="text-center text-[9px] text-slate-500 pb-2 leading-relaxed">
+        Raspadita de la suerte casino Royal es operado por Cordyline Ltd todos los derechos reservados.
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE TÉRMINOS Y CONDICIONES (ANTI-TRAMPAS Y PROTECCIÓN LEGAL) -->
+  <div id="modal-terms" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-amber-500/40 w-full max-w-md rounded-2xl flex flex-col max-h-[85vh] shadow-2xl overflow-hidden">
+      
+      <!-- HEADER MODAL -->
+      <div class="p-4 bg-slate-950 border-b border-amber-500/20 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved text-amber-400 text-base"></i>
+          <h3 class="text-xs font-black text-amber-400 uppercase tracking-wide">Términos y Política Anti-Fraude</h3>
+        </div>
+        <button onclick="toggleTermsModal(false)" class="text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- CUERPO MODAL -->
+      <div class="p-4 text-[11px] text-slate-300 space-y-3.5 overflow-y-auto custom-scrollbar leading-relaxed">
+        <p class="font-bold text-amber-300">
+          Raspadita de la suerte Casino Royal es operado por Cordyline Ltd. Todos los derechos reservados. El acceso a la plataforma implica la aceptación absoluta de estas condiciones.
+        </p>
+
+        <div>
+          <h4 class="font-bold text-white uppercase text-[10px] tracking-wider text-amber-400">1. Monitoreo y Detección Automática</h4>
+          <p class="text-slate-400">
+            El sistema monitorea de forma continua todas las jugadas, transacciones y comportamientos de los usuarios. Si el sistema o el equipo de seguridad detecta cualquier uso inusual, no autorizado o malintencionado de la plataforma, la cuenta será suspendida de inmediato.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-white uppercase text-[10px] tracking-wider text-amber-400">2. Fraude No Autorizado y Anulación de Reclamos</h4>
+          <p class="text-slate-400">
+            Si se confirma o detecta un comportamiento inadecuado, manipulación de algoritmos, uso de software de automatización o cualquier tipo de fraude no autorizado, el usuario <strong class="text-amber-300">no podrá realizar ningún reclamo, exigencia de reembolso ni devolución de fondos</strong>. Toda jugada u operación originada por conducta inadecuada queda anulada de pleno derecho.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-white uppercase text-[10px] tracking-wider text-amber-400">3. Retención Incondicional y Confiscación de Saldo</h4>
+          <p class="text-slate-400">
+            En caso de infracción a las políticas anti-trampas, Cordyline Ltd se reserva la facultad irrestricta de bloquear, congelar y/o confiscar de manera definitiva el balance, las ganancias acumuladas y las fichas o tickets del usuario implicado, sin derecho a indemnización ni recurso alguno.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-white uppercase text-[10px] tracking-wider text-amber-400">4. Reportes Obligatorios y Protección al Personal</h4>
+          <p class="text-slate-400">
+            Queda estrictamente prohibida cualquier amenaza, extorsión, acoso o agresividad hacia agentes, vendedores o personal de soporte. Ante cualquier eventualidad de esta naturaleza o sospecha de delito, la plataforma <strong class="text-red-400">estará obligada a emitir un reporte legal obligatorio a las autoridades correspondientes</strong>, proporcionando los registros técnicos, IP y datos del usuario para las acciones legales y penales pertinentes.
+          </p>
+        </div>
+      </div>
+
+      <!-- FOOTER MODAL -->
+      <div class="p-3 bg-slate-950 border-t border-amber-500/20 text-center">
+        <button onclick="toggleTermsModal(false)" class="w-full py-2.5 rounded-xl font-bold text-slate-950 btn-gold text-xs uppercase tracking-wider">
+          Acepto y Comprendo
+        </button>
+      </div>
     </div>
   </div>
 
 </div>
+
+<!-- SCRIPT DE CONTROL PARA TÉRMINOS Y LOGIN -->
+<script>
+  function toggleTermsModal(show) {
+    const modal = document.getElementById('modal-terms');
+    if (show) {
+      modal.classList.remove('hidden');
+    } else {
+      modal.classList.add('hidden');
+    }
+  }
+
+  function handleLoginWithTerms(e) {
+    e.preventDefault();
+    const checkbox = document.getElementById('accept-terms');
+    if (!checkbox.checked) {
+      alert("Debes aceptar los Términos y Condiciones y la Política Anti-Trampas para continuar.");
+      return;
+    }
+    
+    // Ejecuta la función de login principal de app.js si existe
+    if (typeof handleLogin === 'function') {
+      handleLogin(e);
+    }
+  }
+</script>
 
 <!-- SCRIPT MODULAR DE FIREBASE + APP.JS -->
 <script type="module" src="app.js"></script>
