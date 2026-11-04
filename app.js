@@ -248,7 +248,9 @@ function generateCardData() {
     document.getElementById('card-price-badge').innerText = (cardConfigDB.price || 5000).toLocaleString('es-PY');
   }
 
-  const winRate = cardConfigDB && cardConfigDB.winRate !== undefined ? cardConfigDB.winRate / 100 : 0.60;
+  // PROBABILIDAD GLOBAL CONTROLADA DESDE EL PANEL DE ADMINISTRACIÓN
+  const configuredRate = cardConfigDB && cardConfigDB.winRate !== undefined ? Number(cardConfigDB.winRate) : 15;
+  const winRate = configuredRate / 100;
 
   gridData = [];
   const isWinner = Math.random() < winRate;
@@ -263,11 +265,12 @@ function generateCardData() {
       let item;
       do {
         item = ITEMS[Math.floor(Math.random() * ITEMS.length)];
-      } while ((count[item.id || item.name] || 0) >= 2);
+      } while ((count[item.id || item.name] || 0) >= 2 || (winningItem && (item.id === winningItem.id || item.name === winningItem.name)));
       count[item.id || item.name] = (count[item.id || item.name] || 0) + 1;
       gridData.push({ ...item });
     }
   } else {
+    // SI PIERDE, EL ALGORITMO IMPIDE RIGUROSAMENTE QUE APAREZCAN 3 SÍMBOLOS IGUALES
     winningItem = null;
     const count = {};
     for (let i = 0; i < 9; i++) {
