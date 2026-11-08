@@ -2,49 +2,93 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Casino Royal - Raspaditas & Slots</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Raspadita De La Suerte - Raspaditas Exclusivas</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
+html, body {
+  position: fixed;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
 body {
-  font-family: 'Poppins', sans-serif;
-  background: #050b14;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: #f1f5f9;
   background-image: 
-    radial-gradient(circle at 50% 10%, #1e1b4b 0%, #050b14 70%),
-    repeating-linear-gradient(45deg, rgba(245, 158, 11, 0.03) 0px, rgba(245, 158, 11, 0.03) 2px, transparent 2px, transparent 10px);
-  min-height: 100vh;
-  touch-action: manipulation;
+    radial-gradient(circle at 50% 0%, #e2e8f0 0%, #f8fafc 70%),
+    radial-gradient(circle at 10% 90%, rgba(34, 197, 94, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 90%, rgba(16, 185, 129, 0.08) 0%, transparent 40%);
+  touch-action: none;
   user-select: none;
   -webkit-user-select: none;
-  color: #f8fafc;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.gold-gradient-text {
-  background: linear-gradient(135deg, #FFF5C0 0%, #F1C40F 40%, #D97706 100%);
+
+.lime-gradient-text {
+  background: linear-gradient(135deg, #15803d 0%, #16a34a 40%, #22c55e 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+  filter: drop-shadow(0 2px 4px rgba(22, 163, 74, 0.2));
 }
-.gold-card-border {
-  border: 3px solid #d97706;
-  box-shadow: 0 0 30px rgba(217, 119, 6, 0.5), inset 0 0 20px rgba(245, 158, 11, 0.3);
+
+.card-luxury-light {
+  background: #ffffff;
+  border: 2px solid #cbd5e1;
+  box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.15), 0 0 20px rgba(34, 197, 94, 0.1);
 }
-.scratch-wrapper {
-  position: relative;
+
+.game-grid {
   width: 100%;
-  max-width: 320px;
-  height: 320px;
+  max-width: 275px;
   margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 7px;
+  padding: 8px;
+  background: #e2e8f0;
   border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.9);
-  border: 3px solid #b45309;
-  touch-action: none;
+  border: 2px solid #cbd5e1;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);
 }
-#scratch-canvas {
+
+.grid-cell {
+  position: relative;
+  aspect-ratio: 1;
+  background: #f8fafc;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #cbd5e1;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.grid-cell.matched {
+  border-color: #22c55e;
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  animation: match-pulse 0.8s infinite alternate;
+}
+
+@keyframes match-pulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.04); box-shadow: 0 0 15px #22c55e; }
+}
+
+.cell-canvas {
   position: absolute;
   top: 0;
   left: 0;
@@ -54,371 +98,304 @@ body {
   cursor: crosshair;
   touch-action: none;
 }
-.game-grid {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  gap: 8px;
-  padding: 10px;
-  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-  z-index: 10;
+
+.btn-lime-luxury {
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 50%, #16a34a 100%);
+  color: #ffffff;
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+  transition: transform 0.1s ease, filter 0.1s ease;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
-.grid-cell {
-  background: rgba(15, 23, 42, 0.9);
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #334155;
-  transition: all 0.3s;
-  box-shadow: inset 0 2px 4px rgba(255,255,255,0.05);
+
+.btn-lime-luxury:active {
+  transform: scale(0.97);
 }
-.grid-cell.matched {
-  border-color: #f59e0b;
-  background: linear-gradient(135deg, #451a03 0%, #78350f 100%);
-  animation: match-pulse 0.8s infinite alternate;
-}
-@keyframes match-pulse {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.06); box-shadow: 0 0 25px #f59e0b; }
-}
-.btn-gold {
-  background: linear-gradient(180deg, #fbbf24 0%, #d97706 50%, #b45309 100%);
-  color: #111827;
-  text-shadow: 0 1px 0 rgba(255,255,255,0.3);
-  box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4);
-}
-.btn-gold:hover {
-  background: linear-gradient(180deg, #fcd34d 0%, #f59e0b 50%, #d97706 100%);
-}
-.scratch-progress-fill {
-  transition: width 0.2s ease-out;
-}
-.shimmer {
-  position: relative;
-  overflow: hidden;
-}
-.shimmer::after {
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  content: "";
-  background: linear-gradient(60deg, rgba(255,255,255,0) 20%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 80%);
-  transform: rotate(30deg);
-  animation: shimmerEffect 4s infinite;
-}
-@keyframes shimmerEffect {
-  0% { transform: translateX(-100%) rotate(30deg); }
-  100% { transform: translateX(100%) rotate(30deg); }
+
+.btn-lime-luxury:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: grayscale(0.3);
+  pointer-events: none;
 }
 
 @keyframes stampPop {
-  0% { transform: scale(0.6); opacity: 0; }
-  70% { transform: scale(1.08); opacity: 1; }
+  0% { transform: scale(0.5); opacity: 0; }
+  70% { transform: scale(1.05); opacity: 1; }
   100% { transform: scale(1); opacity: 1; }
 }
 .animate-stamp {
   animation: stampPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-/* Custom Scrollbar */
+.main-app-container {
+  width: 100%;
+  max-width: 385px;
+  max-height: 94vh;
+  background: #ffffff;
+  border-radius: 26px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #090d16;
-  border-radius: 4px;
+  background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #d97706;
+  background: #cbd5e1;
   border-radius: 4px;
 }
 </style>
 </head>
-<body class="flex items-center justify-center p-2 min-h-screen">
+<body>
 
-<div class="w-full max-w-md bg-slate-900/95 rounded-3xl overflow-hidden shadow-2xl border border-amber-500/30 flex flex-col my-auto relative">
+<div class="main-app-container custom-scrollbar">
   
-  <!-- ALERTA TOAST -->
-  <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 bg-amber-500 text-slate-950 px-4 py-2 rounded-full text-xs font-black shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2">
-    <i class="fa-solid fa-crown"></i>
+  <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-4 py-2 rounded-full text-xs font-black shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2 border border-emerald-500">
+    <i class="fa-solid fa-crown text-emerald-400"></i>
     <span id="toast-msg">Mensaje</span>
   </div>
 
   <!-- VISTA 0: INICIO DE SESIÓN -->
-  <div id="view-auth" class="p-6 flex flex-col gap-5">
-    <div class="text-center my-2">
-      <div class="inline-block p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 mb-2 shadow-lg">
-        <i class="fa-solid fa-dice text-4xl text-amber-400"></i>
+  <div id="view-auth" class="p-6 flex flex-col gap-4 my-auto">
+    <div class="text-center my-1">
+      <div class="inline-flex p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 mb-2.5 shadow-inner">
+        <i class="fa-solid fa-dice text-3xl text-emerald-600"></i>
       </div>
-      <h1 class="text-3xl font-black italic gold-gradient-text" id="login-brand-title">CASINO ROYAL</h1>
-      <p class="text-xs text-amber-300 font-bold mt-1 tracking-widest uppercase">CLUB DE RASPADITAS</p>
+      <h1 class="text-2xl font-extrabold tracking-tight lime-gradient-text" id="login-brand-title">RASPADITA DE LA SUERTE</h1>
+      <p class="text-[10px] text-slate-500 font-bold mt-0.5 tracking-[0.2em] uppercase">¡ RASPA Y GANA !</p>
     </div>
 
-    <div class="bg-slate-950 p-3 rounded-xl border border-amber-500/20 text-center text-xs font-bold text-amber-400 flex items-center justify-center gap-2 shadow-inner">
-      <i class="fa-solid fa-gem text-amber-400"></i>
-      <span>SALA DE JUEGOS EXCLUSIVA</span>
+    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-center text-[11px] font-semibold text-slate-700 flex items-center justify-center gap-2 shadow-inner">
+      <i class="fa-solid fa-shield-halved text-emerald-600"></i>
+      <span>ACCESO SEGURO VERIFICADO (+18)</span>
     </div>
 
     <form id="form-login" onsubmit="handleLoginWithTerms(event)" class="flex flex-col gap-3">
       <div>
-        <label class="block text-[11px] font-bold text-slate-400 mb-1">Usuario</label>
+        <label class="block text-[11px] font-semibold text-slate-700 mb-1 ml-1">Usuario</label>
         <div class="relative">
-          <i class="fa-solid fa-user absolute left-3 top-3.5 text-amber-500/60 text-xs"></i>
-          <input type="text" id="login-username" required placeholder="Ingresa tu usuario" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-9 pr-3 text-xs text-white focus:outline-none focus:border-amber-500">
+          <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-emerald-600 text-xs"></i>
+          <input type="text" id="login-username" required placeholder="Ingresá tu usuario" class="w-full bg-slate-50 border border-slate-300 rounded-xl py-2.5 pl-10 pr-4 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition shadow-inner">
         </div>
       </div>
       <div>
-        <label class="block text-[11px] font-bold text-slate-400 mb-1">Contraseña</label>
+        <label class="block text-[11px] font-semibold text-slate-700 mb-1 ml-1">Contraseña</label>
         <div class="relative">
-          <i class="fa-solid fa-lock absolute left-3 top-3.5 text-amber-500/60 text-xs"></i>
-          <input type="password" id="login-password" required placeholder="Ingresa tu contraseña" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-9 pr-3 text-xs text-white focus:outline-none focus:border-amber-500">
+          <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-emerald-600 text-xs"></i>
+          <input type="password" id="login-password" required placeholder="Ingresá tu contraseña" class="w-full bg-slate-50 border border-slate-300 rounded-xl py-2.5 pl-10 pr-4 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition shadow-inner">
         </div>
       </div>
 
-      <!-- CHECKBOX DE TÉRMINOS Y CONDICIONES Y POLÍTICA ANTI-TRAMPAS -->
-      <div class="flex items-start gap-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 mt-1">
-        <input type="checkbox" id="accept-terms" required class="mt-0.5 accent-amber-500 rounded cursor-pointer">
-        <label for="accept-terms" class="text-[10px] text-slate-300 leading-tight cursor-pointer select-none">
-          Acepto los <button type="button" onclick="toggleTermsModal(true)" class="text-amber-400 font-bold underline hover:text-amber-300">Términos y Condiciones</button> y la Política Anti-Trampas (acepto el bloqueo incondicional de saldo y reporte legal en caso de fraude o amenazas).
+      <div class="flex items-start gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200 mt-0.5">
+        <input type="checkbox" id="accept-terms" required class="mt-0.5 accent-emerald-600 rounded cursor-pointer w-3.5 h-3.5">
+        <label for="accept-terms" class="text-[10px] text-slate-600 leading-tight cursor-pointer select-none">
+          Acepto los <button type="button" onclick="toggleTermsModal(true)" class="text-emerald-700 font-bold underline hover:text-emerald-800">Términos y Condiciones</button> y la política antifraude.
         </label>
       </div>
 
-      <button type="submit" class="w-full mt-2 py-3.5 rounded-xl font-black text-slate-950 btn-gold shadow-lg active:scale-[0.98] transition uppercase tracking-wider">Acceder al Casino</button>
+      <button type="submit" class="w-full mt-1 py-3 rounded-xl font-extrabold text-white btn-lime-luxury shadow-lg active:scale-[0.98] transition uppercase tracking-wider text-xs">Ingresar al Casino</button>
     </form>
 
-    <div class="text-center text-[10px] text-slate-500 mt-2">
-      <i class="fa-solid fa-shield-halved mr-1 text-amber-500"></i> Acceso restringido. Solicita tus credenciales a tu agente.
-    </div>
-
-    <!-- PIE DE PÁGINA CORPORATIVO -->
-    <div class="text-center text-[9px] text-slate-500 border-t border-slate-800 pt-3 mt-1 leading-relaxed">
-      Raspadita de la suerte casino Royal es operado por Cordyline Ltd todos los derechos reservados.
+    <div class="text-center text-[9px] text-slate-400 border-t border-slate-200 pt-2 leading-relaxed">
+      Operado por Cordyline Ltd. Todos los derechos reservados.
     </div>
   </div>
 
-  <!-- VISTA 1: DASHBOARD -->
-  <div id="view-dashboard" class="hidden p-5 flex-col gap-5">
-    <div class="flex items-center justify-between bg-slate-950/80 p-4 rounded-2xl border border-amber-500/20">
-      <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-300 flex items-center justify-center text-slate-950 text-xl font-black shadow-lg border border-amber-200">
+  <!-- VISTA 1: DASHBOARD VIP -->
+  <div id="view-dashboard" class="hidden p-4 flex-col gap-3.5">
+    <div class="flex items-center justify-between bg-slate-50 p-3 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="flex items-center gap-2.5">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-green-400 flex items-center justify-center text-white text-base font-black shadow-md border border-emerald-200">
           <i class="fa-solid fa-crown"></i>
         </div>
         <div>
-          <div class="text-sm font-black text-white flex items-center gap-2">
+          <div class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
             <span id="dash-username">Usuario</span>
-            <button onclick="copyUsername()" class="text-amber-400 hover:text-amber-300 text-xs transition" title="Copiar usuario">
+            <button onclick="copyUsername()" class="text-emerald-600 hover:text-emerald-700 text-xs transition" title="Copiar usuario">
               <i class="fa-regular fa-copy"></i>
             </button>
           </div>
-          <div class="flex items-center gap-1.5 text-xs text-slate-400 font-mono mt-0.5">
-            <span class="text-amber-500">VIP ID:</span>
-            <span id="user-id-val" class="font-bold text-amber-400">HLN-88421</span>
+          <div class="flex items-center gap-1 text-[10px] text-slate-500 font-mono mt-0.5">
+            <span class="text-emerald-600 font-bold">ID:</span>
+            <span id="user-id-val" class="text-slate-700">HLN-88421</span>
           </div>
         </div>
       </div>
       <div>
-        <button onclick="logout()" class="bg-red-950/60 hover:bg-red-900 text-red-300 text-xs p-2.5 rounded-xl border border-red-800 transition active:scale-95" title="Cerrar Sesión">
+        <button onclick="logout()" class="bg-red-50 hover:bg-red-100 text-red-600 text-xs p-2 rounded-xl border border-red-200 transition active:scale-95 shadow-sm" title="Cerrar Sesión">
           <i class="fa-solid fa-right-from-bracket"></i>
         </button>
       </div>
     </div>
 
-    <div class="grid grid-cols-2 gap-3">
-      <div class="bg-gradient-to-br from-amber-950/50 via-slate-900 to-slate-950 p-4 rounded-2xl border border-amber-500/40 flex flex-col justify-between shadow-xl">
-        <div class="flex items-center justify-between text-slate-400 text-xs font-bold mb-2">
-          <span>BALANCE</span>
-          <i class="fa-solid fa-coins text-amber-400 text-base"></i>
+    <div class="grid grid-cols-2 gap-2.5">
+      <div class="bg-gradient-to-br from-emerald-50 via-white to-slate-50 p-3 rounded-2xl border border-emerald-200 flex flex-col justify-between shadow-sm">
+        <div class="flex items-center justify-between text-slate-600 text-[10px] font-bold tracking-wider mb-1">
+          <span>SALDO (GS)</span>
+          <i class="fa-solid fa-coins text-emerald-600 text-sm"></i>
         </div>
         <div>
-          <div id="dash-balance" class="text-xl font-black gold-gradient-text">0 GS</div>
-          <div class="text-[10px] text-amber-300/70 mt-1 font-semibold">Fondos disponibles</div>
+          <div id="dash-balance" class="text-base font-black lime-gradient-text">0 GS</div>
+          <div class="text-[9px] text-slate-500 font-semibold mt-0.5">Saldo disponible</div>
         </div>
       </div>
 
-      <div class="bg-gradient-to-br from-purple-950/50 via-slate-900 to-slate-950 p-4 rounded-2xl border border-purple-500/40 flex flex-col justify-between shadow-xl">
-        <div class="flex items-center justify-between text-slate-400 text-xs font-bold mb-2">
-          <span>TICKETS</span>
-          <i class="fa-solid fa-ticket text-purple-400 text-base"></i>
+      <div class="bg-gradient-to-br from-purple-50 via-white to-slate-50 p-3 rounded-2xl border border-purple-200 flex flex-col justify-between shadow-sm">
+        <div class="flex items-center justify-between text-slate-600 text-[10px] font-bold tracking-wider mb-1">
+          <span>TICKETS VIP</span>
+          <i class="fa-solid fa-ticket text-purple-600 text-sm"></i>
         </div>
         <div>
-          <div id="dash-tickets" class="text-2xl font-black text-purple-300">0</div>
-          <div class="text-[10px] text-purple-300/70 mt-1 font-semibold">Fichas disponibles</div>
+          <div id="dash-tickets" class="text-lg font-black text-purple-700">0</div>
+          <div class="text-[9px] text-slate-500 font-semibold mt-0.5">Fichas para jugar</div>
         </div>
       </div>
     </div>
 
-    <button onclick="goToGame()" class="w-full py-4 rounded-2xl font-black text-slate-950 text-base btn-gold shadow-xl hover:brightness-110 active:scale-[0.98] transition flex items-center justify-center gap-2 uppercase tracking-wider">
-      <i class="fa-solid fa-dice text-xl"></i>
+    <button onclick="goToGame()" class="w-full py-3 rounded-xl font-extrabold text-white text-xs btn-lime-luxury shadow-xl hover:brightness-105 active:scale-[0.98] transition flex items-center justify-center gap-2 uppercase tracking-wider">
+      <i class="fa-solid fa-dice text-base text-white"></i>
       <span>JUGAR RASPADITA</span>
     </button>
 
-    <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-800">
-      <div class="text-xs font-bold text-amber-400 mb-3 flex justify-between items-center">
-        <span>HISTORIAL DE APUESTAS</span>
-        <i class="fa-solid fa-clock-rotate-left"></i>
+    <!-- HISTORIAL DE JUEGOS AMPLIADO Y CÓMODO -->
+    <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200 shadow-sm">
+      <div class="text-[11px] font-bold text-slate-800 mb-2.5 flex justify-between items-center px-1">
+        <span>HISTORIAL DE JUEGOS</span>
+        <i class="fa-solid fa-clock-rotate-left text-emerald-600"></i>
       </div>
-      <div id="history-list" class="flex flex-col gap-2 max-h-48 overflow-y-auto pr-1"></div>
+      <div id="history-list" class="flex flex-col gap-2 max-h-52 overflow-y-auto pr-1.5 custom-scrollbar"></div>
     </div>
 
-    <!-- ENLACE Y PIE EN DASHBOARD -->
-    <div class="text-center pt-2">
-      <button onclick="toggleTermsModal(true)" class="text-[10px] text-slate-400 hover:text-amber-400 transition underline block mx-auto mb-2">
-        Ver Términos y Condiciones / Política Anti-Trampas
+    <!-- BOTÓN DISCRETO AL FINAL DEL DASHBOARD -->
+    <div class="pt-1 pb-1 text-center border-t border-slate-200 mt-1">
+      <button onclick="toggleTermsModal(true)" class="text-[10px] text-slate-500 hover:text-emerald-700 transition underline font-semibold">
+        Términos y Condiciones y Política Antifraude
       </button>
-      <div class="text-[9px] text-slate-500 border-t border-slate-800 pt-2 leading-relaxed">
-        Raspadita de la suerte casino Royal es operado por Cordyline Ltd todos los derechos reservados.
+      <div class="text-[9px] text-slate-400 mt-0.5 leading-relaxed">
+        Operado por Cordyline Ltd. Todos los derechos reservados.
       </div>
     </div>
   </div>
 
   <!-- VISTA 2: JUEGO DE RASPADITA -->
   <div id="view-game" class="hidden flex-col">
-    <div class="px-4 py-3 bg-slate-950/90 flex justify-between items-center text-white text-xs font-semibold border-b border-amber-500/20">
+    <div class="px-4 py-2 bg-slate-100 flex justify-between items-center text-slate-800 text-xs font-semibold border-b border-slate-200">
       <div>
-        <span class="text-amber-400 block text-xs font-bold">Fichas VIP <span id="fichas-num">1</span> • <span id="fichas-code">4777</span></span>
-        <span class="text-slate-400 text-[10px]" id="serie-code-top">SERIE A3606</span>
+        <span class="text-emerald-700 block text-[10px] font-bold">Raspadita # <span id="fichas-num">1</span></span>
+        <span class="text-slate-500 text-[9px]" id="serie-code-top">SERIE A3606</span>
       </div>
-      <div class="flex gap-2">
-        <button onclick="goToDashboard()" class="bg-slate-800 hover:bg-slate-700 text-amber-300 px-3.5 py-1.5 rounded-full border border-amber-500/30 text-[11px] transition flex items-center gap-1.5 font-bold">
-          <i class="fa-solid fa-arrow-left"></i> Salón VIP
-        </button>
+      <div>
+        <button onclick="goToDashboard()" class="bg-white hover:bg-slate-50 text-emerald-700 px-3 py-1 rounded-full border border-emerald-300 text-[10px] transition flex items-center gap-1 font-bold shadow-sm">
+          <i class="fa-solid fa-arrow-left"></i>CERRAR</button>
       </div>
     </div>
 
-    <div class="p-4 flex-1 flex flex-col items-center gap-4">
-      <div class="w-full bg-gradient-to-b from-amber-950/90 via-slate-900 to-slate-950 p-4 rounded-2xl gold-card-border relative shimmer">
-        <div class="absolute top-2.5 left-2.5 bg-amber-500 text-slate-950 font-black text-[10px] px-2.5 py-1 rounded-lg border border-yellow-200 text-center leading-tight shadow">APUESTA<br><span id="card-price-badge">5.000</span> GS</div>
-        <div class="absolute top-2.5 right-2.5 bg-red-600 text-white font-extrabold text-[11px] px-2.5 py-0.5 rounded-full border border-red-300 shadow">VIP 18+</div>
+    <div class="p-3 flex-1 flex flex-col items-center gap-2.5">
+      <div class="w-full card-luxury-light p-3 rounded-2xl relative">
+        <div class="absolute top-2 left-2 bg-emerald-600 text-white font-black text-[9px] px-2 py-0.5 rounded-lg border border-emerald-400 text-center leading-tight shadow">APUESTA<br><span id="card-price-badge">5.000</span> GS</div>
+        <div class="absolute top-2 right-2 bg-red-600 text-white font-extrabold text-[9px] px-2 py-0.5 rounded-full border border-red-300 shadow">+18 VIP</div>
         
-        <div class="text-center mt-3 mb-2">
-          <h1 class="text-3xl font-black italic gold-gradient-text leading-tight" id="card-display-title">CASINO ROYAL</h1>
-          <div class="text-[11px] text-amber-300 font-extrabold tracking-widest" id="card-display-subtitle">JACKPOT MILLONARIO</div>
-          <div class="inline-block bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-black text-[11px] px-3 py-0.5 rounded-full mt-1 shadow" id="card-display-max">PREMIO MÁXIMO 5.000.000 GS</div>
+        <div class="text-center mt-1.5 mb-1">
+          <h1 class="text-xl font-black italic lime-gradient-text leading-tight" id="card-display-title">RASPADITA DE LA SUERTE</h1>
+          <div class="text-[9px] text-slate-500 font-bold tracking-[0.15em]" id="card-display-subtitle">¡ RASPA Y GANA !</div>
         </div>
         
-        <div class="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-slate-950 text-center text-[11px] font-black py-1.5 rounded-lg mb-3 shadow uppercase tracking-wider">
-          ★ ENCUENTRA 3 SÍMBOLOS IGUALES ★
+        <div class="bg-gradient-to-r from-emerald-600 via-green-500 to-emerald-600 text-white text-center text-[10px] font-black py-1 rounded-lg mb-2 shadow uppercase tracking-wider">
+          ★ DESCUBRE 3 SÍMBOLOS IGUALES ★
         </div>
 
-        <div class="scratch-wrapper">
-          <div class="game-grid" id="grid"></div>
+        <div class="game-grid" id="grid"></div>
 
-          <!-- SELLO FLOTANTE 100% CENTRADO -->
-          <div id="game-stamp-overlay" class="absolute inset-0 z-30 flex items-center justify-center pointer-events-none hidden bg-slate-950/60 backdrop-blur-[2px]">
-            <!-- SI PIERDE -->
-            <div id="stamp-lose" class="hidden text-center animate-stamp px-4">
-              <div class="text-5xl mb-1">🎰</div>
-              <div class="bg-slate-950 text-amber-400 font-black text-xl px-6 py-3 rounded-2xl border-2 border-amber-500/50 shadow-2xl tracking-wider">
-                SIGUE INTENTANDO
-              </div>
-            </div>
-            <!-- SI GANA -->
-            <div id="stamp-win" class="hidden text-center animate-stamp px-4">
-              <div class="text-5xl mb-1">🏆</div>
-              <div class="bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-black text-2xl px-6 py-2.5 rounded-2xl border-2 border-yellow-200 shadow-2xl tracking-wider uppercase">
-                ¡JACKPOT GANADOR!
-              </div>
-              <div id="stamp-win-amount" class="text-amber-300 font-black text-lg bg-slate-950 px-4 py-1.5 rounded-xl mt-2 shadow-lg border border-amber-500 inline-block"></div>
+        <div id="game-stamp-overlay" class="absolute inset-0 z-30 flex items-center justify-center pointer-events-none hidden bg-slate-900/60 backdrop-blur-[2px] rounded-2xl">
+          <div id="stamp-lose" class="hidden text-center animate-stamp px-4">
+            <div class="text-3xl mb-1">🎰</div>
+            <div class="bg-white text-slate-900 font-black text-xs px-3 py-1.5 rounded-xl border-2 border-slate-300 shadow-2xl tracking-wider">
+              SIGUE INTENTANDO
             </div>
           </div>
-
-          <canvas id="scratch-canvas"></canvas>
+          <div id="stamp-win" class="hidden text-center animate-stamp px-4">
+            <div class="text-3xl mb-1">🏆</div>
+            <div class="bg-gradient-to-r from-emerald-500 to-green-400 text-white font-black text-xs px-3 py-1.5 rounded-xl border-2 border-white shadow-2xl tracking-wider uppercase">
+              ¡JACKPOT GANADOR!
+            </div>
+            <div id="stamp-win-amount" class="text-emerald-900 font-black text-xs bg-emerald-100 px-2.5 py-1 rounded-lg mt-1 shadow-lg border border-emerald-400 inline-block"></div>
+          </div>
         </div>
 
-        <div class="w-full bg-slate-950/80 rounded-full h-2.5 mt-3 overflow-hidden border border-amber-500/30 p-0.5">
-          <div id="scratch-progress" class="bg-gradient-to-r from-amber-500 via-yellow-300 to-amber-400 h-full rounded-full scratch-progress-fill w-0 shadow"></div>
+        <div class="w-full bg-slate-200 rounded-full h-1.5 mt-2.5 overflow-hidden border border-slate-300 p-0.5">
+          <div id="scratch-progress" class="bg-gradient-to-r from-emerald-500 to-green-500 h-full rounded-full scratch-progress-fill w-0 shadow"></div>
         </div>
-        <div class="flex justify-between text-[10px] text-slate-300 mt-1 font-semibold">
-          <span>Progreso de raspe:</span>
-          <span id="progress-text" class="text-amber-400 font-bold">0%</span>
+        <div class="flex justify-between text-[9px] text-slate-500 mt-1 font-semibold px-0.5">
+          <span>Casillas descubiertas:</span>
+          <span id="progress-text" class="text-emerald-700 font-bold">0 / 9</span>
         </div>
       </div>
 
       <!-- PANEL INFERIOR -->
-      <div id="result-card" class="w-full bg-slate-900 border border-amber-500/20 rounded-2xl p-4 text-center shadow-2xl transition-all duration-300">
-        <div class="bg-slate-950 text-amber-400 p-3 rounded-xl mb-3 flex justify-between items-center shadow-inner border border-amber-500/20">
+      <div id="result-card" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-2.5 text-center shadow-sm">
+        <div class="bg-white text-slate-800 p-2 rounded-xl mb-2 flex justify-between items-center shadow-inner border border-slate-200">
           <div class="text-left">
-            <div class="text-[10px] font-black text-slate-400">TICKET NÚMERO</div>
-            <div id="card-big-number" class="text-2xl font-black text-white">4777</div>
+            <div class="text-[8px] font-black text-slate-400">TICKET NÚMERO</div>
+            <div id="card-big-number" class="text-sm font-black text-slate-900">4777</div>
           </div>
-          <div id="card-big-serie" class="text-xs font-black bg-amber-500/10 text-amber-400 px-3 py-1.5 rounded-lg border border-amber-500/30">SERIE A3606</div>
+          <div id="card-big-serie" class="text-[9px] font-black bg-emerald-50 text-emerald-700 px-2 py-1 rounded-lg border border-emerald-200">SERIE A3606</div>
         </div>
         
-        <button onclick="nextCard()" class="w-full py-3.5 rounded-xl font-black text-slate-950 btn-gold shadow-xl hover:brightness-110 active:scale-[0.98] transition flex items-center justify-center gap-2 uppercase tracking-wider">
-          <span>🎲 Siguiente Juego </span>
+        <button id="btn-next-game" class="w-full py-2.5 rounded-xl font-extrabold text-white btn-lime-luxury shadow-xl active:scale-[0.98] transition flex items-center justify-center gap-2 uppercase tracking-wider text-xs">
+          <span id="btn-next-text">🎲 Siguiente Juego</span>
         </button>
       </div>
 
-      <!-- PIE CORPORATIVO EN VISTA DE JUEGO -->
-      <div class="text-center text-[9px] text-slate-500 pb-2 leading-relaxed">
-        Raspadita de la suerte casino Royal es operado por Cordyline Ltd todos los derechos reservados.
+      <div class="text-center text-[9px] text-slate-400 pb-1 leading-relaxed">
+        Operado por Cordyline Ltd. Todos los derechos reservados.
       </div>
     </div>
   </div>
 
-  <!-- MODAL DE TÉRMINOS Y CONDICIONES (ANTI-TRAMPAS Y PROTECCIÓN LEGAL) -->
-  <div id="modal-terms" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-amber-500/40 w-full max-w-md rounded-2xl flex flex-col max-h-[85vh] shadow-2xl overflow-hidden">
-      
-      <!-- HEADER MODAL -->
-      <div class="p-4 bg-slate-950 border-b border-amber-500/20 flex justify-between items-center">
+  <!-- MODAL DE TÉRMINOS Y CONDICIONES -->
+  <div id="modal-terms" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden">
+    <div class="bg-white border border-slate-200 w-full max-w-sm rounded-2xl flex flex-col max-h-[85vh] shadow-2xl overflow-hidden">
+      <div class="p-3 bg-slate-100 border-b border-slate-200 flex justify-between items-center">
         <div class="flex items-center gap-2">
-          <i class="fa-solid fa-shield-halved text-amber-400 text-base"></i>
-          <h3 class="text-xs font-black text-amber-400 uppercase tracking-wide">Términos y Política Anti-Fraude</h3>
+          <i class="fa-solid fa-shield-halved text-emerald-600 text-sm"></i>
+          <h3 class="text-[11px] font-black text-slate-800 uppercase tracking-wide">Términos y Política Antifraude</h3>
         </div>
-        <button onclick="toggleTermsModal(false)" class="text-slate-400 hover:text-white p-1">
-          <i class="fa-solid fa-xmark text-lg"></i>
+        <button onclick="toggleTermsModal(false)" class="text-slate-500 hover:text-slate-800 p-1">
+          <i class="fa-solid fa-xmark text-base"></i>
         </button>
       </div>
 
-      <!-- CUERPO MODAL -->
-      <div class="p-4 text-[11px] text-slate-300 space-y-3.5 overflow-y-auto custom-scrollbar leading-relaxed">
-        <p class="font-bold text-amber-300">
-          Raspadita de la suerte Casino Royal es operado por Cordyline Ltd. Todos los derechos reservados. El acceso a la plataforma implica la aceptación absoluta de estas condiciones.
+      <div class="p-3.5 text-[10px] text-slate-600 space-y-2.5 overflow-y-auto custom-scrollbar leading-relaxed">
+        <p class="font-bold text-emerald-700">
+          Raspadita De La Suerte es operado por Cordyline Ltd en Paraguay. Todos los derechos reservados.
         </p>
-
         <div>
-          <h4 class="font-bold text-white uppercase text-[10px] tracking-wider text-amber-400">1. Monitoreo y Detección Automática</h4>
-          <p class="text-slate-400">
-            El sistema monitorea de forma continua todas las jugadas, transacciones y comportamientos de los usuarios. Si el sistema o el equipo de seguridad detecta cualquier uso inusual, no autorizado o malintencionado de la plataforma, la cuenta será suspendida de inmediato.
-          </p>
+          <h4 class="font-bold text-slate-900 uppercase text-[9px] tracking-wider text-emerald-700">1. Monitoreo del Sistema</h4>
+          <p class="text-slate-600">Todas las jugadas y transacciones son registradas y monitoreadas de forma automática para garantizar total transparencia y seguridad.</p>
         </div>
-
         <div>
-          <h4 class="font-bold text-white uppercase text-[10px] tracking-wider text-amber-400">2. Fraude No Autorizado y Anulación de Reclamos</h4>
-          <p class="text-slate-400">
-            Si se confirma o detecta un comportamiento inadecuado, manipulación de algoritmos, uso de software de automatización o cualquier tipo de fraude no autorizado, el usuario <strong class="text-amber-300">no podrá realizar ningún reclamo, exigencia de reembolso ni devolución de fondos</strong>. Toda jugada u operación originada por conducta inadecuada queda anulada de pleno derecho.
-          </p>
+          <h4 class="font-bold text-slate-900 uppercase text-[9px] tracking-wider text-emerald-700">2. Política Antifraude</h4>
+          <p class="text-slate-600">Cualquier intento de manipulación del software, uso de scripts o bots anulará inmediatamente las jugadas y el saldo correspondiente.</p>
         </div>
-
         <div>
-          <h4 class="font-bold text-white uppercase text-[10px] tracking-wider text-amber-400">3. Retención Incondicional y Confiscación de Saldo</h4>
-          <p class="text-slate-400">
-            En caso de infracción a las políticas anti-trampas, Cordyline Ltd se reserva la facultad irrestricta de bloquear, congelar y/o confiscar de manera definitiva el balance, las ganancias acumuladas y las fichas o tickets del usuario implicado, sin derecho a indemnización ni recurso alguno.
-          </p>
-        </div>
-
-        <div>
-          <h4 class="font-bold text-white uppercase text-[10px] tracking-wider text-amber-400">4. Reportes Obligatorios y Protección al Personal</h4>
-          <p class="text-slate-400">
-            Queda estrictamente prohibida cualquier amenaza, extorsión, acoso o agresividad hacia agentes, vendedores o personal de soporte. Ante cualquier eventualidad de esta naturaleza o sospecha de delito, la plataforma <strong class="text-red-400">estará obligada a emitir un reporte legal obligatorio a las autoridades correspondientes</strong>, proporcionando los registros técnicos, IP y datos del usuario para las acciones legales y penales pertinentes.
-          </p>
+          <h4 class="font-bold text-slate-900 uppercase text-[9px] tracking-wider text-emerald-700">3. Retención y Bloqueo</h4>
+          <p class="text-slate-600">En caso de detectar anomalías o infracciones graves, la cuenta será suspendida de manera definitiva sin derecho a reclamos posteriores.</p>
         </div>
       </div>
 
-      <!-- FOOTER MODAL -->
-      <div class="p-3 bg-slate-950 border-t border-amber-500/20 text-center">
-        <button onclick="toggleTermsModal(false)" class="w-full py-2.5 rounded-xl font-bold text-slate-950 btn-gold text-xs uppercase tracking-wider">
-          Acepto y Comprendo
+      <div class="p-2.5 bg-slate-100 border-t border-slate-200 text-center">
+        <button onclick="toggleTermsModal(false)" class="w-full py-2 rounded-xl font-bold text-white btn-lime-luxury text-[11px] uppercase tracking-wider">
+          Comprendido y Acepto
         </button>
       </div>
     </div>
@@ -426,7 +403,6 @@ body {
 
 </div>
 
-<!-- SCRIPT DE CONTROL PARA TÉRMINOS Y LOGIN -->
 <script>
   function toggleTermsModal(show) {
     const modal = document.getElementById('modal-terms');
@@ -441,18 +417,15 @@ body {
     e.preventDefault();
     const checkbox = document.getElementById('accept-terms');
     if (!checkbox.checked) {
-      alert("Debes aceptar los Términos y Condiciones y la Política Anti-Trampas para continuar.");
+      alert("Debes aceptar los Términos y Condiciones para continuar.");
       return;
     }
-    
-    // Ejecuta la función de login principal de app.js si existe
     if (typeof handleLogin === 'function') {
       handleLogin(e);
     }
   }
 </script>
 
-<!-- SCRIPT MODULAR DE FIREBASE + APP.JS -->
 <script type="module" src="app.js"></script>
 </body>
 </html>

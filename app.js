@@ -114,18 +114,18 @@ function updateDashboardUI() {
 
   const historyContainer = document.getElementById('history-list');
   if (!data.history || data.history.length === 0) {
-    historyContainer.innerHTML = `<div class="text-center text-slate-500 text-xs py-3">Aún no has realizado jugadas VIP.</div>`;
+    historyContainer.innerHTML = `<div class="text-center text-slate-400 text-[10px] py-3">Aún no has realizado jugadas VIP.</div>`;
   } else {
     historyContainer.innerHTML = data.history.map(item => `
-      <div class="flex items-center justify-between bg-slate-900 p-2.5 rounded-xl border border-amber-500/20 text-xs">
+      <div class="flex items-center justify-between bg-white p-2 rounded-xl border border-slate-200 text-[11px] shadow-sm">
         <div class="flex items-center gap-2">
-          <i class="fa-solid ${item.win ? 'fa-trophy text-amber-400' : 'fa-circle-xmark text-slate-500'}"></i>
+          <i class="fa-solid ${item.win ? 'fa-trophy text-emerald-600' : 'fa-circle-xmark text-slate-400'}"></i>
           <div>
-            <div class="font-bold text-slate-200">Juego #${item.code} (${item.serie})</div>
-            <div class="text-[10px] text-slate-400">${item.date}</div>
+            <div class="font-bold text-slate-800">Juego #${item.code} (${item.serie})</div>
+            <div class="text-[9px] text-slate-500">${item.date}</div>
           </div>
         </div>
-        <div class="font-black ${item.win ? 'text-amber-400' : 'text-slate-500'}">
+        <div class="font-black ${item.win ? 'text-emerald-600' : 'text-slate-400'}">
           ${item.win ? '+' + item.prize.toLocaleString('es-PY') + ' GS' : 'SIN PREMIO'}
         </div>
       </div>
@@ -174,7 +174,7 @@ function showToast(msg, type = 'success') {
   const toast = document.getElementById('toast');
   const toastMsg = document.getElementById('toast-msg');
   toastMsg.innerText = msg;
-  toast.className = `fixed top-4 left-1/2 -translate-x-1/2 ${type === 'error' ? 'bg-red-500 text-white' : 'bg-amber-500 text-slate-950'} px-4 py-2 rounded-full text-xs font-black shadow-2xl opacity-100 pointer-events-auto transition-all duration-300 z-50 flex items-center gap-2`;
+  toast.className = `fixed top-4 left-1/2 -translate-x-1/2 ${type === 'error' ? 'bg-red-500 text-white border-red-300' : 'bg-slate-900 text-white border-emerald-500'} px-4 py-2 rounded-full text-xs font-black shadow-2xl opacity-100 pointer-events-auto transition-all duration-300 z-50 flex items-center gap-2 border`;
   setTimeout(() => {
     toast.classList.add('opacity-0', 'pointer-events-none');
   }, 2500);
@@ -199,58 +199,31 @@ window.goToDashboard = function() {
   updateDashboardUI();
 };
 
-let gridData = [], winningItem = null, isScratchedCompleted = false, isDrawing = false, lastPos = null, fichasCount = 1, audioCtx = null, checkThrottler = null;
+let gridData = [], winningItem = null, fichasCount = 1, audioCtx = null;
 let currentCode = '4777', currentSerie = 'A3606';
-const scratchCanvas = document.getElementById('scratch-canvas');
-const scratchCtx = scratchCanvas.getContext('2d', { willReadFrequently: true });
+let isGameLocked = false;       
+let isWaitingNextGame = false;  
+let cellsScratchedCount = 0;    
+let evaluated = false;          
+let cardDeducted = false;       
 const jsConfetti = new JSConfetti();
-
-function initCanvas() {
-  const rect = scratchCanvas.parentElement.getBoundingClientRect();
-  const dpr = window.devicePixelRatio || 1;
-  scratchCanvas.width = rect.width * dpr;
-  scratchCanvas.height = rect.height * dpr;
-  scratchCanvas.style.width = rect.width + 'px';
-  scratchCanvas.style.height = rect.height + 'px';
-  
-  scratchCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  const w = rect.width, h = rect.height;
-  
-  scratchCtx.globalCompositeOperation = 'source-over';
-  scratchCtx.clearRect(0, 0, w, h);
-  
-  const grad = scratchCtx.createLinearGradient(0, 0, w, h);
-  grad.addColorStop(0, '#b45309');
-  grad.addColorStop(0.5, '#d97706');
-  grad.addColorStop(1, '#78350f');
-  scratchCtx.fillStyle = grad;
-  scratchCtx.fillRect(0, 0, w, h);
-  
-  scratchCtx.font = '900 20px Poppins, sans-serif';
-  scratchCtx.fillStyle = '#fef3c7';
-  scratchCtx.textAlign = 'center';
-  scratchCtx.fillText('★ RASPA AQUÍ ★', w / 2, h / 2);
-}
 
 function generateCardData() {
   let ALL_ITEMS = prizesDB && prizesDB.length > 0 ? prizesDB : [
-    { id: 'p1', name: 'Premio Chico (Recarga)', type: 'emoji', val: '🎟️', color: '', prize: 5000, isVisual: false },
-    { id: 'p2', name: 'Premio Chico (Suerte)', type: 'emoji', val: '🍀', color: '', prize: 10000, isVisual: false },
-    { id: 'p3', name: 'Corona Real', type: 'icon', val: 'fa-crown', color: 'text-yellow-400', prize: 50000, isVisual: false },
-    { id: 'p4', name: 'Trofeo Jackpot (Visual)', type: 'emoji', val: '🏆', color: '', prize: 5000000, isVisual: true }
+    { id: 'p1', name: 'Premio Chico', type: 'emoji', val: '🎟️', prize: 5000, isVisual: false },
+    { id: 'p2', name: 'Premio Medio', type: 'emoji', val: '🍀', prize: 10000, isVisual: false },
+    { id: 'p3', name: 'Corona Real', type: 'icon', val: 'fa-crown', color: 'text-emerald-600', prize: 50000, isVisual: false },
+    { id: 'p4', name: 'Jackpot', type: 'emoji', val: '🏆', prize: 5000000, isVisual: true }
   ];
 
   if (cardConfigDB && Object.keys(cardConfigDB).length > 0) {
-    document.getElementById('card-display-title').innerText = cardConfigDB.title || 'CASINO ROYAL';
-    document.getElementById('card-display-subtitle').innerText = cardConfigDB.subtitle || 'JACKPOT MILLONARIO';
-    document.getElementById('card-display-max').innerText = cardConfigDB.maxPrizeText || 'PREMIO MÁXIMO 5.000.000 GS';
+    document.getElementById('card-display-title').innerText = cardConfigDB.title || 'RASPADITA DE LA SUERTE';
+    document.getElementById('card-display-subtitle').innerText = cardConfigDB.subtitle || '¡ RASPA Y GANA !';
     document.getElementById('card-price-badge').innerText = (cardConfigDB.price || 5000).toLocaleString('es-PY');
   }
 
-  // Separar premios reales ganables y premios estrictamente visuales (nunca ganables)
   const realWinItems = ALL_ITEMS.filter(item => !item.isVisual);
   const visualItems = ALL_ITEMS.filter(item => item.isVisual);
-
   const configuredRate = cardConfigDB && cardConfigDB.winRate !== undefined ? Number(cardConfigDB.winRate) : 15;
   const winRate = configuredRate / 100;
 
@@ -272,11 +245,8 @@ function generateCardData() {
       gridData.push({ ...item });
     }
   } else {
-    // SI PIERDE, EL ALGORITMO IMPIDE RIGUROSAMENTE QUE APAREZCAN 3 SÍMBOLOS IGUALES DE CUALQUIER PREMIO
     winningItem = null;
     const count = {};
-    
-    // Inserción sutil de 2 símbolos iguales de un premio visual para hacer creer a la mente humana que estuvo cerca
     if (visualItems.length > 0 && Math.random() < 0.7) {
       const vItem = visualItems[Math.floor(Math.random() * visualItems.length)];
       gridData.push({ ...vItem }, { ...vItem });
@@ -293,11 +263,19 @@ function generateCardData() {
     }
   }
   
-  // Se intercambian de lugar aleatoriamente en cada juego
   gridData.sort(() => Math.random() - 0.5);
-  
+}
+
+function initGridCanvas() {
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
+  cellsScratchedCount = 0;
+  evaluated = false;
+  cardDeducted = false;
+
+  document.getElementById('scratch-progress').style.width = '0%';
+  document.getElementById('progress-text').innerText = '0 / 9';
+
   gridData.forEach((item, i) => {
     const cell = document.createElement('div');
     cell.className = 'grid-cell';
@@ -305,85 +283,176 @@ function generateCardData() {
 
     let renderHtml = '';
     if (item.type === 'image') {
-      renderHtml = `<img src="${item.val}" class="w-10 h-10 object-contain mb-1">`;
+      renderHtml = `<img src="${item.val}" class="w-8 h-8 object-contain mb-1">`;
     } else if (item.type === 'emoji') {
-      renderHtml = `<span class="text-3xl mb-1">${item.val}</span>`;
+      renderHtml = `<span class="text-2xl mb-1">${item.val}</span>`;
     } else {
-      renderHtml = `<i class="fa-solid ${item.val || item.icon || 'fa-gem'} ${item.color || 'text-amber-400'} text-3xl mb-1"></i>`;
+      renderHtml = `<i class="fa-solid ${item.val || item.icon || 'fa-gem'} ${item.color || 'text-emerald-600'} text-2xl mb-1"></i>`;
     }
 
     cell.innerHTML = `
       ${renderHtml}
-      <span class="text-[11px] font-black text-amber-200">${item.prize.toLocaleString('es-PY')} GS</span>
+      <span class="text-[9px] font-extrabold text-slate-700">${item.prize.toLocaleString('es-PY')} GS</span>
+      <canvas class="cell-canvas" id="canvas-${i}"></canvas>
     `;
     grid.appendChild(cell);
+
+    initCellCanvas(i);
   });
 }
 
-function getPos(e) {
-  const r = scratchCanvas.getBoundingClientRect();
-  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-  return { x: clientX - r.left, y: clientY - r.top };
-}
+function initCellCanvas(index) {
+  const canvas = document.getElementById(`canvas-${index}`);
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = (rect.width || 80) * dpr;
+  canvas.height = (rect.height || 80) * dpr;
+  
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const w = rect.width || 80, h = rect.height || 80;
 
-function erase(x, y) {
-  if (isScratchedCompleted) return;
-  
-  scratchCtx.save();
-  scratchCtx.globalCompositeOperation = 'destination-out';
-  scratchCtx.lineCap = 'round';
-  scratchCtx.lineJoin = 'round';
-  scratchCtx.lineWidth = 50;
-  
-  if (lastPos) {
-    scratchCtx.beginPath();
-    scratchCtx.moveTo(lastPos.x, lastPos.y);
-    scratchCtx.lineTo(x, y);
-    scratchCtx.stroke();
-  }
-  
-  scratchCtx.beginPath();
-  scratchCtx.arc(x, y, 25, 0, Math.PI * 2);
-  scratchCtx.fill();
-  scratchCtx.restore();
-  
-  lastPos = { x, y };
-  throttledCheck();
-}
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.clearRect(0, 0, w, h);
 
-function throttledCheck() {
-  if (checkThrottler) return;
-  checkThrottler = setTimeout(() => {
-    checkThrottler = null;
-    checkPercent();
-  }, 50);
-}
+  const grad = ctx.createLinearGradient(0, 0, w, h);
+  grad.addColorStop(0, '#15803d');
+  grad.addColorStop(0.5, '#16a34a');
+  grad.addColorStop(1, '#22c55e');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
 
-function checkPercent() {
-  const w = scratchCanvas.width;
-  const h = scratchCanvas.height;
-  try {
-    const data = scratchCtx.getImageData(0, 0, w, h).data;
-    let transparentPixels = 0, totalPixels = 0;
-    
-    for (let i = 3; i < data.length; i += 32) {
-      totalPixels++;
-      if (data[i] < 20) transparentPixels++;
+  ctx.font = '700 11px "Plus Jakarta Sans", sans-serif';
+  ctx.fillStyle = '#ffffff';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('RASPA', w / 2, h / 2);
+
+  let isDrawing = false;
+  let lastPos = null;
+  let isDone = false;
+
+  const getCellPos = e => {
+    const r = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x: clientX - r.left, y: clientY - r.top };
+  };
+
+  const eraseCell = (x, y) => {
+    if (isDone || isGameLocked) return;
+
+    if (!cardDeducted) {
+      cardDeducted = true;
+      deductTicketOnStart();
     }
-    
-    const percent = Math.min(100, Math.round((transparentPixels / totalPixels) * 100));
-    document.getElementById('scratch-progress').style.width = percent + '%';
-    document.getElementById('progress-text').innerText = percent + '%';
-    
-    if (percent >= 90 && !isScratchedCompleted) {
-      isScratchedCompleted = true;
-      scratchCanvas.style.transition = 'opacity 0.3s ease-out';
-      scratchCanvas.style.opacity = '0';
-      setTimeout(() => scratchCanvas.style.display = 'none', 300);
-      evaluate();
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 25;
+
+    if (lastPos) {
+      ctx.beginPath();
+      ctx.moveTo(lastPos.x, lastPos.y);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    }
+
+    ctx.beginPath();
+    ctx.arc(x, y, 12, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    lastPos = { x, y };
+
+    checkCellCompletion(canvas, ctx, index, () => {
+      isDone = true;
+    });
+  };
+
+  canvas.addEventListener('mousedown', e => {
+    if (isGameLocked) return;
+    e.preventDefault();
+    isDrawing = true;
+    lastPos = null;
+    const p = getCellPos(e);
+    eraseCell(p.x, p.y);
+  });
+
+  canvas.addEventListener('mousemove', e => {
+    if (isGameLocked || !isDrawing) return;
+    e.preventDefault();
+    const p = getCellPos(e);
+    eraseCell(p.x, p.y);
+  });
+
+  window.addEventListener('mouseup', () => { isDrawing = false; lastPos = null; });
+
+  canvas.addEventListener('touchstart', e => {
+    if (isGameLocked) return;
+    isDrawing = true;
+    lastPos = null;
+    const p = getCellPos(e);
+    eraseCell(p.x, p.y);
+  }, { passive: false });
+
+  canvas.addEventListener('touchmove', e => {
+    if (isGameLocked || !isDrawing) return;
+    e.preventDefault();
+    const p = getCellPos(e);
+    eraseCell(p.x, p.y);
+  }, { passive: false });
+
+  canvas.addEventListener('touchend', () => { isDrawing = false; lastPos = null; });
+}
+
+function deductTicketOnStart() {
+  if (!currentUser || !usersDB[currentUser]) return;
+  usersDB[currentUser].tickets = Math.max(0, (usersDB[currentUser].tickets || 0) - 1);
+  saveUserData();
+}
+
+function checkCellCompletion(canvas, ctx, index, markDoneCallback) {
+  try {
+    const w = canvas.width;
+    const h = canvas.height;
+    const data = ctx.getImageData(0, 0, w, h).data;
+    let transparent = 0, total = 0;
+
+    for (let i = 3; i < data.length; i += 32) {
+      total++;
+      if (data[i] < 20) transparent++;
+    }
+
+    const pct = (transparent / total) * 100;
+    if (pct >= 85) {
+      markDoneCallback();
+      canvas.style.transition = 'opacity 0.3s ease';
+      canvas.style.opacity = '0';
+      setTimeout(() => {
+        canvas.style.display = 'none';
+      }, 300);
+
+      registerCellScratched();
     }
   } catch (e) {}
+}
+
+function registerCellScratched() {
+  cellsScratchedCount++;
+  if (cellsScratchedCount > 9) cellsScratchedCount = 9;
+
+  const progressPct = Math.round((cellsScratchedCount / 9) * 100);
+  document.getElementById('scratch-progress').style.width = progressPct + '%';
+  document.getElementById('progress-text').innerText = cellsScratchedCount + ' / 9';
+
+  if (cellsScratchedCount === 9 && !evaluated) {
+    evaluated = true;
+    evaluate();
+  }
 }
 
 function evaluate() {
@@ -415,20 +484,25 @@ function evaluate() {
     stampWinAmount.innerText = '+' + winAmount.toLocaleString('es-PY') + ' GS';
   } else {
     playLoseSound();
-
     stampWin.classList.add('hidden');
     stampLose.classList.remove('hidden');
   }
 
-  usersDB[currentUser].tickets = Math.max(0, (usersDB[currentUser].tickets || 0) - 1);
   if (!usersDB[currentUser].history) usersDB[currentUser].history = [];
   
+  const now = new Date();
+  const formattedDate = now.toLocaleDateString('es-ES', { 
+    day: '2-digit', 
+    month: '2-digit', 
+    year: 'numeric' 
+  }) + ' - ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
   usersDB[currentUser].history.unshift({
     code: currentCode,
     serie: currentSerie,
     win: isWin,
     prize: winAmount,
-    date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    date: formattedDate
   });
 
   saveUserData();
@@ -472,84 +546,70 @@ function playLoseSound() {
 }
 
 function resetGame() {
-  isScratchedCompleted = false;
-  isDrawing = false;
-  lastPos = null;
-  
+  isGameLocked = false;
   document.getElementById('game-stamp-overlay').classList.add('hidden');
   document.getElementById('stamp-lose').classList.add('hidden');
   document.getElementById('stamp-win').classList.add('hidden');
 
-  scratchCanvas.style.display = 'block';
-  scratchCanvas.style.opacity = '1';
-  document.getElementById('scratch-progress').style.width = '0%';
-  document.getElementById('progress-text').innerText = '0%';
-  
   currentCode = Math.floor(1000 + Math.random() * 9000).toString();
   currentSerie = 'A' + Math.floor(1000 + Math.random() * 9000);
   
-  document.getElementById('fichas-code').innerText = currentCode;
+  document.getElementById('fichas-num').innerText = fichasCount;
   document.getElementById('card-big-number').innerText = currentCode;
   document.getElementById('serie-code-top').innerText = 'SERIE ' + currentSerie;
   document.getElementById('card-big-serie').innerText = 'SERIE ' + currentSerie;
   
   generateCardData();
-  initCanvas();
+  initGridCanvas();
 }
 
-window.nextCard = async function() {
-  await initDB();
-  if (!usersDB[currentUser].tickets || usersDB[currentUser].tickets <= 0) {
-    showToast('No tienes más fichas. Volviendo al inicio...', 'error');
-    setTimeout(goToDashboard, 1500);
-    return;
-  }
-  fichasCount++;
-  document.getElementById('fichas-num').innerText = fichasCount;
-  resetGame();
-};
+// NUEVA CONFIGURACIÓN DE BOTÓN RÁPIDO SIN DOBLES TOQUES (USA TOUCHSTART Y CLICK)
+function setupNextButton() {
+  const btn = document.getElementById('btn-next-game');
+  if (!btn) return;
 
-function setupEvents() {
-  scratchCanvas.addEventListener('mousedown', e => {
-    e.preventDefault();
-    isDrawing = true;
-    lastPos = null;
-    const p = getPos(e);
-    erase(p.x, p.y);
-  });
-  
-  scratchCanvas.addEventListener('mousemove', e => {
-    if (isDrawing) {
-      e.preventDefault();
-      const p = getPos(e);
-      erase(p.x, p.y);
+  const handleNextAction = async (e) => {
+    if (e) e.preventDefault();
+    if (isWaitingNextGame || isGameLocked) return;
+    
+    await initDB();
+    if (!usersDB[currentUser].tickets || usersDB[currentUser].tickets <= 0) {
+      showToast('No tienes fichas disponibles en tu cuenta.', 'error');
+      setTimeout(goToDashboard, 1500);
+      return;
     }
-  });
+
+    isWaitingNextGame = true;
+    isGameLocked = true;
+    
+    const txt = document.getElementById('btn-next-text');
+    btn.disabled = true; // Bloquea físicamente el botón para evitar dobles toques
+    
+    let countdown = 3;
+    if (txt) txt.innerHTML = `⏳ Espera (${countdown}s)...`;
+
+    const timer = setInterval(() => {
+      countdown--;
+      if (countdown > 0) {
+        if (txt) txt.innerHTML = `⏳ Espera (${countdown}s)...`;
+      } else {
+        clearInterval(timer);
+        isWaitingNextGame = false;
+        if (btn) btn.disabled = false; // Desbloquea el botón al terminar
+        if (txt) txt.innerHTML = `🎲 Siguiente Juego`;
+        
+        fichasCount++;
+        resetGame();
+      }
+    }, 1000);
+  };
+
+  // Remover eventos anteriores si existían y asignar respuesta táctil instantánea
+  btn.replaceWith(btn.cloneNode(true));
+  const newBtn = document.getElementById('btn-next-game');
   
-  window.addEventListener('mouseup', () => {
-    isDrawing = false;
-    lastPos = null;
-  });
-  
-  scratchCanvas.addEventListener('touchstart', e => {
-    isDrawing = true;
-    lastPos = null;
-    const p = getPos(e);
-    erase(p.x, p.y);
-  }, { passive: false });
-  
-  scratchCanvas.addEventListener('touchmove', e => {
-    if (isDrawing) {
-      e.preventDefault();
-      const p = getPos(e);
-      erase(p.x, p.y);
-    }
-  }, { passive: false });
-  
-  scratchCanvas.addEventListener('touchend', () => {
-    isDrawing = false;
-    lastPos = null;
-  });
+  newBtn.addEventListener('touchstart', handleNextAction, { passive: false });
+  newBtn.addEventListener('click', handleNextAction);
 }
 
 window.addEventListener('beforeunload', () => {
@@ -560,11 +620,12 @@ window.addEventListener('beforeunload', () => {
 
 window.onload = () => {
   checkSession();
-  setupEvents();
+  setupNextButton(); // Inicializa el botón rápido
 };
 
-window.onresize = () => {
-  if (!isScratchedCompleted && !document.getElementById('view-game').classList.contains('hidden')) {
-    initCanvas();
-  }
+// Asegurar que al cambiar a la vista de juego también se active el botón
+const originalGoToGame = window.goToGame;
+window.goToGame = async function() {
+  await originalGoToGame();
+  setupNextButton();
 };
