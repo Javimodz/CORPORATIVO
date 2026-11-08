@@ -19,7 +19,6 @@ let prizesDB = [];
 let cardConfigDB = {};
 let currentUser = sessionStorage.getItem('raspa_logged_user') || null;
 
-// Cargar todos los datos desde Firebase
 async function initDB() {
   try {
     const docRef = doc(db, "sistema", "datos_globales");
@@ -37,7 +36,6 @@ async function initDB() {
   }
 }
 
-// Guardar los datos actuales en Firebase de manera segura
 async function saveToCloud() {
   try {
     const docRef = doc(db, "sistema", "datos_globales");
@@ -235,10 +233,11 @@ function initCanvas() {
 }
 
 function generateCardData() {
-  let ITEMS = prizesDB && prizesDB.length > 0 ? prizesDB : [
-    { id: 'p1', name: 'Premio Chico (Recarga)', type: 'emoji', val: '🎟️', color: '', prize: 5000 },
-    { id: 'p2', name: 'Premio Chico (Suerte)', type: 'emoji', val: '🍀', color: '', prize: 10000 },
-    { id: 'p3', name: 'Corona Real', type: 'icon', val: 'fa-crown', color: 'text-yellow-400', prize: 50000 }
+  let ALL_ITEMS = prizesDB && prizesDB.length > 0 ? prizesDB : [
+    { id: 'p1', name: 'Premio Chico (Recarga)', type: 'emoji', val: '🎟️', color: '', prize: 5000, isVisual: false },
+    { id: 'p2', name: 'Premio Chico (Suerte)', type: 'emoji', val: '🍀', color: '', prize: 10000, isVisual: false },
+    { id: 'p3', name: 'Corona Real', type: 'icon', val: 'fa-crown', color: 'text-yellow-400', prize: 50000, isVisual: false },
+    { id: 'p4', name: 'Trofeo Jackpot (Visual)', type: 'emoji', val: '🏆', color: '', prize: 5000000, isVisual: true }
   ];
 
   if (cardConfigDB && Object.keys(cardConfigDB).length > 0) {
@@ -248,15 +247,18 @@ function generateCardData() {
     document.getElementById('card-price-badge').innerText = (cardConfigDB.price || 5000).toLocaleString('es-PY');
   }
 
-  // PROBABILIDAD GLOBAL CONTROLADA DESDE EL PANEL DE ADMINISTRACIÓN
+  // Separar premios reales ganables y premios estrictamente visuales (nunca ganables)
+  const realWinItems = ALL_ITEMS.filter(item => !item.isVisual);
+  const visualItems = ALL_ITEMS.filter(item => item.isVisual);
+
   const configuredRate = cardConfigDB && cardConfigDB.winRate !== undefined ? Number(cardConfigDB.winRate) : 15;
   const winRate = configuredRate / 100;
 
   gridData = [];
   const isWinner = Math.random() < winRate;
   
-  if (isWinner) {
-    winningItem = ITEMS[Math.floor(Math.random() * ITEMS.length)];
+  if (isWinner && realWinItems.length > 0) {
+    winningItem = realWinItems[Math.floor(Math.random() * realWinItems.length)];
     for (let i = 0; i < 3; i++) gridData.push({ ...winningItem });
     const count = {};
     count[winningItem.id || winningItem.name] = 3;
@@ -264,25 +266,34 @@ function generateCardData() {
     for (let i = 0; i < 6; i++) {
       let item;
       do {
-        item = ITEMS[Math.floor(Math.random() * ITEMS.length)];
+        item = ALL_ITEMS[Math.floor(Math.random() * ALL_ITEMS.length)];
       } while ((count[item.id || item.name] || 0) >= 2 || (winningItem && (item.id === winningItem.id || item.name === winningItem.name)));
       count[item.id || item.name] = (count[item.id || item.name] || 0) + 1;
       gridData.push({ ...item });
     }
   } else {
-    // SI PIERDE, EL ALGORITMO IMPIDE RIGUROSAMENTE QUE APAREZCAN 3 SÍMBOLOS IGUALES
+    // SI PIERDE, EL ALGORITMO IMPIDE RIGUROSAMENTE QUE APAREZCAN 3 SÍMBOLOS IGUALES DE CUALQUIER PREMIO
     winningItem = null;
     const count = {};
-    for (let i = 0; i < 9; i++) {
+    
+    // Inserción sutil de 2 símbolos iguales de un premio visual para hacer creer a la mente humana que estuvo cerca
+    if (visualItems.length > 0 && Math.random() < 0.7) {
+      const vItem = visualItems[Math.floor(Math.random() * visualItems.length)];
+      gridData.push({ ...vItem }, { ...vItem });
+      count[vItem.id || vItem.name] = 2;
+    }
+
+    for (let i = gridData.length; i < 9; i++) {
       let item;
       do {
-        item = ITEMS[Math.floor(Math.random() * ITEMS.length)];
+        item = ALL_ITEMS[Math.floor(Math.random() * ALL_ITEMS.length)];
       } while ((count[item.id || item.name] || 0) >= 2);
       count[item.id || item.name] = (count[item.id || item.name] || 0) + 1;
       gridData.push({ ...item });
     }
   }
   
+  // Se intercambian de lugar aleatoriamente en cada juego
   gridData.sort(() => Math.random() - 0.5);
   
   const grid = document.getElementById('grid');
@@ -386,7 +397,7 @@ function evaluate() {
 
   overlay.classList.remove('hidden');
 
-  if (winningItem) {
+  if (winningItem && !winningItem.isVisual) {
     isWin = true;
     winAmount = winningItem.prize;
     gridData.forEach((it, i) => {
