@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Raspadita De La Suerte - Raspaditas Exclusivas</title>
+<title>Casino VIP - Saldo de Juego</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
@@ -50,53 +50,53 @@ body {
 
 .game-grid {
   width: 100%;
-  max-width: 275px;
+  max-width: 280px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  gap: 7px;
-  padding: 8px;
-  background: #e2e8f0;
-  border-radius: 16px;
-  border: 2px solid #cbd5e1;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);
+  gap: 8px;
+  padding: 10px;
+  background: #0f172a;
+  border-radius: 18px;
+  border: 3px solid #1e293b;
+  box-shadow: inset 0 4px 10px rgba(0,0,0,0.5);
 }
 
 .grid-cell {
   position: relative;
   aspect-ratio: 1;
-  background: #f8fafc;
-  border-radius: 10px;
+  background: linear-gradient(145deg, #1e293b, #0f172a);
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #334155;
   overflow: hidden;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.grid-cell.revealed {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  animation: flipIn 0.3s ease-out forwards;
 }
 
 .grid-cell.matched {
-  border-color: #22c55e;
+  border: 2px solid #22c55e;
   background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
   animation: match-pulse 0.8s infinite alternate;
 }
 
-@keyframes match-pulse {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.04); box-shadow: 0 0 15px #22c55e; }
+@keyframes flipIn {
+  0% { transform: scale(0.8) rotateY(90deg); opacity: 0.5; }
+  100% { transform: scale(1) rotateY(0deg); opacity: 1; }
 }
 
-.cell-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 20;
-  cursor: crosshair;
-  touch-action: none;
+@keyframes match-pulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.05); box-shadow: 0 0 15px #22c55e; }
 }
 
 .btn-lime-luxury {
@@ -115,9 +115,9 @@ body {
 }
 
 .btn-lime-luxury:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
-  filter: grayscale(0.3);
+  filter: grayscale(0.5);
   pointer-events: none;
 }
 
@@ -144,16 +144,9 @@ body {
   flex-direction: column;
 }
 
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 </style>
 </head>
 <body>
@@ -169,10 +162,10 @@ body {
   <div id="view-auth" class="p-6 flex flex-col gap-4 my-auto">
     <div class="text-center my-1">
       <div class="inline-flex p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 mb-2.5 shadow-inner">
-        <i class="fa-solid fa-dice text-3xl text-emerald-600"></i>
+        <i class="fa-solid fa-wallet text-3xl text-emerald-600"></i>
       </div>
-      <h1 class="text-2xl font-extrabold tracking-tight lime-gradient-text" id="login-brand-title">RASPADITA DE LA SUERTE</h1>
-      <p class="text-[10px] text-slate-500 font-bold mt-0.5 tracking-[0.2em] uppercase">¡ RASPA Y GANA !</p>
+      <h1 class="text-2xl font-extrabold tracking-tight lime-gradient-text" id="login-brand-title">CASINO VIP DE LA SUERTE</h1>
+      <p class="text-[10px] text-slate-500 font-bold mt-0.5 tracking-[0.2em] uppercase">¡ JUEGA CON TU SALDO DE JUEGO !</p>
     </div>
 
     <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-center text-[11px] font-semibold text-slate-700 flex items-center justify-center gap-2 shadow-inner">
@@ -238,45 +231,47 @@ body {
       </div>
     </div>
 
+    <!-- DOS CAJAS SEPARADAS: SALDO DE JUEGO Y PREMIOS GANADOS -->
     <div class="grid grid-cols-2 gap-2.5">
-      <div class="bg-gradient-to-br from-emerald-50 via-white to-slate-50 p-3 rounded-2xl border border-emerald-200 flex flex-col justify-between shadow-sm">
-        <div class="flex items-center justify-between text-slate-600 text-[10px] font-bold tracking-wider mb-1">
-          <span>SALDO (GS)</span>
-          <i class="fa-solid fa-coins text-emerald-600 text-sm"></i>
+      <!-- SALDO DE JUEGO (CADA JUEGO CUESTA 2.500 GS) -->
+      <div class="bg-gradient-to-br from-amber-50 via-white to-slate-50 p-3 rounded-2xl border border-amber-300 flex flex-col justify-between shadow-sm">
+        <div class="flex items-center justify-between text-amber-800 text-[10px] font-bold tracking-wider mb-1">
+          <span>SALDO DE JUEGO</span>
+          <i class="fa-solid fa-wallet text-amber-500 text-sm"></i>
         </div>
         <div>
-          <div id="dash-balance" class="text-base font-black lime-gradient-text">0 GS</div>
-          <div class="text-[9px] text-slate-500 font-semibold mt-0.5">Saldo disponible</div>
+          <div id="dash-tickets" class="text-base font-black text-amber-600">0 GS</div>
+          <div class="text-[9px] text-slate-500 font-semibold mt-0.5">Para apostar (2.500 GS/juego)</div>
         </div>
       </div>
 
-      <div class="bg-gradient-to-br from-purple-50 via-white to-slate-50 p-3 rounded-2xl border border-purple-200 flex flex-col justify-between shadow-sm">
-        <div class="flex items-center justify-between text-slate-600 text-[10px] font-bold tracking-wider mb-1">
-          <span>TICKETS VIP</span>
-          <i class="fa-solid fa-ticket text-purple-600 text-sm"></i>
+      <!-- PREMIOS GANADOS (PROTEGIDOS Y SEPARADOS) -->
+      <div class="bg-gradient-to-br from-emerald-50 via-white to-slate-50 p-3 rounded-2xl border border-emerald-300 flex flex-col justify-between shadow-sm">
+        <div class="flex items-center justify-between text-emerald-800 text-[10px] font-bold tracking-wider mb-1">
+          <span>PREMIOS GANADOS</span>
+          <i class="fa-solid fa-trophy text-emerald-600 text-sm"></i>
         </div>
         <div>
-          <div id="dash-tickets" class="text-lg font-black text-purple-700">0</div>
-          <div class="text-[9px] text-slate-500 font-semibold mt-0.5">Fichas para jugar</div>
+          <div id="dash-balance" class="text-base font-black lime-gradient-text">0 GS</div>
+          <div class="text-[9px] text-slate-500 font-semibold mt-0.5">Saldo protegido (Retirable)</div>
         </div>
       </div>
     </div>
 
-    <button onclick="goToGame()" class="w-full py-3 rounded-xl font-extrabold text-white text-xs btn-lime-luxury shadow-xl hover:brightness-105 active:scale-[0.98] transition flex items-center justify-center gap-2 uppercase tracking-wider">
+    <button onclick="goToGame()" class="w-full py-3.5 rounded-xl font-extrabold text-white text-xs btn-lime-luxury shadow-xl hover:brightness-105 active:scale-[0.98] transition flex items-center justify-center gap-2 uppercase tracking-wider">
       <i class="fa-solid fa-dice text-base text-white"></i>
-      <span>JUGAR RASPADITA</span>
+      <span>ENTRAR A LA MESA DE JUEGO</span>
     </button>
 
-    <!-- HISTORIAL DE JUEGOS AMPLIADO Y CÓMODO -->
+    <!-- HISTORIAL -->
     <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200 shadow-sm">
       <div class="text-[11px] font-bold text-slate-800 mb-2.5 flex justify-between items-center px-1">
-        <span>HISTORIAL DE JUEGOS</span>
+        <span>HISTORIAL DE JUGADAS</span>
         <i class="fa-solid fa-clock-rotate-left text-emerald-600"></i>
       </div>
       <div id="history-list" class="flex flex-col gap-2 max-h-52 overflow-y-auto pr-1.5 custom-scrollbar"></div>
     </div>
 
-    <!-- BOTÓN DISCRETO AL FINAL DEL DASHBOARD -->
     <div class="pt-1 pb-1 text-center border-t border-slate-200 mt-1">
       <button onclick="toggleTermsModal(true)" class="text-[10px] text-slate-500 hover:text-emerald-700 transition underline font-semibold">
         Términos y Condiciones y Política Antifraude
@@ -287,72 +282,80 @@ body {
     </div>
   </div>
 
-  <!-- VISTA 2: JUEGO DE RASPADITA -->
+  <!-- VISTA 2: MESA DE CASINO -->
   <div id="view-game" class="hidden flex-col">
-    <div class="px-4 py-2 bg-slate-100 flex justify-between items-center text-slate-800 text-xs font-semibold border-b border-slate-200">
-      <div>
-        <span class="text-emerald-700 block text-[10px] font-bold">Raspadita # <span id="fichas-num">1</span></span>
-        <span class="text-slate-500 text-[9px]" id="serie-code-top">SERIE A3606</span>
+    <div class="px-3.5 py-2.5 bg-slate-900 text-white flex justify-between items-center border-b border-slate-800">
+      <div class="flex items-center gap-3">
+        <div class="bg-slate-800 px-2.5 py-1 rounded-xl border border-amber-500/40">
+          <span class="text-[8px] text-amber-400 block font-bold uppercase">Saldo de Juego</span>
+          <span class="text-xs font-black text-white flex items-center gap-1">
+            <i class="fa-solid fa-wallet text-amber-400 text-[10px]"></i>
+            <span id="game-live-chips">0 GS</span>
+          </span>
+        </div>
+        <div class="bg-slate-800 px-2.5 py-1 rounded-xl border border-emerald-500/40">
+          <span class="text-[8px] text-emerald-400 block font-bold uppercase">Premios Ganados</span>
+          <span class="text-xs font-black text-emerald-300" id="game-live-prizes">0 GS</span>
+        </div>
       </div>
-      <div>
-        <button onclick="goToDashboard()" class="bg-white hover:bg-slate-50 text-emerald-700 px-3 py-1 rounded-full border border-emerald-300 text-[10px] transition flex items-center gap-1 font-bold shadow-sm">
-          <i class="fa-solid fa-arrow-left"></i>CERRAR</button>
-      </div>
+
+      <button onclick="goToDashboard()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl border border-slate-600 text-[10px] transition flex items-center gap-1 font-bold">
+        <i class="fa-solid fa-arrow-left"></i> SALIR
+      </button>
     </div>
 
     <div class="p-3 flex-1 flex flex-col items-center gap-2.5">
       <div class="w-full card-luxury-light p-3 rounded-2xl relative">
-        <div class="absolute top-2 left-2 bg-emerald-600 text-white font-black text-[9px] px-2 py-0.5 rounded-lg border border-emerald-400 text-center leading-tight shadow">APUESTA<br><span id="card-price-badge">5.000</span> GS</div>
-        <div class="absolute top-2 right-2 bg-red-600 text-white font-extrabold text-[9px] px-2 py-0.5 rounded-full border border-red-300 shadow">+18 VIP</div>
-        
-        <div class="text-center mt-1.5 mb-1">
-          <h1 class="text-xl font-black italic lime-gradient-text leading-tight" id="card-display-title">RASPADITA DE LA SUERTE</h1>
-          <div class="text-[9px] text-slate-500 font-bold tracking-[0.15em]" id="card-display-subtitle">¡ RASPA Y GANA !</div>
+        <div class="flex justify-between items-center mb-1">
+          <span class="bg-amber-100 text-amber-800 font-black text-[9px] px-2.5 py-0.5 rounded-lg border border-amber-300">
+            APUESTA POR JUEGO: 2.500 GS
+          </span>
+          <span class="text-[9px] font-bold text-slate-400">RONDA #<span id="fichas-num">1</span></span>
         </div>
         
-        <div class="bg-gradient-to-r from-emerald-600 via-green-500 to-emerald-600 text-white text-center text-[10px] font-black py-1 rounded-lg mb-2 shadow uppercase tracking-wider">
-          ★ DESCUBRE 3 SÍMBOLOS IGUALES ★
+        <div class="text-center my-1">
+          <h1 class="text-lg font-black italic lime-gradient-text leading-tight" id="card-display-title">MESA VIP DE LA SUERTE</h1>
+        </div>
+        
+        <div class="bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 text-amber-400 text-center text-[10px] font-black py-1 rounded-lg mb-2.5 shadow uppercase tracking-wider border border-amber-500/30">
+          ★ CONSIGUE 3 SÍMBOLOS IGUALES ★
         </div>
 
+        <!-- TABLERO DE CASINO 3X3 -->
         <div class="game-grid" id="grid"></div>
 
-        <div id="game-stamp-overlay" class="absolute inset-0 z-30 flex items-center justify-center pointer-events-none hidden bg-slate-900/60 backdrop-blur-[2px] rounded-2xl">
+        <!-- OVERLAY DE RESULTADO -->
+        <div id="game-stamp-overlay" class="absolute inset-0 z-30 flex items-center justify-center pointer-events-none hidden bg-slate-900/65 backdrop-blur-[2px] rounded-2xl">
           <div id="stamp-lose" class="hidden text-center animate-stamp px-4">
             <div class="text-3xl mb-1">🎰</div>
             <div class="bg-white text-slate-900 font-black text-xs px-3 py-1.5 rounded-xl border-2 border-slate-300 shadow-2xl tracking-wider">
-              SIGUE INTENTANDO
+              SIN PREMIO ESTA RONDA
             </div>
           </div>
           <div id="stamp-win" class="hidden text-center animate-stamp px-4">
             <div class="text-3xl mb-1">🏆</div>
             <div class="bg-gradient-to-r from-emerald-500 to-green-400 text-white font-black text-xs px-3 py-1.5 rounded-xl border-2 border-white shadow-2xl tracking-wider uppercase">
-              ¡JACKPOT GANADOR!
+              ¡PREMIO GANADO!
             </div>
-            <div id="stamp-win-amount" class="text-emerald-900 font-black text-xs bg-emerald-100 px-2.5 py-1 rounded-lg mt-1 shadow-lg border border-emerald-400 inline-block"></div>
+            <div id="stamp-win-amount" class="text-emerald-950 font-black text-xs bg-emerald-100 px-3 py-1 rounded-lg mt-1.5 shadow-lg border border-emerald-400 inline-block"></div>
+            <div class="text-[9px] text-white font-bold mt-1 drop-shadow">Acreditado en Premios Ganados</div>
           </div>
-        </div>
-
-        <div class="w-full bg-slate-200 rounded-full h-1.5 mt-2.5 overflow-hidden border border-slate-300 p-0.5">
-          <div id="scratch-progress" class="bg-gradient-to-r from-emerald-500 to-green-500 h-full rounded-full scratch-progress-fill w-0 shadow"></div>
-        </div>
-        <div class="flex justify-between text-[9px] text-slate-500 mt-1 font-semibold px-0.5">
-          <span>Casillas descubiertas:</span>
-          <span id="progress-text" class="text-emerald-700 font-bold">0 / 9</span>
         </div>
       </div>
 
-      <!-- PANEL INFERIOR -->
+      <!-- PANEL DE JUEGO -->
       <div id="result-card" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-2.5 text-center shadow-sm">
-        <div class="bg-white text-slate-800 p-2 rounded-xl mb-2 flex justify-between items-center shadow-inner border border-slate-200">
+        <div class="bg-white text-slate-800 px-3 py-1.5 rounded-xl mb-2 flex justify-between items-center shadow-inner border border-slate-200">
           <div class="text-left">
-            <div class="text-[8px] font-black text-slate-400">TICKET NÚMERO</div>
-            <div id="card-big-number" class="text-sm font-black text-slate-900">4777</div>
+            <div class="text-[8px] font-black text-slate-400">JUGADA N°</div>
+            <div id="card-big-number" class="text-xs font-black text-slate-900">4777</div>
           </div>
-          <div id="card-big-serie" class="text-[9px] font-black bg-emerald-50 text-emerald-700 px-2 py-1 rounded-lg border border-emerald-200">SERIE A3606</div>
+          <div id="card-big-serie" class="text-[9px] font-black bg-slate-100 text-slate-700 px-2 py-0.5 rounded-lg border border-slate-300">SERIE A3606</div>
         </div>
         
-        <button id="btn-next-game" class="w-full py-2.5 rounded-xl font-extrabold text-white btn-lime-luxury shadow-xl active:scale-[0.98] transition flex items-center justify-center gap-2 uppercase tracking-wider text-xs">
-          <span id="btn-next-text">🎲 Siguiente Juego</span>
+        <button id="btn-spin-chips" class="w-full py-3 rounded-xl font-extrabold text-white btn-lime-luxury shadow-xl active:scale-[0.98] transition flex items-center justify-center gap-2 uppercase tracking-wider text-xs">
+          <i class="fa-solid fa-wallet text-amber-200"></i>
+          <span id="btn-spin-text">JUGAR (2.500 GS)</span>
         </button>
       </div>
 
@@ -377,19 +380,15 @@ body {
 
       <div class="p-3.5 text-[10px] text-slate-600 space-y-2.5 overflow-y-auto custom-scrollbar leading-relaxed">
         <p class="font-bold text-emerald-700">
-          Raspadita De La Suerte es operado por Cordyline Ltd en Paraguay. Todos los derechos reservados.
+          Casino VIP De La Suerte es operado por Cordyline Ltd en Paraguay. Todos los derechos reservados.
         </p>
         <div>
-          <h4 class="font-bold text-slate-900 uppercase text-[9px] tracking-wider text-emerald-700">1. Monitoreo del Sistema</h4>
-          <p class="text-slate-600">Todas las jugadas y transacciones son registradas y monitoreadas de forma automática para garantizar total transparencia y seguridad.</p>
+          <h4 class="font-bold text-slate-900 uppercase text-[9px] tracking-wider text-emerald-700">1. Saldo de Juego</h4>
+          <p class="text-slate-600">Cada ronda de juego tiene un costo fijo de 2.500 GS descontados del Saldo de Juego. Los premios obtenidos se acreditan en una bóveda independiente y no se mezclan.</p>
         </div>
         <div>
           <h4 class="font-bold text-slate-900 uppercase text-[9px] tracking-wider text-emerald-700">2. Política Antifraude</h4>
           <p class="text-slate-600">Cualquier intento de manipulación del software, uso de scripts o bots anulará inmediatamente las jugadas y el saldo correspondiente.</p>
-        </div>
-        <div>
-          <h4 class="font-bold text-slate-900 uppercase text-[9px] tracking-wider text-emerald-700">3. Retención y Bloqueo</h4>
-          <p class="text-slate-600">En caso de detectar anomalías o infracciones graves, la cuenta será suspendida de manera definitiva sin derecho a reclamos posteriores.</p>
         </div>
       </div>
 
@@ -406,11 +405,8 @@ body {
 <script>
   function toggleTermsModal(show) {
     const modal = document.getElementById('modal-terms');
-    if (show) {
-      modal.classList.remove('hidden');
-    } else {
-      modal.classList.add('hidden');
-    }
+    if (show) modal.classList.remove('hidden');
+    else modal.classList.add('hidden');
   }
 
   function handleLoginWithTerms(e) {
@@ -420,9 +416,7 @@ body {
       alert("Debes aceptar los Términos y Condiciones para continuar.");
       return;
     }
-    if (typeof handleLogin === 'function') {
-      handleLogin(e);
-    }
+    if (typeof handleLogin === 'function') handleLogin(e);
   }
 </script>
 

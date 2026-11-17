@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Panel de Agente - Casino Royal</title>
+<title>Panel de Sub-Agente - Casino Royal</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -14,160 +14,168 @@ body {
   background: #f8fafc;
   background-image: 
     radial-gradient(circle at 50% 10%, #e2e8f0 0%, #f8fafc 70%),
-    repeating-linear-gradient(45deg, rgba(37, 99, 235, 0.02) 0px, rgba(37, 99, 235, 0.02) 2px, transparent 2px, transparent 10px);
+    repeating-linear-gradient(45deg, rgba(16, 185, 129, 0.02) 0px, rgba(16, 185, 129, 0.02) 2px, transparent 2px, transparent 10px);
   min-height: 100vh;
   color: #1e293b;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
-.blue-gradient-text {
-  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 40%, #3b82f6 100%);
+.lime-gradient-text {
+  background: linear-gradient(135deg, #047857 0%, #059669 40%, #10b981 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
 }
-/* EFECTO AZUL AL TOCAR CUALQUIER BOTÓN */
-button, .btn-interactive {
-  transition: all 0.2s ease-in-out !important;
-}
+button, .btn-interactive { transition: all 0.2s ease-in-out !important; }
 button:active, button:hover {
-  background-color: #2563eb !important;
-  color: #ffffff !important;
-  border-color: #1d4ed8 !important;
+  background-color: #10b981 !important;
+  color: #052e16 !important;
+  border-color: #059669 !important;
   transform: scale(0.98);
 }
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-::-webkit-scrollbar-thumb {
-  background: #3b82f6;
-  border-radius: 4px;
-}
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
 </style>
 </head>
 <body class="p-2 sm:p-4 md:p-6 flex flex-col items-center justify-start min-h-screen">
 
-<div class="w-full max-w-5xl bg-white/95 backdrop-blur-xl rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-blue-200 flex flex-col my-2">
+<div class="w-full max-w-5xl bg-white/95 backdrop-blur-xl rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-emerald-200 flex flex-col my-2">
   
   <!-- TOAST ALERTA FLOTANTE -->
-  <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-4 py-2.5 rounded-full text-xs font-black shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2 max-w-[90vw] truncate">
-    <i class="fa-solid fa-crown text-sm shrink-0"></i>
-    <span id="toast-msg" class="truncate">Mensaje</span>
+  <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-500 text-white px-5 py-3 rounded-2xl text-xs font-black shadow-2xl shadow-emerald-500/30 border border-emerald-400/40 opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2.5 max-w-[90vw] truncate backdrop-blur-md">
+    <div class="w-6 h-6 rounded-xl bg-white/20 flex items-center justify-center text-white shrink-0">
+      <i id="toast-icon" class="fa-solid fa-crown text-xs"></i>
+    </div>
+    <span id="toast-msg" class="truncate tracking-wide">Mensaje</span>
   </div>
 
-  <!-- 1. PANTALLA DE LOGIN DE AGENTE -->
+  <!-- MODAL DE CANJE RÁPIDO: CANJEAR PREMIOS DEL CLIENTE POR SALDO DE JUEGO -->
+  <div id="modal-quick-redeem" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl border border-emerald-200 flex flex-col gap-4 animate-in fade-in zoom-in duration-200">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-gift text-emerald-600 text-sm"></i>
+          <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Canjear Premios por Saldo de Juego</h3>
+        </div>
+        <button onclick="closeQuickRedeemModal()" class="text-slate-400 hover:text-slate-700 p-1 text-sm"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs flex flex-col gap-1">
+        <span class="text-slate-500 text-[10px] uppercase font-bold">Cliente Seleccionado</span>
+        <span id="qr-client-name" class="font-black text-slate-900">-</span>
+        <span id="qr-client-balance" class="font-bold text-emerald-600">Premios Ganados: 0 GS</span>
+      </div>
+
+      <form onsubmit="handleQuickRedeem(event)" class="flex flex-col gap-3.5">
+        <input type="hidden" id="qr-username-key">
+        <div class="space-y-1">
+          <label class="block text-[10px] font-bold text-slate-600 uppercase">Monto de Premios a Canjear por Saldo de Juego (GS)</label>
+          <input type="number" id="qr-amount" required min="2500" step="2500" placeholder="Ej: 25000" oninput="calcQuickRedeemPreview()" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-emerald-600">
+          <span id="qr-preview-desc" class="text-[10px] text-emerald-600 block font-bold mt-1">Se acreditará 0 GS de Saldo de Juego</span>
+        </div>
+
+        <div class="flex gap-2 pt-1">
+          <button type="button" onclick="closeQuickRedeemModal()" class="flex-1 py-3 rounded-xl font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition text-xs uppercase">Cancelar</button>
+          <button type="submit" class="flex-1 py-3 rounded-xl font-black text-white bg-emerald-600 hover:bg-emerald-700 transition text-xs shadow uppercase tracking-wider">Confirmar Canje</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 1. PANTALLA DE LOGIN DE SUB-AGENTE -->
   <div id="view-login" class="p-5 sm:p-8 md:p-12 flex flex-col gap-6 max-w-md mx-auto w-full my-auto">
     <div class="text-center">
-      <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-400 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-blue-500/20 border border-blue-200 text-white">
-        <i class="fa-solid fa-headset text-3xl sm:text-4xl"></i>
+      <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-tr from-emerald-700 via-emerald-600 to-teal-400 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-emerald-500/20 border border-emerald-200 text-white">
+        <i class="fa-solid fa-user-gear text-3xl sm:text-4xl"></i>
       </div>
-      <h1 class="text-xl sm:text-2xl font-black italic blue-gradient-text tracking-wide">PANEL DE AGENTE ROYAL</h1>
-      <p class="text-[11px] sm:text-xs text-slate-500 mt-1 font-medium">Ingresa con tu usuario y contraseña asignados</p>
+      <h1 class="text-xl sm:text-2xl font-black italic lime-gradient-text tracking-wide">PANEL DE SUB-AGENTE</h1>
+      <p class="text-[11px] sm:text-xs text-slate-500 mt-1 font-medium">Ingresa con tus credenciales asignadas</p>
     </div>
 
-    <form onsubmit="handleAgentLogin(event)" class="flex flex-col gap-4 mt-1">
+    <form onsubmit="handleSubAgentLogin(event)" class="flex flex-col gap-4 mt-1">
       <div class="space-y-1">
-        <label class="block text-xs font-bold text-slate-700">Usuario de Agente</label>
+        <label class="block text-xs font-bold text-slate-700">Usuario de Sub-Agente</label>
         <div class="relative">
-          <i class="fa-solid fa-user absolute left-4 top-3.5 text-blue-500 text-xs"></i>
-          <input type="text" id="agent-user" required placeholder="Ingresa tu usuario" class="w-full bg-slate-50 border border-slate-300 rounded-xl py-3 pl-10 pr-4 text-xs text-slate-800 focus:outline-none focus:border-blue-600 transition">
+          <i class="fa-solid fa-user absolute left-4 top-3.5 text-emerald-600 text-xs"></i>
+          <input type="text" id="subagent-user" required placeholder="Ingresa tu usuario" class="w-full bg-slate-50 border border-slate-300 rounded-xl py-3 pl-10 pr-4 text-xs text-slate-800 focus:outline-none focus:border-emerald-600 transition">
         </div>
       </div>
       <div class="space-y-1">
         <label class="block text-xs font-bold text-slate-700">Contraseña</label>
         <div class="relative">
-          <i class="fa-solid fa-lock absolute left-4 top-3.5 text-blue-500 text-xs"></i>
-          <input type="password" id="agent-pass" required placeholder="Ingresa tu contraseña" class="w-full bg-slate-50 border border-slate-300 rounded-xl py-3 pl-10 pr-4 text-xs text-slate-800 focus:outline-none focus:border-blue-600 transition">
+          <i class="fa-solid fa-lock absolute left-4 top-3.5 text-emerald-600 text-xs"></i>
+          <input type="password" id="subagent-pass" required placeholder="Ingresa tu contraseña" class="w-full bg-slate-50 border border-slate-300 rounded-xl py-3 pl-10 pr-4 text-xs text-slate-800 focus:outline-none focus:border-emerald-600 transition">
         </div>
       </div>
-      <button type="submit" class="w-full mt-2 py-3.5 rounded-xl font-black text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/20 active:scale-[0.98] transition text-xs uppercase tracking-wider">Iniciar Sesión</button>
+      <button type="submit" class="w-full mt-2 py-3.5 rounded-xl font-black text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-500/20 active:scale-[0.98] transition text-xs uppercase tracking-wider">Iniciar Sesión</button>
     </form>
   </div>
 
-  <!-- 2. DASHBOARD DE AGENTE -->
+  <!-- 2. DASHBOARD DE SUB-AGENTE -->
   <div id="view-dashboard" class="hidden flex-col">
-    <!-- Header Agente -->
     <div class="px-3 sm:px-6 py-3 bg-slate-900 flex justify-between items-center text-white border-b border-slate-800">
       <div class="flex items-center gap-2.5">
-        <div class="w-8 h-8 rounded-xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400 shrink-0">
-          <i class="fa-solid fa-user-tie text-sm"></i>
+        <div class="w-8 h-8 rounded-xl bg-emerald-600/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
+          <i class="fa-solid fa-user-gear text-sm"></i>
         </div>
         <div>
-          <h2 class="text-xs sm:text-sm font-black text-white tracking-wide uppercase" id="agent-header-name">AGENTE VIP</h2>
-          <span class="text-[9px] text-blue-400 font-medium block">Agente Autorizado Royal</span>
+          <h2 class="text-xs sm:text-sm font-black text-white tracking-wide uppercase" id="subagent-header-name">SUB-AGENTE VIP</h2>
+          <span class="text-[9px] text-emerald-400 font-medium block">Casino Royal ☁️</span>
         </div>
       </div>
-      <button onclick="agentLogout()" class="bg-red-500/10 hover:bg-red-600 hover:text-white text-red-300 text-[11px] px-3 py-1.5 rounded-xl border border-red-800/50 transition flex items-center gap-1.5 font-bold active:scale-95">
+      <button onclick="subAgentLogout()" class="bg-red-500/10 hover:bg-red-600 hover:text-white text-red-300 text-[11px] px-3 py-1.5 rounded-xl border border-red-800/50 transition flex items-center gap-1.5 font-bold active:scale-95">
         <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden sm:inline">Salir</span>
       </button>
     </div>
 
-    <!-- TARJETAS DE RESUMEN CLARAS Y RESPONSIVAS -->
+    <!-- TARJETAS DE RESUMEN -->
     <div class="px-3 sm:px-6 pt-3 grid grid-cols-3 gap-2">
-      <!-- Stock de fichas -->
-      <div class="bg-white border border-slate-200 rounded-xl p-2.5 flex flex-col justify-between shadow-sm">
-        <div class="flex items-center justify-between text-blue-600">
-          <span class="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-tight truncate">Fichas Stock</span>
-          <i class="fa-solid fa-ticket text-xs"></i>
-        </div>
-        <div class="mt-1">
-          <span class="text-sm sm:text-lg font-black text-blue-600 block truncate" id="agent-stock-tickets">0</span>
-        </div>
-      </div>
-
-      <!-- Stock de Canje -->
-      <div class="bg-white border border-slate-200 rounded-xl p-2.5 flex flex-col justify-between shadow-sm">
-        <div class="flex items-center justify-between text-amber-500">
-          <span class="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-tight truncate">Canje (Stock)</span>
-          <i class="fa-solid fa-gift text-xs"></i>
-        </div>
-        <div class="mt-1">
-          <span class="text-sm sm:text-lg font-black text-amber-500 block truncate" id="agent-stock-redeem">0</span>
-        </div>
-      </div>
-
-      <!-- Saldo Actual del Agente -->
       <div class="bg-white border border-slate-200 rounded-xl p-2.5 flex flex-col justify-between shadow-sm">
         <div class="flex items-center justify-between text-emerald-600">
-          <span class="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-tight truncate">Retiros</span>
+          <span class="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-tight truncate">Saldo de Juego Stock</span>
           <i class="fa-solid fa-wallet text-xs"></i>
         </div>
         <div class="mt-1">
-          <span class="text-xs sm:text-base font-black text-emerald-600 block truncate" id="agent-current-balance">0 GS</span>
+          <span class="text-xs sm:text-sm font-black text-emerald-600 block truncate" id="subagent-stock-tickets">0 GS</span>
+        </div>
+      </div>
+
+      <div class="bg-white border border-slate-200 rounded-xl p-2.5 flex flex-col justify-between shadow-sm">
+        <div class="flex items-center justify-between text-amber-500">
+          <span class="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-tight truncate">Stock Canjes</span>
+          <i class="fa-solid fa-gift text-xs"></i>
+        </div>
+        <div class="mt-1">
+          <span class="text-sm sm:text-lg font-black text-amber-500 block truncate" id="subagent-stock-redeem">0</span>
+        </div>
+      </div>
+
+      <div class="bg-white border border-slate-200 rounded-xl p-2.5 flex flex-col justify-between shadow-sm">
+        <div class="flex items-center justify-between text-emerald-600">
+          <span class="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-tight truncate">Premio Pagado</span>
+          <i class="fa-solid fa-hand-holding-dollar text-xs"></i>
+        </div>
+        <div class="mt-1">
+          <span class="text-xs sm:text-base font-black text-emerald-600 block truncate" id="subagent-current-balance">0 GS</span>
         </div>
       </div>
     </div>
 
-    <!-- Menú de Pestañas -->
-    <div class="flex p-2 bg-slate-100 border-b border-slate-200 overflow-x-auto no-scrollbar gap-2 mt-3">
-      <button onclick="switchTab('create')" id="tab-create" class="py-2 px-3 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold bg-blue-600 text-white transition flex items-center justify-center gap-1.5 shrink-0 shadow">
+    <div class="flex p-3 bg-slate-100 border-b border-slate-200 overflow-x-auto no-scrollbar gap-3 mt-3">
+      <button onclick="switchTab('create')" id="tab-create" class="py-2.5 px-4 sm:px-6 rounded-xl text-[11px] sm:text-xs font-extrabold bg-emerald-600 text-white transition flex items-center justify-center gap-2 shrink-0 shadow">
         <i class="fa-solid fa-user-plus text-xs"></i> Crear Jugador
       </button>
-      <button onclick="switchTab('subagents')" id="tab-subagents" class="py-2 px-3 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-600 hover:text-white bg-white border border-slate-200 transition flex items-center justify-center gap-1.5 shrink-0">
-        <i class="fa-solid fa-user-gear text-xs"></i> Agentes
+      <button onclick="switchTab('clients')" id="tab-clients" class="py-2.5 px-4 sm:px-6 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-600 hover:text-white bg-white border border-slate-200 transition flex items-center justify-center gap-2 shrink-0">
+        <i class="fa-solid fa-users text-xs"></i> Jugadores
       </button>
-      <button onclick="switchTab('clients')" id="tab-clients" class="py-2 px-3 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-600 hover:text-white bg-white border border-slate-200 transition flex items-center justify-center gap-1.5 shrink-0">
-        <i class="fa-solid fa-users text-xs"></i> Clientes
-      </button>
-      <button onclick="switchTab('withdrawals')" id="tab-withdrawals" class="py-2 px-3 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-600 hover:text-white bg-white border border-slate-200 transition flex items-center justify-center gap-1.5 shrink-0">
+      <button onclick="switchTab('withdrawals')" id="tab-withdrawals" class="py-2.5 px-4 sm:px-6 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-600 hover:text-white bg-white border border-slate-200 transition flex items-center justify-center gap-2 shrink-0">
         <i class="fa-solid fa-money-bill-transfer text-xs"></i> Retiros
       </button>
-      <button onclick="switchTab('redeem')" id="tab-redeem" class="py-2 px-3 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-600 hover:text-white bg-white border border-slate-200 transition flex items-center justify-center gap-1.5 shrink-0">
-        <i class="fa-solid fa-gift text-xs"></i> Canjes
-      </button>
-      <button onclick="switchTab('history')" id="tab-history" class="py-2 px-3 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-600 hover:text-white bg-white border border-slate-200 transition flex items-center justify-center gap-1.5 shrink-0">
-        <i class="fa-solid fa-clock-rotate-left text-xs"></i> Historial y Apuestas
+      <button onclick="switchTab('history')" id="tab-history" class="py-2.5 px-4 sm:px-6 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-600 hover:text-white bg-white border border-slate-200 transition flex items-center justify-center gap-2 shrink-0">
+        <i class="fa-solid fa-clock-rotate-left text-xs"></i> Historial
       </button>
     </div>
 
@@ -177,86 +185,33 @@ button:active, button:hover {
       <div id="section-create" class="flex flex-col gap-5">
         <div class="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm max-w-xl mx-auto w-full">
           <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100">
-            <i class="fa-solid fa-user-plus text-blue-600 text-xs"></i>
+            <i class="fa-solid fa-user-plus text-emerald-600 text-xs"></i>
             <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Crear Nuevo Jugador / Cliente VIP</h3>
           </div>
           
           <form onsubmit="handleCreateClient(event)" class="flex flex-col gap-3.5">
             <div class="space-y-1">
               <label class="block text-[10px] font-bold text-slate-600 uppercase">Nombre Completo</label>
-              <input type="text" id="c-name" required placeholder="Nombre y Apellido" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-blue-600">
-            </div>
-            <div class="space-y-1">
-              <label class="block text-[10px] font-bold text-slate-600 uppercase">Usuario (Login)</label>
-              <input type="text" id="c-username" required placeholder="Crea Usuario" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-blue-600">
+              <input type="text" id="c-name" required placeholder="Nombre y Apellido" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-emerald-600">
             </div>
             <div class="space-y-1">
               <label class="block text-[10px] font-bold text-slate-600 uppercase">Contraseña</label>
-              <input type="password" id="c-pass" required placeholder="Crea Contraseña" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-blue-600">
+              <input type="password" id="c-pass" required placeholder="Crea Contraseña" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-emerald-600">
             </div>
             <div class="pt-1">
-              <button type="submit" class="w-full py-3.5 rounded-xl font-black text-white bg-blue-600 hover:bg-blue-700 transition text-xs shadow uppercase tracking-wider">Registrar Cliente</button>
+              <button type="submit" class="w-full py-3.5 rounded-xl font-black text-white bg-emerald-600 hover:bg-emerald-700 transition text-xs shadow uppercase tracking-wider">Registrar Cliente</button>
             </div>
           </form>
         </div>
       </div>
 
-      <!-- SECCIÓN 2: AGENTES -->
-      <div id="section-subagents" class="hidden flex-col gap-5">
-        <div class="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm max-w-xl mx-auto w-full mb-4">
-          <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100">
-            <i class="fa-solid fa-user-tie text-blue-600 text-xs"></i>
-            <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Crear Nuevo Sub-Agente</h3>
-          </div>
-          <form onsubmit="handleCreateSubAgent(event)" class="flex flex-col gap-3.5">
-            <div class="space-y-1">
-              <label class="block text-[10px] font-bold text-slate-600 uppercase">Nombre del Agente</label>
-              <input type="text" id="sa-name" required placeholder="Nombre completo" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-blue-600">
-            </div>
-            <div class="space-y-1">
-              <label class="block text-[10px] font-bold text-slate-600 uppercase">Usuario de Agente</label>
-              <input type="text" id="sa-username" required placeholder="Usuario" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-blue-600">
-            </div>
-            <div class="space-y-1">
-              <label class="block text-[10px] font-bold text-slate-600 uppercase">Contraseña</label>
-              <input type="password" id="sa-pass" required placeholder="Contraseña" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-blue-600">
-            </div>
-            <button type="submit" class="w-full py-3.5 rounded-xl font-black text-white bg-blue-600 hover:bg-blue-700 transition text-xs shadow uppercase tracking-wider">Registrar Agente</button>
-          </form>
-        </div>
-
-        <div class="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm">
-          <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
-            <div class="flex items-center gap-2">
-              <i class="fa-solid fa-users text-blue-600 text-xs"></i>
-              <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Mis Sub-Agentes Registrados</h3>
-            </div>
-          </div>
-          <div class="hidden md:block overflow-x-auto rounded-xl border border-slate-200 bg-slate-50">
-            <table class="w-full text-left text-xs text-slate-700">
-              <thead class="bg-slate-100 text-slate-500 uppercase text-[10px] font-bold border-b border-slate-200">
-                <tr>
-                  <th class="p-3">Agente</th>
-                  <th class="p-3">Credenciales</th>
-                  <th class="p-3">Saldo Actual</th>
-                  <th class="p-3">Fichas / Stock</th>
-                  <th class="p-3 text-center">Acciones</th>
-                </tr>
-              </thead>
-              <tbody id="table-subagents-body" class="divide-y divide-slate-200"></tbody>
-            </table>
-          </div>
-          <div id="cards-subagents-body" class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:hidden"></div>
-        </div>
-      </div>
-
-      <!-- SECCIÓN 3: CLIENTES -->
+      <!-- SECCIÓN 2: CLIENTES -->
       <div id="section-clients" class="hidden flex-col gap-5">
         <div class="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm">
           <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
             <div class="flex items-center gap-2">
-              <i class="fa-solid fa-users text-blue-600 text-xs"></i>
-              <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Mis Clientes (Gestión y Fichas)</h3>
+              <i class="fa-solid fa-users text-emerald-600 text-xs"></i>
+              <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Mis Clientes (Gestión de Saldo de Juego y Canjes)</h3>
             </div>
           </div>
 
@@ -264,7 +219,7 @@ button:active, button:hover {
             <label class="block text-[10px] font-bold text-slate-600 uppercase mb-1">Buscar Cliente</label>
             <div class="relative">
               <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400 text-xs"></i>
-              <input type="text" id="client-search-input" placeholder="Escribe el nombre o usuario..." oninput="filterClientsTable()" class="w-full bg-slate-50 border border-slate-300 rounded-xl py-3 pl-10 pr-4 text-xs text-slate-800 focus:outline-none focus:border-blue-600">
+              <input type="text" id="client-search-input" placeholder="Escribe el nombre..." oninput="filterClientsTable()" class="w-full bg-slate-50 border border-slate-300 rounded-xl py-3 pl-10 pr-4 text-xs text-slate-800 focus:outline-none focus:border-emerald-600">
             </div>
           </div>
 
@@ -273,9 +228,9 @@ button:active, button:hover {
               <thead class="bg-slate-100 text-slate-500 uppercase text-[10px] font-bold border-b border-slate-200">
                 <tr>
                   <th class="p-3">ID / Nombre</th>
-                  <th class="p-3">Usuario y Pass</th>
-                  <th class="p-3">Saldo GS</th>
-                  <th class="p-3">Fichas Disponibles</th>
+                  <th class="p-3">Credenciales</th>
+                  <th class="p-3">Premios Ganados</th>
+                  <th class="p-3">Saldo de Juego</th>
                   <th class="p-3 text-center">Acciones</th>
                 </tr>
               </thead>
@@ -287,7 +242,7 @@ button:active, button:hover {
         </div>
       </div>
 
-      <!-- SECCIÓN 4: RETIROS -->
+      <!-- SECCIÓN 3: RETIROS -->
       <div id="section-withdrawals" class="hidden flex-col gap-5">
         <div class="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm max-w-xl mx-auto w-full">
           <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100">
@@ -295,111 +250,43 @@ button:active, button:hover {
             <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Retirar Premio de Cliente VIP</h3>
           </div>
           
-          <form onsubmit="handleAgentWithdrawal(event)" class="flex flex-col gap-3.5">
+          <form onsubmit="handleSubAgentWithdrawal(event)" class="flex flex-col gap-3.5">
             <div class="space-y-1 relative">
-              <label class="block text-[10px] font-bold text-slate-600 uppercase">Escribir o Buscar Usuario / Nombre</label>
+              <label class="block text-[10px] font-bold text-slate-600 uppercase">Buscar Nombre Completo</label>
               <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400 text-xs"></i>
-                <input type="text" id="w-client-search" required autocomplete="off" placeholder="Escribe el usuario o nombre..." oninput="filterClientsDropdown('w')" class="w-full bg-slate-50 border border-slate-300 rounded-xl py-3 pl-10 pr-4 text-xs text-slate-800 font-bold focus:outline-none focus:border-blue-600">
+                <input type="text" id="w-client-search" required autocomplete="off" placeholder="Escribe el nombre..." oninput="filterClientsDropdown('w')" class="w-full bg-slate-50 border border-slate-300 rounded-xl py-3 pl-10 pr-4 text-xs text-slate-800 font-bold focus:outline-none focus:border-emerald-600">
               </div>
-              
               <div id="w-dropdown-results" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-20 max-h-48 overflow-y-auto divide-y divide-slate-100"></div>
-
-              <span id="client-balance-info" class="text-[10px] text-slate-500 block font-bold mt-1">Saldo disponible: 0 GS</span>
+              <span id="client-balance-info" class="text-[10px] text-slate-500 block font-bold mt-1">Premios disponibles: 0 GS</span>
             </div>
 
             <div class="space-y-1">
               <label class="block text-[10px] font-bold text-slate-600 uppercase">Monto a Retirar</label>
-              <input type="number" id="w-amount" required placeholder="Ingresa monto" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-blue-600">
+              <input type="number" id="w-amount" required placeholder="Ingresa monto" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-emerald-600">
             </div>
             <div class="space-y-1">
               <label class="block text-[10px] font-bold text-slate-600 uppercase">Detalles</label>
-              <input type="text" id="w-details" required placeholder="Agrega detalles..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-blue-600">
+              <input type="text" id="w-details" required placeholder="Agrega detalles..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-emerald-600">
             </div>
             <div class="pt-1">
-              <button type="submit" class="w-full py-3.5 rounded-xl font-black text-white bg-blue-600 hover:bg-blue-700 transition text-xs shadow uppercase tracking-wider">Procesar Retiro</button>
+              <button type="submit" class="w-full py-3.5 rounded-xl font-black text-white bg-emerald-600 hover:bg-emerald-700 transition text-xs shadow uppercase tracking-wider">Procesar Retiro</button>
             </div>
           </form>
         </div>
       </div>
 
-      <!-- SECCIÓN 5: CANJES DE SALDO -->
-      <div id="section-redeem" class="hidden flex-col gap-5">
-        <div class="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm max-w-xl mx-auto w-full">
-          <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100">
-            <i class="fa-solid fa-gift text-blue-600 text-xs"></i>
-            <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Canjear Saldo por Cartones (1 Cartón = 5.000 GS)</h3>
-          </div>
-          
-          <form onsubmit="handleRedeemBalance(event)" class="flex flex-col gap-3.5">
-            <div class="space-y-1 relative">
-              <label class="block text-[10px] font-bold text-slate-600 uppercase">Seleccionar Cliente VIP</label>
-              <div class="relative">
-                <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400 text-xs"></i>
-                <input type="text" id="r-client-search" required autocomplete="off" placeholder="Escribe el usuario o nombre..." oninput="filterClientsDropdown('r')" class="w-full bg-slate-50 border border-slate-300 rounded-xl py-3 pl-10 pr-4 text-xs text-slate-800 font-bold focus:outline-none focus:border-blue-600">
-              </div>
-              
-              <div id="r-dropdown-results" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-20 max-h-48 overflow-y-auto divide-y divide-slate-100"></div>
-
-              <span id="redeem-client-info" class="text-[10px] text-slate-500 block font-bold mt-1">Saldo disponible: 0 GS</span>
-            </div>
-
-            <div class="space-y-1">
-              <label class="block text-[10px] font-bold text-slate-600 uppercase">Cantidad de Cartones a Canjear</label>
-              <input type="number" id="r-cartones" required min="1" placeholder="Ej: 2 (Equivale a 10.000 GS)" oninput="calcRedeemCost()" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:border-blue-600">
-              <span id="redeem-cost-preview" class="text-[10px] text-blue-600 block font-bold mt-1">Costo total: 0 GS</span>
-            </div>
-            
-            <div class="pt-1">
-              <button type="submit" class="w-full py-3.5 rounded-xl font-black text-white bg-blue-600 hover:bg-blue-700 transition text-xs shadow uppercase tracking-wider">Confirmar Canje</button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <!-- SECCIÓN 6: HISTORIAL Y APUESTAS DE CLIENTES -->
-      <div id="section-history" class="hidden flex-col gap-6">
-        <!-- Pestañas Internas del Historial -->
-        <div class="flex gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200 max-w-lg">
-          <button onclick="switchHistorySubTab('bets')" id="subtab-b" class="flex-1 py-2 rounded-lg text-xs font-bold bg-blue-600 text-white transition shadow-sm">Apuestas Clientes</button>
-          <button onclick="switchHistorySubTab('withdrawals')" id="subtab-w" class="flex-1 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition">Retiros</button>
-          <button onclick="switchHistorySubTab('tickets')" id="subtab-t" class="flex-1 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition">Fichas / Cargas</button>
+      <!-- SECCIÓN 4: HISTORIAL -->
+      <div id="section-history" class="hidden flex-col gap-5">
+        <div class="flex gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200 max-w-md mx-auto w-full">
+          <button onclick="switchHistorySubTab('withdrawals')" id="subtab-w" class="flex-1 py-2 rounded-lg text-xs font-bold bg-emerald-600 text-white transition shadow-sm">Premio Pagado</button>
+          <button onclick="switchHistorySubTab('tickets')" id="subtab-t" class="flex-1 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition">Cargas y Canjes</button>
         </div>
 
-        <!-- 1. HISTORIAL DE APUESTAS / JUGADAS DE CLIENTES (CON BUSCADOR) -->
-        <div id="history-box-bets" class="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm">
-          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 pb-3 border-b border-slate-100">
-            <div class="flex items-center gap-2">
-              <i class="fa-solid fa-dice text-blue-600 text-xs"></i>
-              <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Historial de Apuestas y Jugadas de Clientes</h3>
-            </div>
-            <div class="w-full sm:w-64 relative">
-              <input type="text" id="bets-search-input" placeholder="Buscar por cliente, código o fecha..." oninput="renderClientBetsHistory()" class="w-full bg-slate-50 border border-slate-300 rounded-xl py-2 px-3 text-xs text-slate-800 focus:outline-none focus:border-blue-600">
-            </div>
-          </div>
-
-          <div class="hidden md:block overflow-x-auto rounded-xl border border-slate-200 bg-slate-50">
-            <table class="w-full text-left text-xs text-slate-700">
-              <thead class="bg-slate-100 text-slate-500 uppercase text-[10px] font-bold border-b border-slate-200">
-                <tr>
-                  <th class="p-3">Cliente VIP</th>
-                  <th class="p-3">Jugada / Serie</th>
-                  <th class="p-3">Resultado</th>
-                  <th class="p-3">Premio / Monto</th>
-                  <th class="p-3">Día, Fecha y Hora</th>
-                </tr>
-              </thead>
-              <tbody id="table-bets-history-body" class="divide-y divide-slate-200"></tbody>
-            </table>
-          </div>
-          <div id="cards-bets-history-body" class="grid grid-cols-1 gap-3 md:hidden"></div>
-        </div>
-
-        <!-- 2. HISTORIAL DE RETIROS -->
-        <div id="history-box-withdrawals" class="hidden bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm">
+        <div id="history-box-withdrawals" class="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm">
           <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
             <div class="flex items-center gap-2">
-              <i class="fa-solid fa-clock-rotate-left text-blue-600 text-xs"></i>
+              <i class="fa-solid fa-clock-rotate-left text-emerald-600 text-xs"></i>
               <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Historial de Retiros Procesados</h3>
             </div>
           </div>
@@ -409,7 +296,7 @@ button:active, button:hover {
                 <tr>
                   <th class="p-3">Cliente</th>
                   <th class="p-3">Monto Retirado</th>
-                  <th class="p-3">Detalles / Método</th>
+                  <th class="p-3">Detalles</th>
                   <th class="p-3">Fecha y Hora</th>
                   <th class="p-3 text-center">Estado</th>
                 </tr>
@@ -420,21 +307,20 @@ button:active, button:hover {
           <div id="cards-history-body" class="grid grid-cols-1 gap-3 md:hidden"></div>
         </div>
 
-        <!-- 3. HISTORIAL DE MOVIMIENTOS DE CARTONES / FICHAS -->
         <div id="history-box-tickets" class="hidden bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-sm">
           <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
             <div class="flex items-center gap-2">
-              <i class="fa-solid fa-ticket text-blue-600 text-xs"></i>
-              <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Historial de Cargas y Canjes de Fichas</h3>
+              <i class="fa-solid fa-wallet text-emerald-600 text-xs"></i>
+              <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Historial de Cargas y Canjes</h3>
             </div>
           </div>
           <div class="hidden md:block overflow-x-auto rounded-xl border border-slate-200 bg-slate-50">
             <table class="w-full text-left text-xs text-slate-700">
               <thead class="bg-slate-100 text-slate-500 uppercase text-[10px] font-bold border-b border-slate-200">
                 <tr>
-                  <th class="p-3">Destinatario</th>
-                  <th class="p-3">Acción / Tipo</th>
-                  <th class="p-3">Cantidad</th>
+                  <th class="p-3">Cliente</th>
+                  <th class="p-3">Tipo de Acción</th>
+                  <th class="p-3">Monto / Cantidad</th>
                   <th class="p-3">Fecha y Hora</th>
                 </tr>
               </thead>
@@ -471,10 +357,9 @@ button:active, button:hover {
   let usersDB = {};
   let withdrawalsDB = [];
   let ticketLogsDB = [];
-  let currentAgent = null;
+  let currentSubAgent = null;
 
   window.selectedWithdrawalUser = "";
-  window.selectedRedeemUser = "";
 
   async function initDB() {
     try {
@@ -510,58 +395,38 @@ button:active, button:hover {
   window.copyUserAndPass = function(username, password) {
     const textToCopy = `Usuario: ${username}\nContraseña: ${password}`;
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(textToCopy).then(() => {
-        showToast(`Copiado: Usuario: ${username}`);
-      });
-    } else {
-      fallbackCopyTextToClipboard(textToCopy, username);
+      navigator.clipboard.writeText(textToCopy).then(() => showToast(`Copiado: @${username}`));
     }
   };
 
-  function fallbackCopyTextToClipboard(text, username) {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.position = "fixed";
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    try {
-      document.execCommand('copy');
-      showToast(`Copiado: Usuario: ${username}`);
-    } catch (err) {
-      showToast('Error al copiar', 'error');
-    }
-    document.body.removeChild(textArea);
-  }
-
-  window.handleAgentLogin = async function(e) {
+  window.handleSubAgentLogin = async function(e) {
     e.preventDefault();
     await initDB();
     
-    const username = document.getElementById('agent-user').value.trim().toLowerCase();
-    const pass = document.getElementById('agent-pass').value;
+    const username = document.getElementById('subagent-user').value.trim().toLowerCase();
+    const pass = document.getElementById('subagent-pass').value;
 
     if (usersDB[username] && usersDB[username].role === 'agent' && usersDB[username].password === pass) {
-      currentAgent = username;
-      sessionStorage.setItem('agent_logged', currentAgent);
+      currentSubAgent = username;
+      sessionStorage.setItem('subagent_logged', currentSubAgent);
       showDashboard();
     } else {
-      showToast('Usuario o contraseña de agente incorrectos', 'error');
+      showToast('Usuario o contraseña incorrectos', 'error');
     }
   };
 
-  window.agentLogout = function() {
-    currentAgent = null;
-    sessionStorage.removeItem('agent_logged');
+  window.subAgentLogout = function() {
+    currentSubAgent = null;
+    sessionStorage.removeItem('subagent_logged');
     document.getElementById('view-dashboard').classList.add('hidden');
     document.getElementById('view-login').classList.remove('hidden');
   };
 
-  async function checkAgentAuth() {
+  async function checkSubAgentAuth() {
     await initDB();
-    const logged = sessionStorage.getItem('agent_logged');
+    const logged = sessionStorage.getItem('subagent_logged');
     if (logged && usersDB[logged] && usersDB[logged].role === 'agent') {
-      currentAgent = logged;
+      currentSubAgent = logged;
       showDashboard();
     }
   }
@@ -570,78 +435,67 @@ button:active, button:hover {
     document.getElementById('view-login').classList.add('hidden');
     document.getElementById('view-dashboard').classList.remove('hidden');
     document.getElementById('view-dashboard').classList.add('flex');
-    document.getElementById('agent-header-name').innerText = usersDB[currentAgent].name;
-    updateAgentMetrics();
+    document.getElementById('subagent-header-name').innerText = usersDB[currentSubAgent].name;
+    updateSubAgentMetrics();
     renderClients();
-    renderSubAgents();
-    renderAgentHistory();
+    renderSubAgentHistory();
     renderTicketHistory();
-    renderClientBetsHistory();
   }
 
-  function updateAgentMetrics() {
-    if (!currentAgent || !usersDB[currentAgent]) return;
+  function updateSubAgentMetrics() {
+    if (!currentSubAgent || !usersDB[currentSubAgent]) return;
     
-    const stock = usersDB[currentAgent].tickets || 0;
-    const stockEl = document.getElementById('agent-stock-tickets');
-    if (stockEl) stockEl.innerText = stock.toLocaleString('es-PY');
+    const stock = usersDB[currentSubAgent].tickets || 0;
+    const stockEl = document.getElementById('subagent-stock-tickets');
+    if (stockEl) stockEl.innerText = stock.toLocaleString('es-PY') + " GS";
 
-    const redeemStock = usersDB[currentAgent].redeemTickets || 0;
-    const redeemEl = document.getElementById('agent-stock-redeem');
+    const redeemStock = usersDB[currentSubAgent].redeemTickets || 0;
+    const redeemEl = document.getElementById('subagent-stock-redeem');
     if (redeemEl) redeemEl.innerText = redeemStock.toLocaleString('es-PY');
 
-    const balance = usersDB[currentAgent].balance || 0;
-    const balanceEl = document.getElementById('agent-current-balance');
+    const balance = usersDB[currentSubAgent].balance || 0;
+    const balanceEl = document.getElementById('subagent-current-balance');
     if (balanceEl) balanceEl.innerText = balance.toLocaleString('es-PY') + " GS";
   }
 
   window.switchTab = function(tab) {
-    const sections = ['create', 'subagents', 'clients', 'withdrawals', 'redeem', 'history'];
+    const sections = ['create', 'clients', 'withdrawals', 'history'];
     sections.forEach(s => {
       const secEl = document.getElementById(`section-${s}`);
       const tabEl = document.getElementById(`tab-${s}`);
       if (secEl) secEl.classList.add('hidden');
-      if (tabEl) tabEl.className = "py-2 px-3 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-600 hover:text-white bg-white border border-slate-200 transition flex items-center justify-center gap-1.5 shrink-0";
+      if (tabEl) tabEl.className = "py-2.5 px-4 sm:px-6 rounded-xl text-[11px] sm:text-xs font-extrabold text-slate-600 hover:text-white bg-white border border-slate-200 transition flex items-center justify-center gap-2 shrink-0";
     });
 
     const activeSec = document.getElementById(`section-${tab}`);
     const activeTab = document.getElementById(`tab-${tab}`);
     if (activeSec) activeSec.classList.remove('hidden');
-    if (activeTab) activeTab.className = "py-2 px-3 sm:px-4 rounded-xl text-[11px] sm:text-xs font-extrabold bg-blue-600 text-white transition flex items-center justify-center gap-1.5 shrink-0 shadow";
+    if (activeTab) activeTab.className = "py-2.5 px-4 sm:px-6 rounded-xl text-[11px] sm:text-xs font-extrabold bg-emerald-600 text-white transition flex items-center justify-center gap-2 shrink-0 shadow";
 
     if (tab === 'clients') renderClients();
-    if (tab === 'subagents') renderSubAgents();
     if (tab === 'history') {
-      renderClientBetsHistory();
-      renderAgentHistory();
+      renderSubAgentHistory();
       renderTicketHistory();
     }
   };
 
   window.switchHistorySubTab = function(sub) {
-    const boxB = document.getElementById('history-box-bets');
     const boxW = document.getElementById('history-box-withdrawals');
     const boxT = document.getElementById('history-box-tickets');
-    const btnB = document.getElementById('subtab-b');
     const btnW = document.getElementById('subtab-w');
     const btnT = document.getElementById('subtab-t');
 
-    boxB.classList.add('hidden');
     boxW.classList.add('hidden');
     boxT.classList.add('hidden');
-    btnB.className = "flex-1 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition";
     btnW.className = "flex-1 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition";
     btnT.className = "flex-1 py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition";
 
-    if (sub === 'bets') {
-      boxB.classList.remove('hidden');
-      btnB.className = "flex-1 py-2 rounded-lg text-xs font-bold bg-blue-600 text-white transition shadow-sm";
-    } else if (sub === 'withdrawals') {
+    if (sub === 'withdrawals') {
       boxW.classList.remove('hidden');
-      btnW.className = "flex-1 py-2 rounded-lg text-xs font-bold bg-blue-600 text-white transition shadow-sm";
+      btnW.className = "flex-1 py-2 rounded-lg text-xs font-bold bg-emerald-600 text-white transition shadow-sm";
     } else {
       boxT.classList.remove('hidden');
-      btnT.className = "flex-1 py-2 rounded-lg text-xs font-bold bg-blue-600 text-white transition shadow-sm";
+      btnT.className = "flex-1 py-2 rounded-lg text-xs font-bold bg-emerald-600 text-white transition shadow-sm";
     }
   };
 
@@ -649,22 +503,11 @@ button:active, button:hover {
     let myClients = {};
     Object.keys(usersDB).forEach(k => {
       const u = usersDB[k];
-      if (u.role === 'client' && u.createdBy === currentAgent) {
+      if (u.role === 'client' && u.createdBy === currentSubAgent) {
         myClients[k] = u;
       }
     });
     return myClients;
-  }
-
-  function getMySubAgents() {
-    let mySubAgents = {};
-    Object.keys(usersDB).forEach(k => {
-      const u = usersDB[k];
-      if (u.role === 'agent' && u.createdBy === currentAgent) {
-        mySubAgents[k] = u;
-      }
-    });
-    return mySubAgents;
   }
 
   window.handleCreateClient = async function(e) {
@@ -672,11 +515,13 @@ button:active, button:hover {
     await initDB();
 
     const name = document.getElementById('c-name').value.trim();
-    const username = document.getElementById('c-username').value.trim().toLowerCase();
     const pass = document.getElementById('c-pass').value;
 
+    const cleanBaseUser = name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 10);
+    const username = (cleanBaseUser || 'cliente') + '_' + Math.floor(100 + Math.random() * 900);
+
     if (usersDB[username]) {
-      showToast('El nombre de usuario ya está en uso', 'error');
+      showToast('Error al generar usuario único', 'error');
       return;
     }
 
@@ -689,7 +534,7 @@ button:active, button:hover {
       username: username,
       password: pass,
       role: 'client',
-      createdBy: currentAgent,
+      createdBy: currentSubAgent,
       balance: 0,
       tickets: 0,
       history: [],
@@ -702,36 +547,6 @@ button:active, button:hover {
     renderClients();
   };
 
-  window.handleCreateSubAgent = async function(e) {
-    e.preventDefault();
-    await initDB();
-
-    const name = document.getElementById('sa-name').value.trim();
-    const username = document.getElementById('sa-username').value.trim().toLowerCase();
-    const pass = document.getElementById('sa-pass').value;
-
-    if (usersDB[username]) {
-      showToast('El usuario ya está en uso', 'error');
-      return;
-    }
-
-    usersDB[username] = {
-      name: name,
-      username: username,
-      password: pass,
-      role: 'agent',
-      createdBy: currentAgent,
-      balance: 0,
-      tickets: 0,
-      redeemTickets: 0
-    };
-
-    await saveToCloud();
-    showToast(`Sub-Agente ${name} registrado con éxito`);
-    e.target.reset();
-    renderSubAgents();
-  };
-
   function renderClients() {
     const tbody = document.getElementById('table-clients-body');
     const cardsContainer = document.getElementById('cards-clients-body');
@@ -742,7 +557,7 @@ button:active, button:hover {
 
     const keys = Object.keys(clients).filter(k => {
       const u = clients[k];
-      return k.toLowerCase().includes(filterQuery) || u.name.toLowerCase().includes(filterQuery) || u.id.toLowerCase().includes(filterQuery);
+      return u.name.toLowerCase().includes(filterQuery) || u.id.toLowerCase().includes(filterQuery) || u.username.toLowerCase().includes(filterQuery);
     });
 
     if (keys.length === 0) {
@@ -755,28 +570,19 @@ button:active, button:hover {
       const u = clients[k];
       return `
         <tr class="hover:bg-slate-100 transition">
-          <td class="p-3 font-bold text-slate-900">${u.name}<br><span class="text-[10px] text-blue-600 font-mono">${u.id}</span></td>
-          <td class="p-3 text-slate-700 font-mono">
-            <div class="flex items-center gap-2">
-              <div>
-                <span class="block text-slate-900 font-bold">Usuario: ${u.username}</span>
-                <span class="block text-[10px] text-slate-500">Contraseña: ${u.password || '••••••'}</span>
-              </div>
-              <button onclick="copyUserAndPass('${u.username}', '${u.password || ''}')" title="Copiar" class="px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200 hover:bg-blue-600 hover:text-white text-blue-600 transition flex items-center gap-1 text-[10px] font-bold">
-                <i class="fa-solid fa-copy"></i> Copiar
-              </button>
-            </div>
+          <td class="p-3 font-bold text-slate-900">${u.name}<br><span class="text-[10px] text-emerald-600 font-mono">${u.id}</span></td>
+          <td class="p-3 text-slate-700 font-mono text-xs">
+            <div>Usuario: <strong>${u.username}</strong></div>
+            <div>Pass: ${u.password || '••••••'}</div>
+            <button onclick="copyUserAndPass('${u.username}', '${u.password || ''}')" class="mt-1 px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] font-bold border border-emerald-200">Copiar</button>
           </td>
           <td class="p-3 font-black text-emerald-600">${(u.balance || 0).toLocaleString('es-PY')} GS</td>
-          <td class="p-3 font-black text-blue-600">${u.tickets || 0} Fichas</td>
+          <td class="p-3 font-black text-amber-600">${(u.tickets || 0).toLocaleString('es-PY')} GS</td>
           <td class="p-3 text-center">
-            <div class="flex items-center justify-center gap-1.5">
-              <button onclick="modifyClientTickets('${k}', 'add')" title="Cargar Cartón" class="bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white px-2 py-1.5 rounded-lg text-[10px] font-extrabold border border-blue-200 transition flex items-center gap-1">
-                <i class="fa-solid fa-plus"></i> Cargar
-              </button>
-              <button onclick="modifyClientTickets('${k}', 'remove')" title="Quitar Cartón" class="bg-amber-50 hover:bg-amber-600 text-amber-600 hover:text-white px-2 py-1.5 rounded-lg text-[10px] font-extrabold border border-amber-200 transition flex items-center gap-1">
-                <i class="fa-solid fa-minus"></i> Quitar
-              </button>
+            <div class="flex items-center justify-center gap-1.5 flex-wrap">
+              <button onclick="modifyClientBalance('${k}', 'add')" class="bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white px-2 py-1.5 rounded-lg text-[10px] font-extrabold border border-emerald-200 transition">Cargar Saldo</button>
+              <button onclick="modifyClientBalance('${k}', 'remove')" class="bg-amber-50 hover:bg-amber-600 text-amber-600 hover:text-white px-2 py-1.5 rounded-lg text-[10px] font-extrabold border border-amber-200 transition">Quitar Saldo</button>
+              <button onclick="openQuickRedeemModal('${k}')" class="bg-teal-50 hover:bg-teal-600 text-teal-600 hover:text-white px-2 py-1.5 rounded-lg text-[10px] font-extrabold border border-teal-200 transition">Canjear Premios</button>
             </div>
           </td>
         </tr>
@@ -790,139 +596,114 @@ button:active, button:hover {
           <div class="flex items-center justify-between">
             <div>
               <div class="text-xs font-black text-slate-900">${u.name}</div>
-              <div class="text-[10px] text-blue-600 font-mono">${u.id}</div>
-              <div class="text-[10px] text-slate-700 font-mono mt-1">Usuario: <span class="text-slate-900 font-bold">${u.username}</span></div>
-              <div class="text-[10px] text-slate-500 font-mono">Contraseña: ${u.password || '••••••'}</div>
+              <div class="text-[10px] text-emerald-600 font-mono">${u.id}</div>
+              <div class="text-[10px] text-slate-700 font-mono mt-1">Usuario: <strong>${u.username}</strong> | Pass: ${u.password || '••••••'}</div>
             </div>
-            <button onclick="copyUserAndPass('${u.username}', '${u.password || ''}')" class="px-2.5 py-1.5 rounded-lg bg-blue-50 border border-blue-200 hover:bg-blue-600 hover:text-white text-blue-600 transition flex items-center gap-1.5 text-[10px] font-bold shrink-0">
-              <i class="fa-solid fa-copy"></i> Copiar
-            </button>
+            <button onclick="copyUserAndPass('${u.username}', '${u.password || ''}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-600 text-[10px] font-bold border border-emerald-200">Copiar</button>
           </div>
           <div class="flex justify-between items-center text-xs bg-slate-50 p-2 rounded-lg border border-slate-200">
-            <div><span class="text-[10px] text-slate-500 block">Saldo</span><span class="font-black text-emerald-600">${(u.balance || 0).toLocaleString('es-PY')} GS</span></div>
-            <div class="text-right"><span class="text-[10px] text-slate-500 block">Fichas</span><span class="font-black text-blue-600">${u.tickets || 0}</span></div>
+            <div><span class="text-[10px] text-slate-500 block">Premios</span><span class="font-black text-emerald-600">${(u.balance || 0).toLocaleString('es-PY')} GS</span></div>
+            <div class="text-right"><span class="text-[10px] text-slate-500 block">Saldo Juego</span><span class="font-black text-amber-600">${(u.tickets || 0).toLocaleString('es-PY')} GS</span></div>
           </div>
-          <div class="grid grid-cols-2 gap-1.5 pt-0.5">
-            <button onclick="modifyClientTickets('${k}', 'add')" class="bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white py-1.5 rounded-lg text-[10px] font-extrabold border border-blue-200 transition text-center flex items-center justify-center gap-1">
-              <i class="fa-solid fa-plus"></i> Cargar
-            </button>
-            <button onclick="modifyClientTickets('${k}', 'remove')" class="bg-amber-50 hover:bg-amber-600 text-amber-600 hover:text-white py-1.5 rounded-lg text-[10px] font-extrabold border border-amber-200 transition text-center flex items-center justify-center gap-1">
-              <i class="fa-solid fa-minus"></i> Quitar
-            </button>
+          <div class="grid grid-cols-3 gap-1.5 pt-0.5">
+            <button onclick="modifyClientBalance('${k}', 'add')" class="bg-emerald-50 text-emerald-600 py-1.5 rounded-lg text-[10px] font-extrabold border border-emerald-200 text-center">Cargar</button>
+            <button onclick="modifyClientBalance('${k}', 'remove')" class="bg-amber-50 text-amber-600 py-1.5 rounded-lg text-[10px] font-extrabold border border-amber-200 text-center">Quitar</button>
+            <button onclick="openQuickRedeemModal('${k}')" class="bg-teal-50 text-teal-600 py-1.5 rounded-lg text-[10px] font-extrabold border border-teal-200 text-center">Canjear</button>
           </div>
         </div>
       `;
     }).join('');
   }
 
-  window.filterClientsTable = function() {
-    renderClients();
+  window.filterClientsTable = function() { renderClients(); };
+
+  /* MODAL DE CANJE RÁPIDO: PREMIOS DEL CLIENTE -> SALDO DE JUEGO */
+  window.openQuickRedeemModal = function(usernameKey) {
+    const clients = getMyClients();
+    const client = clients[usernameKey];
+    if (!client) return;
+
+    document.getElementById('qr-username-key').value = usernameKey;
+    document.getElementById('qr-client-name').innerText = `${client.name} (@${client.username})`;
+    document.getElementById('qr-client-balance').innerText = `Premios Ganados: ${(client.balance || 0).toLocaleString('es-PY')} GS`;
+    document.getElementById('qr-amount').value = '';
+    document.getElementById('qr-preview-desc').innerText = 'Se acreditará 0 GS de Saldo de Juego';
+    document.getElementById('modal-quick-redeem').classList.remove('hidden');
   };
 
-  function renderSubAgents() {
-    const tbody = document.getElementById('table-subagents-body');
-    const cardsContainer = document.getElementById('cards-subagents-body');
-    if (!tbody || !cardsContainer) return;
+  window.closeQuickRedeemModal = function() {
+    document.getElementById('modal-quick-redeem').classList.add('hidden');
+  };
 
-    const subAgents = getMySubAgents();
-    const keys = Object.keys(subAgents);
+  window.calcQuickRedeemPreview = function() {
+    const amount = parseInt(document.getElementById('qr-amount').value) || 0;
+    document.getElementById('qr-preview-desc').innerText = `Se acreditará ${amount.toLocaleString('es-PY')} GS de Saldo de Juego`;
+  };
 
-    if (keys.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">No tienes sub-agentes registrados.</td></tr>`;
-      cardsContainer.innerHTML = `<div class="text-center text-slate-400 text-xs py-4 col-span-full">No tienes sub-agentes registrados.</div>`;
+  window.handleQuickRedeem = async function(e) {
+    e.preventDefault();
+    await initDB();
+
+    const username = document.getElementById('qr-username-key').value;
+    const amountInput = document.getElementById('qr-amount').value;
+
+    if (!username || !usersDB[username]) {
+      showToast('Cliente no válido', 'error');
       return;
     }
 
-    tbody.innerHTML = keys.map(k => {
-      const u = subAgents[k];
-      return `
-        <tr class="hover:bg-slate-100 transition">
-          <td class="p-3 font-bold text-slate-900">${u.name}</td>
-          <td class="p-3 text-slate-700 font-mono">
-            <div class="flex items-center gap-2">
-              <div>
-                <span class="block text-slate-900 font-bold">Usuario: ${u.username}</span>
-                <span class="block text-[10px] text-slate-500">Contraseña: ${u.password || '••••••'}</span>
-              </div>
-              <button onclick="copyUserAndPass('${u.username}', '${u.password || ''}')" class="px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200 hover:bg-blue-600 hover:text-white text-blue-600 transition flex items-center gap-1 text-[10px] font-bold">
-                <i class="fa-solid fa-copy"></i> Copiar
-              </button>
-            </div>
-          </td>
-          <td class="p-3 font-black text-emerald-600">${(u.balance || 0).toLocaleString('es-PY')} GS</td>
-          <td class="p-3 font-black text-blue-600">${u.tickets || 0} Fichas</td>
-          <td class="p-3 text-center">
-            <button onclick="modifySubAgentTickets('${k}')" class="bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white px-3 py-1.5 rounded-lg text-[10px] font-extrabold border border-blue-200 transition">
-              Asignar Stock
-            </button>
-          </td>
-        </tr>
-      `;
-    }).join('');
+    const client = usersDB[username];
+    const amount = parseInt(amountInput);
+    const clientPrizes = client.balance || 0;
+    const currentRedeemStock = usersDB[currentSubAgent].redeemTickets || 0;
 
-    cardsContainer.innerHTML = keys.map(k => {
-      const u = subAgents[k];
-      return `
-        <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col gap-2.5 shadow-sm">
-          <div class="flex items-center justify-between">
-            <div>
-              <div class="text-xs font-black text-slate-900">${u.name}</div>
-              <div class="text-[10px] text-slate-700 font-mono mt-1">Usuario: <span class="text-slate-900 font-bold">${u.username}</span></div>
-            </div>
-            <button onclick="copyUserAndPass('${u.username}', '${u.password || ''}')" class="px-2 py-1 rounded-lg bg-blue-50 border border-blue-200 text-blue-600 text-[10px] font-bold">Copiar</button>
-          </div>
-          <div class="flex justify-between items-center text-xs bg-slate-50 p-2 rounded-lg border border-slate-200">
-            <div><span class="text-[10px] text-slate-500 block">Saldo</span><span class="font-black text-emerald-600">${(u.balance || 0).toLocaleString('es-PY')} GS</span></div>
-            <div class="text-right"><span class="text-[10px] text-slate-500 block">Fichas</span><span class="font-black text-blue-600">${u.tickets || 0}</span></div>
-          </div>
-          <button onclick="modifySubAgentTickets('${k}')" class="w-full bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white py-1.5 rounded-lg text-[10px] font-extrabold border border-blue-200 transition text-center">
-            Asignar Stock
-          </button>
-        </div>
-      `;
-    }).join('');
-  }
-
-  window.modifySubAgentTickets = async function(username) {
-    await initDB();
-    const subAgent = usersDB[username];
-    const currentStock = usersDB[currentAgent].tickets || 0;
-
-    const count = prompt(`Cantidad de fichas a transferir a ${subAgent.name}\n(Tu stock disponible: ${currentStock}):`, "10");
-    if (count && !isNaN(count) && parseInt(count) > 0) {
-      const qty = parseInt(count);
-      if (qty > currentStock) {
-        showToast('Stock insuficiente en tu cuenta', 'error');
-        return;
-      }
-      usersDB[currentAgent].tickets -= qty;
-      usersDB[username].tickets = (usersDB[username].tickets || 0) + qty;
-
-      await saveToCloud();
-      updateAgentMetrics();
-      renderSubAgents();
-      showToast(`Fichas transferidas a ${subAgent.name}`);
+    if (amount <= 0 || amount % 2500 !== 0) {
+      showToast('El monto a canjear debe ser múltiplo de 2.500 GS', 'error');
+      return;
     }
+
+    if (clientPrizes < amount) {
+      showToast(`Premios insuficientes. El cliente posee ${clientPrizes.toLocaleString('es-PY')} GS en premios`, 'error');
+      return;
+    }
+
+    // Cada 2.500 GS equivale a 1 unidad de stock de canje del agente
+    const unitsNeeded = amount / 2500;
+    if (unitsNeeded > currentRedeemStock) {
+      showToast(`Stock de canje insuficiente en tu cuenta. Necesitas stock autorizado por el Administrador.`, 'error');
+      return;
+    }
+
+    // Ejecutar canje: Se descuenta del premio del cliente y del stock del agente, y se suma al saldo de juego del cliente
+    usersDB[username].balance -= amount;
+    usersDB[currentSubAgent].redeemTickets -= unitsNeeded;
+    usersDB[username].tickets = (usersDB[username].tickets || 0) + amount;
+
+    const fullDateStr = new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' }) + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    ticketLogsDB.unshift({
+      agent: currentSubAgent,
+      username: client.name,
+      type: 'canje_premio_por_saldo',
+      qty: amount,
+      date: fullDateStr
+    });
+
+    await saveToCloud();
+    showToast(`¡Canje exitoso! Se acreditaron ${amount.toLocaleString('es-PY')} GS de Saldo de Juego`);
+    closeQuickRedeemModal();
+    updateSubAgentMetrics();
+    renderClients();
+    renderTicketHistory();
   };
 
   window.filterClientsDropdown = function(type) {
-    const isRedeem = type === 'r';
-    const inputId = isRedeem ? 'r-client-search' : 'w-client-search';
-    const dropdownId = isRedeem ? 'r-dropdown-results' : 'w-dropdown-results';
-    const query = document.getElementById(inputId).value.toLowerCase().trim();
-    const dropdown = document.getElementById(dropdownId);
-
-    if (isRedeem) window.selectedRedeemUser = "";
-    else window.selectedWithdrawalUser = "";
-
-    const infoEl = document.getElementById(isRedeem ? 'redeem-client-info' : 'client-balance-info');
-    infoEl.innerText = "Saldo disponible: 0 GS";
+    const query = document.getElementById('w-client-search').value.toLowerCase().trim();
+    const dropdown = document.getElementById('w-dropdown-results');
+    window.selectedWithdrawalUser = "";
 
     const clients = getMyClients();
-    const keys = Object.keys(clients).filter(k => {
-      const u = clients[k];
-      return k.toLowerCase().includes(query) || u.name.toLowerCase().includes(query) || u.id.toLowerCase().includes(query);
-    });
+    const keys = Object.keys(clients).filter(k => clients[k].name.toLowerCase().includes(query));
 
     if (query === '' || keys.length === 0) {
       dropdown.classList.add('hidden');
@@ -934,97 +715,25 @@ button:active, button:hover {
     dropdown.innerHTML = keys.map(k => {
       const u = clients[k];
       return `
-        <div onclick="selectClientFromSearch('${type}', '${k}', '${u.name}', '${u.username}', ${u.balance || 0})" class="p-2.5 hover:bg-slate-50 cursor-pointer flex justify-between items-center transition">
+        <div onclick="selectClientForWithdrawal('${k}', '${u.name}', ${u.balance || 0})" class="p-2.5 hover:bg-slate-50 cursor-pointer flex justify-between items-center transition">
           <div>
-            <div class="text-xs font-bold text-slate-900">${u.name} <span class="text-blue-600 font-mono">(@${u.username})</span></div>
-            <div class="text-[9px] text-slate-500">${u.id}</div>
+            <div class="text-xs font-bold text-slate-900">${u.name}</div>
+            <div class="text-[9px] text-slate-500 font-mono">${u.id}</div>
           </div>
-          <div class="text-right text-[10px] font-black text-emerald-600">
-            ${(u.balance || 0).toLocaleString('es-PY')} GS
-          </div>
+          <div class="text-right text-[10px] font-black text-emerald-600">${(u.balance || 0).toLocaleString('es-PY')} GS</div>
         </div>
       `;
     }).join('');
   };
 
-  window.selectClientFromSearch = function(type, usernameKey, name, username, balance) {
-    const isRedeem = type === 'r';
-    if (isRedeem) {
-      window.selectedRedeemUser = usernameKey;
-      document.getElementById('r-client-search').value = `${name} (@${username})`;
-      document.getElementById('r-dropdown-results').classList.add('hidden');
-      document.getElementById('redeem-client-info').innerText = `Saldo disponible: ${balance.toLocaleString('es-PY')} GS`;
-      calcRedeemCost();
-    } else {
-      window.selectedWithdrawalUser = usernameKey;
-      document.getElementById('w-client-search').value = `${name} (@${username})`;
-      document.getElementById('w-dropdown-results').classList.add('hidden');
-      const infoEl = document.getElementById('client-balance-info');
-      infoEl.innerText = `Saldo disponible: ${balance.toLocaleString('es-PY')} GS`;
-      infoEl.className = balance > 0 ? "text-[10px] text-emerald-600 block font-bold mt-1" : "text-[10px] text-red-600 block font-bold mt-1";
-    }
+  window.selectClientForWithdrawal = function(usernameKey, name, balance) {
+    window.selectedWithdrawalUser = usernameKey;
+    document.getElementById('w-client-search').value = name;
+    document.getElementById('w-dropdown-results').classList.add('hidden');
+    document.getElementById('client-balance-info').innerText = `Premios disponibles: ${balance.toLocaleString('es-PY')} GS`;
   };
 
-  window.calcRedeemCost = function() {
-    const cartones = parseInt(document.getElementById('r-cartones').value) || 0;
-    const cost = cartones * 5000;
-    document.getElementById('redeem-cost-preview').innerText = `Costo total: ${cost.toLocaleString('es-PY')} GS`;
-  };
-
-  window.handleRedeemBalance = async function(e) {
-    e.preventDefault();
-    await initDB();
-
-    const username = window.selectedRedeemUser;
-    const cartonesInput = document.getElementById('r-cartones').value;
-
-    if (!username || !usersDB[username]) {
-      showToast('Selecciona un cliente válido', 'error');
-      return;
-    }
-
-    const client = usersDB[username];
-    const cartones = parseInt(cartonesInput);
-    const cost = cartones * 5000;
-    const currentBalance = client.balance || 0;
-    const currentRedeemStock = usersDB[currentAgent].redeemTickets || 0;
-
-    if (currentBalance < cost) {
-      showToast(`Saldo insuficiente. El cliente necesita ${cost.toLocaleString('es-PY')} GS`, 'error');
-      return;
-    }
-
-    if (cartones > currentRedeemStock) {
-      showToast(`Stock de canje insuficiente en tu cuenta. Solicita más stock al administrador.`, 'error');
-      return;
-    }
-
-    usersDB[username].balance -= cost;
-    usersDB[currentAgent].redeemTickets -= cartones;
-    usersDB[username].tickets = (usersDB[username].tickets || 0) + cartones;
-
-    const fullDateStr = new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' }) + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-    ticketLogsDB.unshift({
-      agent: currentAgent,
-      username: client.name + ' (@' + client.username + ')',
-      type: 'redeem',
-      qty: cartones,
-      date: fullDateStr
-    });
-
-    await saveToCloud();
-    showToast(`¡Canje exitoso! Se acreditaron ${cartones} cartones`);
-    e.target.reset();
-    window.selectedRedeemUser = "";
-    document.getElementById('redeem-client-info').innerText = "Saldo disponible: 0 GS";
-    document.getElementById('redeem-cost-preview').innerText = "Costo total: 0 GS";
-    updateAgentMetrics();
-    renderClients();
-    renderTicketHistory();
-  };
-
-  window.handleAgentWithdrawal = async function(e) {
+  window.handleSubAgentWithdrawal = async function(e) {
     e.preventDefault();
     await initDB();
 
@@ -1042,19 +751,19 @@ button:active, button:hover {
     const currentBalance = client.balance || 0;
 
     if (amount > currentBalance) {
-      showToast(`Saldo insuficiente. El cliente posee ${currentBalance.toLocaleString('es-PY')} GS`, 'error');
+      showToast(`Premios insuficientes. El cliente posee ${currentBalance.toLocaleString('es-PY')} GS`, 'error');
       return;
     }
 
     usersDB[username].balance -= amount;
-    if (!usersDB[currentAgent].balance) usersDB[currentAgent].balance = 0;
-    usersDB[currentAgent].balance += amount;
+    if (!usersDB[currentSubAgent].balance) usersDB[currentSubAgent].balance = 0;
+    usersDB[currentSubAgent].balance += amount;
 
     const fullDateStr = new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' }) + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     withdrawalsDB.unshift({
-      agent: currentAgent,
-      username: client.name + ' (@' + client.username + ')',
+      agent: currentSubAgent,
+      username: client.name,
       amount: amount,
       details: details,
       status: 'RETIRADO / PROCESADO',
@@ -1062,87 +771,69 @@ button:active, button:hover {
     });
 
     await saveToCloud();
-    showToast(`¡Retiro procesado!`);
+    showToast('¡Retiro procesado con éxito!');
     e.target.reset();
     window.selectedWithdrawalUser = "";
-    document.getElementById('client-balance-info').innerText = "Saldo disponible: 0 GS";
-    updateAgentMetrics();
+    updateSubAgentMetrics();
     renderClients();
-    renderAgentHistory();
+    renderSubAgentHistory();
   };
 
-  /* HISTORIAL DE APUESTAS DE CLIENTES */
-  function renderClientBetsHistory() {
-    const tbody = document.getElementById('table-bets-history-body');
-    const cardsContainer = document.getElementById('cards-bets-history-body');
-    if (!tbody || !cardsContainer) return;
+  window.modifyClientBalance = async function(username, action) {
+    await initDB();
+    const subAgentData = usersDB[currentSubAgent];
+    const currentStock = subAgentData.tickets || 0;
+    const client = usersDB[username];
+    const currentClientBalance = client.tickets || 0;
 
-    const filterQuery = (document.getElementById('bets-search-input')?.value || "").toLowerCase().trim();
-    const clients = getMyClients();
-    
-    let allBets = [];
-    Object.keys(clients).forEach(k => {
-      const c = clients[k];
-      if (c.history && Array.isArray(c.history)) {
-        c.history.forEach(h => {
-          allBets.push({
-            clientName: c.name,
-            username: c.username,
-            ...h
-          });
-        });
+    let promptMsg = action === 'add' 
+      ? `Monto de Saldo de Juego a CARGAR a ${client.name}\n(Tu saldo de juego disponible: ${currentStock.toLocaleString('es-PY')} GS):`
+      : `Monto de Saldo de Juego a QUITAR a ${client.name}\n(Saldo de juego actual del cliente: ${currentClientBalance.toLocaleString('es-PY')} GS):`;
+
+    const count = prompt(promptMsg, "0");
+    if (count && !isNaN(count) && parseInt(count) > 0) {
+      const qty = parseInt(count);
+      const fullDateStr = new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' }) + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      if (action === 'add') {
+        if (qty > currentStock) {
+          showToast(`Saldo de juego insuficiente. Solo tienes ${currentStock.toLocaleString('es-PY')} GS.`, 'error');
+          return;
+        }
+        usersDB[currentSubAgent].tickets -= qty;
+        usersDB[username].tickets = currentClientBalance + qty;
+        showToast(`¡Se cargaron ${qty.toLocaleString('es-PY')} GS de saldo de juego!`);
+      } else {
+        if (qty > currentClientBalance) {
+          showToast(`El cliente solo tiene ${currentClientBalance.toLocaleString('es-PY')} GS de saldo.`, 'error');
+          return;
+        }
+        usersDB[username].tickets = currentClientBalance - qty;
+        usersDB[currentSubAgent].tickets = currentStock + qty; 
+        showToast(`¡Se quitaron ${qty.toLocaleString('es-PY')} GS de saldo!`);
       }
-    });
+      
+      ticketLogsDB.unshift({
+        agent: currentSubAgent,
+        username: client.name,
+        type: action === 'add' ? 'carga_saldo_juego' : 'quitar_saldo_juego',
+        qty: qty,
+        date: fullDateStr
+      });
 
-    // Filtrar por búsqueda
-    const filtered = allBets.filter(b => {
-      return b.clientName.toLowerCase().includes(filterQuery) ||
-             b.username.toLowerCase().includes(filterQuery) ||
-             (b.code && b.code.toLowerCase().includes(filterQuery)) ||
-             (b.date && b.date.toLowerCase().includes(filterQuery));
-    });
-
-    if (filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">No hay apuestas o jugadas registradas.</td></tr>`;
-      cardsContainer.innerHTML = `<div class="text-center text-slate-400 text-xs py-4 col-span-full">No hay apuestas o jugadas registradas.</div>`;
-      return;
+      await saveToCloud();
+      updateSubAgentMetrics();
+      renderClients();
+      renderTicketHistory();
     }
+  };
 
-    tbody.innerHTML = filtered.map(b => `
-      <tr class="hover:bg-slate-100 transition">
-        <td class="p-3 font-bold text-slate-900">${b.clientName} <span class="text-[10px] text-blue-600 font-mono">(@${b.username})</span></td>
-        <td class="p-3 font-mono text-xs">Juego #${b.code || 'N/A'} <span class="text-slate-500">(${b.serie || 'Serie A'})</span></td>
-        <td class="p-3"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-black ${b.win ? 'bg-emerald-100 text-emerald-700 border border-emerald-300' : 'bg-slate-100 text-slate-600 border border-slate-300'}">${b.win ? 'GANADOR' : 'SIN PREMIO'}</span></td>
-        <td class="p-3 font-black ${b.win ? 'text-emerald-600' : 'text-slate-500'}">${b.win ? '+' + b.prize.toLocaleString('es-PY') + ' GS' : '0 GS'}</td>
-        <td class="p-3 text-slate-600 text-[11px]">${b.date}</td>
-      </tr>
-    `).join('');
-
-    cardsContainer.innerHTML = filtered.map(b => `
-      <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col gap-2 shadow-sm">
-        <div class="flex justify-between items-start">
-          <div>
-            <div class="text-xs font-bold text-slate-900">${b.clientName}</div>
-            <div class="text-[10px] text-blue-600 font-mono">@${b.username}</div>
-          </div>
-          <span class="px-2 py-0.5 rounded-full text-[9px] font-black ${b.win ? 'bg-emerald-100 text-emerald-700 border border-emerald-300' : 'bg-slate-100 text-slate-600 border border-slate-300'}">${b.win ? 'GANADOR' : 'SIN PREMIO'}</span>
-        </div>
-        <div class="bg-slate-50 p-2 rounded-lg border border-slate-200 text-xs flex flex-col gap-1">
-          <div class="text-[10px] text-slate-600">Jugada: <span class="font-mono font-bold text-slate-900">#${b.code || 'N/A'} (${b.serie || 'Serie A'})</span></div>
-          <div class="text-[10px] text-slate-600">Premio: <span class="font-black ${b.win ? 'text-emerald-600' : 'text-slate-500'}">${b.win ? '+' + b.prize.toLocaleString('es-PY') + ' GS' : 'Sin Premio'}</span></div>
-          <div class="text-[9px] text-slate-500 mt-0.5">Fecha: ${b.date}</div>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  function renderAgentHistory() {
+  function renderSubAgentHistory() {
     const tbody = document.getElementById('table-history-body');
     const cardsContainer = document.getElementById('cards-history-body');
     if (!tbody || !cardsContainer) return;
 
-    const myWithdrawals = withdrawalsDB.filter(w => w.agent === currentAgent);
-
+    const myWithdrawals = withdrawalsDB.filter(w => w.agent === currentSubAgent);
     if (myWithdrawals.length === 0) {
       tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">No hay retiros registrados.</td></tr>`;
       cardsContainer.innerHTML = `<div class="text-center text-slate-400 text-xs py-4 col-span-full">No hay retiros registrados.</div>`;
@@ -1155,7 +846,7 @@ button:active, button:hover {
         <td class="p-3 font-black text-emerald-600">${parseInt(w.amount).toLocaleString('es-PY')} GS</td>
         <td class="p-3 text-slate-700 font-mono text-[11px]">${w.details}</td>
         <td class="p-3 text-slate-600">${w.date}</td>
-        <td class="p-3 text-center"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-700 border border-emerald-300">${w.status}</span></td>
+        <td class="p-3 text-center"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-700">${w.status}</span></td>
       </tr>
     `).join('');
 
@@ -1163,7 +854,7 @@ button:active, button:hover {
       <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col gap-2 shadow-sm">
         <div class="flex justify-between items-start">
           <div class="text-xs font-bold text-slate-900">${w.username}</div>
-          <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-100 text-emerald-700 border border-emerald-300">${w.status}</span>
+          <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-100 text-emerald-700">${w.status}</span>
         </div>
         <div class="bg-slate-50 p-2 rounded-lg border border-slate-200 text-xs">
           <div class="text-[10px] text-slate-600">Monto: <span class="font-black text-emerald-600">${parseInt(w.amount).toLocaleString('es-PY')} GS</span></div>
@@ -1179,127 +870,46 @@ button:active, button:hover {
     const cardsContainer = document.getElementById('cards-tickets-history-body');
     if (!tbody || !cardsContainer) return;
 
-    const myLogs = ticketLogsDB.filter(l => l.agent === currentAgent);
-
+    const myLogs = ticketLogsDB.filter(l => l.agent === currentSubAgent);
     if (myLogs.length === 0) {
       tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">No hay movimientos registrados.</td></tr>`;
       cardsContainer.innerHTML = `<div class="text-center text-slate-400 text-xs py-4 col-span-full">No hay movimientos registrados.</div>`;
       return;
     }
 
-    tbody.innerHTML = myLogs.map(l => {
-      let badgeColor = 'bg-blue-100 text-blue-700 border-blue-300';
-      let titleAction = 'CARGA DIRECTA DE CARTÓN';
-      if (l.type === 'remove') {
-        badgeColor = 'bg-amber-100 text-amber-700 border-amber-300';
-        titleAction = 'RETIRO DE CARTÓN';
-      } else if (l.type === 'redeem') {
-        badgeColor = 'bg-indigo-100 text-indigo-700 border-indigo-300';
-        titleAction = 'CANJE DE SALDO';
-      }
-      return `
-        <tr class="hover:bg-slate-100 transition">
-          <td class="p-3 font-bold text-slate-900">${l.username}</td>
-          <td class="p-3">
-            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black border ${badgeColor}">
-              ${titleAction}
-            </span>
-          </td>
-          <td class="p-3 font-black ${l.type === 'remove' ? 'text-amber-600' : 'text-blue-600'}">${l.type === 'remove' ? '-' : '+'}${l.qty} Fichas</td>
-          <td class="p-3 text-slate-600">${l.date}</td>
-        </tr>
-      `;
-    }).join('');
+    tbody.innerHTML = myLogs.map(l => `
+      <tr class="hover:bg-slate-100 transition">
+        <td class="p-3 font-bold text-slate-900">${l.username}</td>
+        <td class="p-3"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-700">${l.type}</span></td>
+        <td class="p-3 font-black text-emerald-600">${l.qty.toLocaleString('es-PY')} GS</td>
+        <td class="p-3 text-slate-600">${l.date}</td>
+      </tr>
+    `).join('');
 
-    cardsContainer.innerHTML = myLogs.map(l => {
-      let badgeColor = 'bg-blue-100 text-blue-700 border-blue-300';
-      let titleAction = 'CARGA DIRECTA';
-      if (l.type === 'remove') {
-        badgeColor = 'bg-amber-100 text-amber-700 border-amber-300';
-        titleAction = 'QUITAR';
-      } else if (l.type === 'redeem') {
-        badgeColor = 'bg-indigo-100 text-indigo-700 border-indigo-300';
-        titleAction = 'CANJE';
-      }
-      return `
-        <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col gap-2 shadow-sm">
-          <div class="flex justify-between items-start">
-            <div class="text-xs font-bold text-slate-900">${l.username}</div>
-            <span class="px-2 py-0.5 rounded-full text-[9px] font-black border ${badgeColor}">
-              ${titleAction}
-            </span>
-          </div>
-          <div class="bg-slate-50 p-2 rounded-lg border border-slate-200 text-xs flex justify-between items-center">
-            <div><div class="text-[10px] text-slate-600">Cantidad: <span class="font-black ${l.type === 'remove' ? 'text-amber-600' : 'text-blue-600'}">${l.type === 'remove' ? '-' : '+'}${l.qty} Fichas</span></div></div>
-            <div class="text-[9px] text-slate-500">${l.date}</div>
-          </div>
+    cardsContainer.innerHTML = myLogs.map(l => `
+      <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col gap-2 shadow-sm">
+        <div class="flex justify-between items-start">
+          <div class="text-xs font-bold text-slate-900">${l.username}</div>
+          <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-100 text-emerald-700">${l.type}</span>
         </div>
-      `;
-    }).join('');
+        <div class="bg-slate-50 p-2 rounded-lg text-xs flex justify-between items-center">
+          <div><span class="text-slate-600">Cantidad:</span> <span class="font-black text-emerald-600">${l.qty.toLocaleString('es-PY')} GS</span></div>
+          <div class="text-[9px] text-slate-500">${l.date}</div>
+        </div>
+      </div>
+    `).join('');
   }
-
-  window.modifyClientTickets = async function(username, action) {
-    await initDB();
-    const agentData = usersDB[currentAgent];
-    const currentStock = agentData.tickets || 0;
-    const client = usersDB[username];
-    const currentClientTickets = client.tickets || 0;
-
-    let promptMsg = action === 'add' 
-      ? `Cantidad de fichas a CARGAR a ${client.name}\n(Stock disponible tuyo: ${currentStock}):`
-      : `Cantidad de fichas a QUITAR a ${client.name}\n(Fichas actuales del cliente: ${currentClientTickets}):`;
-
-    const count = prompt(promptMsg, "1");
-    if (count && !isNaN(count) && parseInt(count) > 0) {
-      const qty = parseInt(count);
-      const fullDateStr = new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' }) + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-      if (action === 'add') {
-        if (qty > currentStock) {
-          showToast(`Stock insuficiente. Solo tienes ${currentStock} Fichas.`, 'error');
-          return;
-        }
-        usersDB[currentAgent].tickets -= qty;
-        usersDB[username].tickets = currentClientTickets + qty;
-        showToast(`¡Se cargaron ${qty} fichas directamente!`);
-      } else {
-        if (qty > currentClientTickets) {
-          showToast(`El cliente solo tiene ${currentClientTickets} fichas.`, 'error');
-          return;
-        }
-        usersDB[username].tickets = currentClientTickets - qty;
-        usersDB[currentAgent].tickets = currentStock + qty; 
-        showToast(`¡Se quitaron ${qty} fichas!`);
-      }
-      
-      ticketLogsDB.unshift({
-        agent: currentAgent,
-        username: client.name + ' (@' + client.username + ')',
-        type: action,
-        qty: qty,
-        date: fullDateStr
-      });
-
-      await saveToCloud();
-      updateAgentMetrics();
-      renderClients();
-      renderTicketHistory();
-    }
-  };
 
   function showToast(msg, type = 'success') {
     const toast = document.getElementById('toast');
     const toastMsg = document.getElementById('toast-msg');
     if (!toast || !toastMsg) return;
-
     toastMsg.innerText = msg;
-    toast.className = `fixed top-4 left-1/2 -translate-x-1/2 ${type === 'error' ? 'bg-red-600 text-white' : 'bg-blue-600 text-white'} px-4 py-2.5 rounded-full text-xs font-black shadow-2xl opacity-100 pointer-events-auto transition-all duration-300 z-50 flex items-center gap-2 max-w-[90vw] truncate`;
-    setTimeout(() => {
-      toast.classList.add('opacity-0', 'pointer-events-none');
-    }, 2500);
+    toast.className = `fixed top-5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-700 to-teal-500 text-white px-5 py-3 rounded-2xl text-xs font-black shadow-2xl opacity-100 pointer-events-auto transition-all duration-300 z-50 flex items-center gap-2.5`;
+    setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none'), 2800);
   }
 
-  window.onload = checkAgentAuth;
+  window.onload = checkSubAgentAuth;
 </script>
 </body>
 </html>
