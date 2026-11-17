@@ -1,5 +1,5 @@
 /**
- * APP.JS - Lógica Centralizada, Autenticación y Sincronización con Firebase
+ * APP.JS - Lógica Centralizada, Autenticación, Sincronización y Raspe Físico Interactivo
  * Casino Royal - Sistema de Raspaditas y Saldo de Juego
  */
 
@@ -209,6 +209,8 @@ window.goToDashboard = function() {
 let gridData = [], winningItem = null, roundCount = 1, audioCtx = null;
 let currentCode = '4777', currentSerie = 'A3606';
 let isSpinning = false;
+let revealedCount = 0;
+let roundEvaluated = false;
 const jsConfetti = new JSConfetti();
 
 function prepareEmptyTable() {
@@ -222,15 +224,16 @@ function prepareEmptyTable() {
 
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
+  revealedCount = 0;
+  roundEvaluated = false;
 
   for (let i = 0; i < 9; i++) {
     const cell = document.createElement('div');
     cell.className = 'grid-cell';
     cell.id = `cell-${i}`;
     cell.innerHTML = `
-      <div class="w-10 h-10 rounded-full border-2 border-dashed border-amber-400/60 flex items-center justify-center bg-slate-800/80 shadow-inner">
-        <i class="fa-solid fa-wallet text-amber-400/80 text-sm"></i>
-      </div>
+      <div id="content-${i}" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-100 opacity-0 transition-opacity duration-300"></div>
+      <canvas id="scratch-${i}" class="scratch-canvas"></canvas>
     `;
     grid.appendChild(cell);
   }
@@ -306,14 +309,10 @@ async function playCasinoChipRound() {
   const btn = document.getElementById('btn-spin-chips');
   const btnText = document.getElementById('btn-spin-text');
   btn.disabled = true;
-  btnText.innerText = 'PROCESANDO APUESTA (2.500 GS)...';
+  btnText.innerText = 'PARTIDA EN CURSO (2.500 GS)...';
 
   usersDB[currentUser].tickets = gameBalance - 2500;
   await saveUserData();
-
-  document.getElementById('game-stamp-overlay').classList.add('hidden');
-  document.getElementById('stamp-lose').classList.add('hidden');
-  document.getElementById('stamp-win').classList.add('hidden');
 
   currentCode = Math.floor(1000 + Math.random() * 9000).toString();
   currentSerie = 'A' + Math.floor(1000 + Math.random() * 9000);
@@ -325,42 +324,107 @@ async function playCasinoChipRound() {
   prepareEmptyTable();
 
   for (let i = 0; i < 9; i++) {
-    await new Promise(resolve => setTimeout(resolve, 130));
-    revealCell(i, gridData[i]);
-    playTickSound(400 + i * 45);
+    setupScratchCanvas(i, gridData[i]);
   }
-
-  await new Promise(resolve => setTimeout(resolve, 250));
-  evaluateRound();
 
   isSpinning = false;
-  btn.disabled = false;
-  btnText.innerText = 'JUGAR (2.500 GS)';
-
-  if ((usersDB[currentUser].tickets || 0) < 2500) {
-    showToast('¡Te has quedado sin saldo de juego suficiente!', 'error');
-  }
 }
 
-function revealCell(index, item) {
+function setupScratchCanvas(index, item) {
   const cell = document.getElementById(`cell-${index}`);
-  if (!cell) return;
-
-  cell.classList.add('revealed');
+  const contentDiv = document.getElementById(`content-${index}`);
+  const canvas = document.getElementById(`scratch-${index}`);
+  const ctx = canvas.getContext('2d');
 
   let renderHtml = '';
   if (item.type === 'image') {
-    renderHtml = `<img src="${item.val}" class="w-8 h-8 object-contain mb-1">`;
+    renderHtml = `<img src="${item.val}" class="w-7 h-7 object-contain mb-0.5">`;
   } else if (item.type === 'emoji') {
     renderHtml = `<span class="text-2xl mb-0.5">${item.val}</span>`;
   } else {
-    renderHtml = `<i class="fa-solid ${item.val || item.icon || 'fa-gem'} ${item.color || 'text-emerald-600'} text-2xl mb-0.5"></i>`;
+    renderHtml = `<i class="fa-solid ${item.val || item.icon || 'fa-gem'} ${item.color || 'text-emerald-600'} text-xl mb-0.5"></i>`;
+  }
+  contentDiv.innerHTML = `
+    ${renderHtml}
+    <span class="text-[8px] font-extrabold text-slate-800">${item.prize.toLocaleString('es-PY')} GS</span>
+  `;
+
+  canvas.width = cell.clientWidth || 80;
+  canvas.height = cell.clientHeight || 80;
+
+  ctx.fillStyle = '#64748b';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  ctx.fillStyle = '#cbd5e1';
+  ctx.font = 'bold 10px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('RASPA AQUÍ', canvas.width / 2, canvas.height / 2 + 3);
+
+  let isDrawing = false;
+  let totalPixels = canvas.width * canvas.height;
+  let isRevealed = false;
+
+  function scratch(x, y) {
+    if (isRevealed) return;
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.arc(x, y, 16, 0, Math.PI * 2, false);
+    ctx.fill();
+
+    playTickSound(600);
+
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let transparent = 0;
+    for (let i = 3; i < imageData.data.length; i += 4) {
+      if (imageData.data[i] === 0) transparent++;
+    }
+
+    if (transparent > totalPixels * 0.4 && !isRevealed) {
+      isRevealed = true;
+      revealCellCompletely(index);
+    }
   }
 
-  cell.innerHTML = `
-    ${renderHtml}
-    <span class="text-[9px] font-extrabold text-slate-800">${item.prize.toLocaleString('es-PY')} GS</span>
-  `;
+  canvas.addEventListener('mousedown', (e) => { isDrawing = true; scratch(e.offsetX, e.offsetY); });
+  canvas.addEventListener('mousemove', (e) => { if (isDrawing) scratch(e.offsetX, e.offsetY); });
+  window.addEventListener('mouseup', () => { isDrawing = false; });
+
+  canvas.addEventListener('touchstart', (e) => {
+    isDrawing = true;
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    scratch(touch.clientX - rect.left, touch.clientY - rect.top);
+    e.preventDefault();
+  });
+  canvas.addEventListener('touchmove', (e) => {
+    if (!isDrawing) return;
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    scratch(touch.clientX - rect.left, touch.clientY - rect.top);
+    e.preventDefault();
+  });
+  canvas.addEventListener('touchend', () => { isDrawing = false; });
+}
+
+function revealCellCompletely(index) {
+  const cell = document.getElementById(`cell-${index}`);
+  const contentDiv = document.getElementById(`content-${index}`);
+  const canvas = document.getElementById(`scratch-${index}`);
+
+  if (cell.classList.contains('revealed')) return;
+
+  cell.classList.add('revealed');
+  contentDiv.style.opacity = '1';
+  canvas.style.display = 'none';
+
+  revealedCount++;
+
+  if (revealedCount === 9 && !roundEvaluated) {
+    roundEvaluated = true;
+    setTimeout(() => {
+      evaluateRound();
+    }, 400);
+  }
 }
 
 function evaluateRound() {
@@ -412,6 +476,15 @@ function evaluateRound() {
   });
 
   saveUserData();
+
+  const btn = document.getElementById('btn-spin-chips');
+  const btnText = document.getElementById('btn-spin-text');
+  btn.disabled = false;
+  btnText.innerText = 'INICIAR NUEVA APUESTA (2.500 GS)';
+
+  if ((usersDB[currentUser].tickets || 0) < 2500) {
+    showToast('¡Te has quedado sin saldo de juego suficiente!', 'error');
+  }
 }
 
 function initAudio() {

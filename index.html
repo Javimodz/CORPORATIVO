@@ -66,32 +66,40 @@ body {
 .grid-cell {
   position: relative;
   aspect-ratio: 1;
-  background: linear-gradient(145deg, #1e293b, #0f172a);
+  background: linear-gradient(145deg, #334155, #1e293b);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 1px solid #334155;
+  border: 1px solid #475569;
   overflow: hidden;
-  transition: transform 0.25s ease, background 0.25s ease;
+  cursor: pointer;
+  touch-action: none;
 }
 
-.grid-cell.revealed {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-  animation: flipIn 0.3s ease-out forwards;
+/* Capa raspar (Canvas o diseño táctil) */
+.scratch-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  border-radius: 11px;
+  touch-action: none;
+  cursor: pointer;
+}
+
+.grid-cell.revealed .scratch-canvas {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
 }
 
 .grid-cell.matched {
   border: 2px solid #22c55e;
   background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
   animation: match-pulse 0.8s infinite alternate;
-}
-
-@keyframes flipIn {
-  0% { transform: scale(0.8) rotateY(90deg); opacity: 0.5; }
-  100% { transform: scale(1) rotateY(0deg); opacity: 1; }
 }
 
 @keyframes match-pulse {
@@ -318,10 +326,10 @@ body {
         </div>
         
         <div class="bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 text-amber-400 text-center text-[10px] font-black py-1 rounded-lg mb-2.5 shadow uppercase tracking-wider border border-amber-500/30">
-          ★ CONSIGUE 3 SÍMBOLOS IGUALES ★
+          ★ RASPA LAS 9 CASILLAS PARA GANAR ★
         </div>
 
-        <!-- TABLERO DE CASINO 3X3 -->
+        <!-- TABLERO DE CASINO 3X3 CON CAPA RASPABLE -->
         <div class="game-grid" id="grid"></div>
 
         <!-- OVERLAY DE RESULTADO -->
@@ -355,7 +363,7 @@ body {
         
         <button id="btn-spin-chips" class="w-full py-3 rounded-xl font-extrabold text-white btn-lime-luxury shadow-xl active:scale-[0.98] transition flex items-center justify-center gap-2 uppercase tracking-wider text-xs">
           <i class="fa-solid fa-wallet text-amber-200"></i>
-          <span id="btn-spin-text">JUGAR (2.500 GS)</span>
+          <span id="btn-spin-text">INICIAR NUEVA APUESTA (2.500 GS)</span>
         </button>
       </div>
 
