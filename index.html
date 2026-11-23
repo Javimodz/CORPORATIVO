@@ -3,11 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Casino VIP - Saldo de Juego</title>
+<title>FortunaJuegos VIP - Casino Oficial</title>
+
+<!-- ÍCONO DE PESTAÑA DEL NAVEGADOR (FAVICON) -->
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 html, body {
@@ -21,31 +26,86 @@ html, body {
 
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  background: #f1f5f9;
+  background-color: #070d1a;
   background-image: 
-    radial-gradient(circle at 50% 0%, #e2e8f0 0%, #f8fafc 70%),
-    radial-gradient(circle at 10% 90%, rgba(34, 197, 94, 0.08) 0%, transparent 40%),
-    radial-gradient(circle at 90% 90%, rgba(16, 185, 129, 0.08) 0%, transparent 40%);
+    radial-gradient(circle at 50% -5%, rgba(52, 211, 153, 0.34) 0%, transparent 58%),
+    radial-gradient(circle at 88% 18%, rgba(251, 191, 36, 0.24) 0%, transparent 48%),
+    radial-gradient(circle at 12% 85%, rgba(16, 185, 129, 0.24) 0%, transparent 50%),
+    linear-gradient(180deg, #0b1326 0%, #070c18 100%);
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
-  color: #0f172a;
+  color: #f8fafc;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.lime-gradient-text {
-  background: linear-gradient(135deg, #15803d 0%, #16a34a 40%, #22c55e 100%);
+.font-casino {
+  font-family: 'Cinzel', serif;
+}
+
+.gold-gradient-text {
+  background: linear-gradient(180deg, #fffbeb 0%, #fde047 38%, #f59e0b 75%, #d97706 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 4px rgba(22, 163, 74, 0.2));
+  filter: drop-shadow(0 2px 10px rgba(251, 191, 36, 0.55));
+}
+
+.game-logo-ring {
+  position: relative;
+  background: linear-gradient(145deg, #27354f, #0d1526);
+  border: 2px solid #fbbf24;
+  box-shadow: 
+    0 0 28px rgba(251, 191, 36, 0.55),
+    0 0 14px rgba(52, 211, 153, 0.28),
+    inset 0 0 14px rgba(254, 240, 138, 0.35);
+  animation: logo-glow 2.6s infinite alternate ease-in-out;
+}
+
+@keyframes logo-glow {
+  0% { box-shadow: 0 0 22px rgba(251, 191, 36, 0.45), inset 0 0 12px rgba(254, 240, 138, 0.28); }
+  100% { box-shadow: 0 0 38px rgba(251, 191, 36, 0.82), 0 0 18px rgba(52, 211, 153, 0.35), inset 0 0 18px rgba(254, 240, 138, 0.55); }
+}
+
+.casino-game-card {
+  position: relative;
+  background: linear-gradient(165deg, #1a253b 0%, #0d1424 100%);
+  border: 1px solid rgba(251, 191, 36, 0.48);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 
+    0 8px 20px -8px rgba(0, 0, 0, 0.75),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  text-align: left;
+}
+
+.casino-game-card:hover {
+  transform: translateY(-2px);
+  border-color: #fde047;
+  box-shadow: 
+    0 12px 26px -6px rgba(251, 191, 36, 0.42),
+    0 0 16px rgba(52, 211, 153, 0.22);
+}
+
+.casino-game-card:active {
+  transform: scale(0.97);
+}
+
+.casino-game-card.is-disabled {
+  opacity: 0.65;
+  border-color: rgba(148, 163, 184, 0.35);
 }
 
 .card-luxury-light {
-  background: #ffffff;
-  border: 2px solid #cbd5e1;
-  box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.15), 0 0 20px rgba(34, 197, 94, 0.1);
+  background: linear-gradient(180deg, #19243b 0%, #0d1424 100%);
+  border: 1.5px solid rgba(251, 191, 36, 0.62);
+  box-shadow: 
+    0 22px 48px -10px rgba(0, 0, 0, 0.85),
+    0 0 30px rgba(52, 211, 153, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
 }
 
 .game-grid {
@@ -57,28 +117,33 @@ body {
   grid-template-rows: repeat(3, 1fr);
   gap: 8px;
   padding: 10px;
-  background: #0f172a;
+  background: radial-gradient(circle at center, #093d2f 0%, #061224 100%);
   border-radius: 18px;
-  border: 3px solid #1e293b;
-  box-shadow: inset 0 4px 10px rgba(0,0,0,0.5);
+  border: 2px solid #fbbf24;
+  box-shadow: 
+    inset 0 4px 16px rgba(0, 0, 0, 0.85),
+    0 0 26px rgba(251, 191, 36, 0.35);
 }
 
 .grid-cell {
   position: relative;
   aspect-ratio: 1;
-  background: linear-gradient(145deg, #334155, #1e293b);
+  background: linear-gradient(145deg, #273652, #111b2e);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 1px solid #475569;
+  border: 1px solid rgba(251, 191, 36, 0.5);
+  box-shadow: 
+    inset 0 2px 6px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
   overflow: hidden;
   cursor: pointer;
   touch-action: none;
+  color: #f8fafc;
 }
 
-/* Capa raspar (Canvas o diseño táctil) */
 .scratch-canvas {
   position: absolute;
   inset: 0;
@@ -97,25 +162,34 @@ body {
 }
 
 .grid-cell.matched {
-  border: 2px solid #22c55e;
-  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  border: 2px solid #fde047;
+  background: linear-gradient(135deg, #059669 0%, #10b981 55%, #34d399 100%);
   animation: match-pulse 0.8s infinite alternate;
 }
 
 @keyframes match-pulse {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.05); box-shadow: 0 0 15px #22c55e; }
+  0% { transform: scale(1); box-shadow: 0 0 12px rgba(253, 224, 71, 0.65); }
+  100% { transform: scale(1.05); box-shadow: 0 0 24px #fde047, 0 0 38px rgba(52, 211, 153, 0.85); }
 }
 
 .btn-lime-luxury {
-  background: linear-gradient(135deg, #4ade80 0%, #22c55e 50%, #16a34a 100%);
+  background: linear-gradient(135deg, #34d399 0%, #10b981 48%, #059669 100%);
+  border: 1px solid #a7f3d0;
   color: #ffffff;
   font-weight: 800;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
-  transition: transform 0.1s ease, filter 0.1s ease;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+  box-shadow: 
+    0 8px 24px rgba(16, 185, 129, 0.55),
+    0 0 14px rgba(52, 211, 153, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  transition: transform 0.1s ease, filter 0.15s ease, box-shadow 0.15s ease;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+}
+
+.btn-lime-luxury:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 10px 28px rgba(16, 185, 129, 0.72), inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 .btn-lime-luxury:active {
@@ -123,10 +197,39 @@ body {
 }
 
 .btn-lime-luxury:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
-  filter: grayscale(0.5);
+  filter: grayscale(0.6);
   pointer-events: none;
+}
+
+.toast-vip {
+  background: linear-gradient(135deg, rgba(26, 37, 59, 0.97) 0%, rgba(10, 18, 34, 0.98) 100%);
+  border: 1.5px solid rgba(251, 191, 36, 0.75);
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.75),
+    0 0 22px rgba(251, 191, 36, 0.32),
+    0 0 12px rgba(52, 211, 153, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  color: #fef08a;
+}
+
+.toast-vip.toast-success {
+  border-color: rgba(52, 211, 153, 0.85);
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.75),
+    0 0 22px rgba(52, 211, 153, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  color: #a7f3d0;
+}
+
+.toast-vip.toast-error {
+  border-color: rgba(248, 113, 113, 0.85);
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.75),
+    0 0 22px rgba(239, 68, 68, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  color: #fecaca;
 }
 
 @keyframes stampPop {
@@ -140,148 +243,301 @@ body {
 
 .main-app-container {
   width: 100%;
-  max-width: 385px;
-  max-height: 94vh;
-  background: #ffffff;
-  border-radius: 26px;
+  max-width: 390px;
+  max-height: 95vh;
+  background: linear-gradient(180deg, #152036 0%, #0b1220 100%);
+  border-radius: 28px;
   overflow-y: auto;
   overflow-x: hidden;
-  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
-  border: 1px solid #e2e8f0;
+  box-shadow: 
+    0 30px 65px -12px rgba(0, 0, 0, 0.9),
+    0 0 0 1.5px rgba(251, 191, 36, 0.52),
+    0 0 42px rgba(52, 211, 153, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
   display: flex;
   flex-direction: column;
 }
 
 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #fbbf24; }
 </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
 <div class="main-app-container custom-scrollbar">
   
-  <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-4 py-2 rounded-full text-xs font-black shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2 border border-emerald-500">
-    <i class="fa-solid fa-crown text-emerald-400"></i>
-    <span id="toast-msg">Mensaje</span>
+  <!-- TOAST DE NOTIFICACIÓN PREMIUM -->
+  <div id="toast" class="toast-vip fixed top-4 left-1/2 -translate-x-1/2 -translate-y-2 backdrop-blur-md px-4 py-2 rounded-full text-[11px] font-extrabold opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2 max-w-[90vw] tracking-wide">
+    <span id="toast-badge" class="w-5 h-5 rounded-full bg-amber-400/20 border border-amber-300/50 flex items-center justify-center shrink-0">
+      <i id="toast-icon" class="fa-solid fa-crown text-amber-300 text-[10px]"></i>
+    </span>
+    <span id="toast-msg" class="truncate">Mensaje</span>
   </div>
 
   <!-- VISTA 0: INICIO DE SESIÓN -->
   <div id="view-auth" class="p-6 flex flex-col gap-4 my-auto">
     <div class="text-center my-1">
-      <div class="inline-flex p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 mb-2.5 shadow-inner">
-        <i class="fa-solid fa-wallet text-3xl text-emerald-600"></i>
+      <div class="relative inline-flex items-center justify-center mb-3">
+        <div class="w-20 h-20 rounded-2xl game-logo-ring p-1.5 flex items-center justify-center overflow-hidden">
+          <img src="logo.png" alt="Logo del Juego" class="w-full h-full object-cover rounded-xl" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <div class="hidden w-full h-full rounded-xl bg-gradient-to-br from-amber-400/25 to-emerald-400/25 items-center justify-center">
+            <i class="fa-solid fa-crown text-4xl gold-gradient-text"></i>
+          </div>
+        </div>
+        <span class="absolute -bottom-2 bg-gradient-to-r from-yellow-300 via-amber-400 to-amber-500 text-slate-950 text-[9px] font-black px-2.5 py-0.5 rounded-full shadow-lg uppercase tracking-wider border border-white/60">
+          VIP CLUB
+        </span>
       </div>
-      <h1 class="text-2xl font-extrabold tracking-tight lime-gradient-text" id="login-brand-title">CASINO VIP DE LA SUERTE</h1>
-      <p class="text-[10px] text-slate-500 font-bold mt-0.5 tracking-[0.2em] uppercase">¡ JUEGA CON TU SALDO DE JUEGO !</p>
+
+      <h1 class="text-2xl font-black tracking-tight font-casino gold-gradient-text uppercase" id="login-brand-title">CASINO VIP DE LA SUERTE</h1>
+      <p class="text-[10px] text-emerald-300 font-bold mt-1 tracking-[0.22em] uppercase">¡ JUEGA CON TU SALDO DE JUEGO !</p>
     </div>
 
-    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-center text-[11px] font-semibold text-slate-700 flex items-center justify-center gap-2 shadow-inner">
-      <i class="fa-solid fa-shield-halved text-emerald-600"></i>
-      <span>ACCESO SEGURO VERIFICADO (+18)</span>
+    <div class="bg-slate-900/90 p-2.5 rounded-xl border border-amber-400/40 text-center text-[11px] font-semibold text-slate-200 flex items-center justify-center gap-2 shadow-inner">
+      <i class="fa-solid fa-shield-halved text-amber-300"></i>
+      <span>PLATAFORMA ENCRIPTADA • ACCESO (+18)</span>
     </div>
 
-    <form id="form-login" onsubmit="handleLoginWithTerms(event)" class="flex flex-col gap-3">
+    <form id="form-login" onsubmit="handleLoginWithTerms(event)" class="flex flex-col gap-3" autocomplete="off">
       <div>
-        <label class="block text-[11px] font-semibold text-slate-700 mb-1 ml-1">Usuario</label>
+        <label class="block text-[11px] font-bold text-amber-200 mb-1 ml-1 uppercase tracking-wider">Usuario</label>
         <div class="relative">
-          <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-emerald-600 text-xs"></i>
-          <input type="text" id="login-username" required placeholder="Ingresá tu usuario" class="w-full bg-slate-50 border border-slate-300 rounded-xl py-2.5 pl-10 pr-4 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition shadow-inner">
+          <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-amber-300 text-xs"></i>
+          <input type="text" id="login-username" required maxlength="40" placeholder="Ingresá tu usuario" class="w-full bg-slate-950/90 border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-amber-300 focus:ring-1 focus:ring-amber-300/50 transition shadow-inner">
         </div>
       </div>
       <div>
-        <label class="block text-[11px] font-semibold text-slate-700 mb-1 ml-1">Contraseña</label>
+        <label class="block text-[11px] font-bold text-amber-200 mb-1 ml-1 uppercase tracking-wider">Contraseña</label>
         <div class="relative">
-          <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-emerald-600 text-xs"></i>
-          <input type="password" id="login-password" required placeholder="Ingresá tu contraseña" class="w-full bg-slate-50 border border-slate-300 rounded-xl py-2.5 pl-10 pr-4 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition shadow-inner">
+          <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-amber-300 text-xs"></i>
+          <input type="password" id="login-password" required maxlength="80" placeholder="Ingresá tu contraseña" class="w-full bg-slate-950/90 border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-amber-300 focus:ring-1 focus:ring-amber-300/50 transition shadow-inner">
         </div>
       </div>
 
-      <div class="flex items-start gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200 mt-0.5">
-        <input type="checkbox" id="accept-terms" required class="mt-0.5 accent-emerald-600 rounded cursor-pointer w-3.5 h-3.5">
-        <label for="accept-terms" class="text-[10px] text-slate-600 leading-tight cursor-pointer select-none">
-          Acepto los <button type="button" onclick="toggleTermsModal(true)" class="text-emerald-700 font-bold underline hover:text-emerald-800">Términos y Condiciones</button> y la política antifraude.
+      <div class="flex items-start gap-2 bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 mt-0.5">
+        <input type="checkbox" id="accept-terms" required class="mt-0.5 accent-emerald-400 rounded cursor-pointer w-3.5 h-3.5">
+        <label for="accept-terms" class="text-[10px] text-slate-300 leading-tight cursor-pointer select-none">
+          Acepto los <button type="button" onclick="toggleTermsModal(true)" class="text-amber-300 font-bold underline hover:text-amber-200">Términos y Condiciones</button> y la política antifraude.
         </label>
       </div>
 
-      <button type="submit" class="w-full mt-1 py-3 rounded-xl font-extrabold text-white btn-lime-luxury shadow-lg active:scale-[0.98] transition uppercase tracking-wider text-xs">Ingresar al Casino</button>
+      <button type="submit" class="w-full mt-1 py-3.5 rounded-xl font-extrabold text-white btn-lime-luxury shadow-lg active:scale-[0.98] transition uppercase tracking-wider text-xs flex items-center justify-center gap-2">
+        <i class="fa-solid fa-right-to-bracket"></i>
+        <span>Ingresar al Casino</span>
+      </button>
     </form>
 
-    <div class="text-center text-[9px] text-slate-400 border-t border-slate-200 pt-2 leading-relaxed">
+    <div class="text-center text-[9px] text-slate-400 border-t border-slate-800 pt-2.5 leading-relaxed">
       Operado por Cordyline Ltd. Todos los derechos reservados.
     </div>
   </div>
 
-  <!-- VISTA 1: DASHBOARD VIP -->
-  <div id="view-dashboard" class="hidden p-4 flex-col gap-3.5">
-    <div class="flex items-center justify-between bg-slate-50 p-3 rounded-2xl border border-slate-200 shadow-sm">
+  <!-- VISTA 1: DASHBOARD VIP + MI CUENTA ARRIBA + CATÁLOGO DE JUEGOS -->
+  <div id="view-dashboard" class="hidden p-3.5 flex-col gap-2.5">
+    
+    <!-- CABECERA CON LOGO DEL JUEGO -->
+    <div class="flex items-center justify-between bg-gradient-to-r from-slate-900 via-slate-800/95 to-slate-900 px-3 py-2 rounded-2xl border border-amber-400/50 shadow-lg">
       <div class="flex items-center gap-2.5">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-green-400 flex items-center justify-center text-white text-base font-black shadow-md border border-emerald-200">
-          <i class="fa-solid fa-crown"></i>
+        <div class="w-10 h-10 rounded-xl game-logo-ring p-0.5 flex items-center justify-center overflow-hidden shrink-0">
+          <img src="logo.png" alt="Juego VIP" class="w-full h-full object-cover rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <div class="hidden w-full h-full rounded-lg bg-gradient-to-tr from-amber-400 to-yellow-200 items-center justify-center text-slate-950 text-sm font-black">
+            <i class="fa-solid fa-crown"></i>
+          </div>
         </div>
+
         <div>
-          <div class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-            <span id="dash-username">Usuario</span>
-            <button onclick="copyUsername()" class="text-emerald-600 hover:text-emerald-700 text-xs transition" title="Copiar usuario">
-              <i class="fa-regular fa-copy"></i>
-            </button>
-          </div>
-          <div class="flex items-center gap-1 text-[10px] text-slate-500 font-mono mt-0.5">
-            <span class="text-emerald-600 font-bold">ID:</span>
-            <span id="user-id-val" class="text-slate-700">HLN-88421</span>
-          </div>
+          <div class="text-xs font-black font-casino gold-gradient-text tracking-wide leading-none">FORTUNAJUEGOS VIP</div>
+          <div class="text-[9px] text-emerald-300 font-semibold mt-1 leading-none">Lobby Oficial del Casino</div>
         </div>
       </div>
       <div>
-        <button onclick="logout()" class="bg-red-50 hover:bg-red-100 text-red-600 text-xs p-2 rounded-xl border border-red-200 transition active:scale-95 shadow-sm" title="Cerrar Sesión">
+        <button type="button" onclick="logout()" class="bg-red-950/75 hover:bg-red-900/90 text-red-300 text-xs p-2 rounded-xl border border-red-400/40 transition active:scale-95 shadow-sm" title="Cerrar Sesión">
           <i class="fa-solid fa-right-from-bracket"></i>
         </button>
       </div>
     </div>
 
-    <!-- DOS CAJAS SEPARADAS: SALDO DE JUEGO Y PREMIOS GANADOS -->
-    <div class="grid grid-cols-2 gap-2.5">
-      <!-- SALDO DE JUEGO (CADA JUEGO CUESTA 2.500 GS) -->
-      <div class="bg-gradient-to-br from-amber-50 via-white to-slate-50 p-3 rounded-2xl border border-amber-300 flex flex-col justify-between shadow-sm">
-        <div class="flex items-center justify-between text-amber-800 text-[10px] font-bold tracking-wider mb-1">
-          <span>SALDO DE JUEGO</span>
-          <i class="fa-solid fa-wallet text-amber-500 text-sm"></i>
+    <!-- APARTADO MI CUENTA ARRIBA -->
+    <div class="bg-slate-900/90 rounded-2xl px-3 py-2 border border-amber-400/45 shadow-md flex flex-col gap-1.5">
+      <div class="flex items-center justify-between">
+        <span class="text-[10px] font-black text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+          <i class="fa-solid fa-user-shield text-amber-300"></i>
+          <span>Mi Cuenta</span>
+        </span>
+        <button type="button" onclick="toggleAccountHistory()" id="btn-toggle-history" class="bg-slate-950 hover:bg-slate-800 text-emerald-300 border border-emerald-400/50 px-2.5 py-1 rounded-lg text-[9px] font-extrabold uppercase tracking-wider transition flex items-center gap-1 cursor-pointer">
+          <i class="fa-solid fa-clock-rotate-left text-amber-300"></i>
+          <span>Historial</span>
+          <i id="history-chevron" class="fa-solid fa-chevron-down text-[8px] transition-transform duration-200"></i>
+        </button>
+      </div>
+
+      <div class="bg-slate-950/90 rounded-xl px-2.5 py-1.5 border border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-1.5">
+          <span class="text-[9px] text-slate-400 font-bold uppercase">Usuario:</span>
+          <span id="dash-username" class="text-[11px] font-extrabold text-white">Usuario</span>
+          <button type="button" onclick="copyUsername()" class="text-amber-300 hover:text-amber-200 text-[10px] transition" title="Copiar usuario">
+            <i class="fa-regular fa-copy"></i>
+          </button>
         </div>
-        <div>
-          <div id="dash-tickets" class="text-base font-black text-amber-600">0 GS</div>
-          <div class="text-[9px] text-slate-500 font-semibold mt-0.5">Para apostar (2.500 GS/juego)</div>
+        <div class="flex items-center gap-1">
+          <span class="text-[9px] text-slate-400 font-bold uppercase">ID:</span>
+          <span id="user-id-val" class="text-[10px] text-emerald-300 font-mono font-bold">---</span>
         </div>
       </div>
 
-      <!-- PREMIOS GANADOS (PROTEGIDOS Y SEPARADOS) -->
-      <div class="bg-gradient-to-br from-emerald-50 via-white to-slate-50 p-3 rounded-2xl border border-emerald-300 flex flex-col justify-between shadow-sm">
-        <div class="flex items-center justify-between text-emerald-800 text-[10px] font-bold tracking-wider mb-1">
-          <span>PREMIOS GANADOS</span>
-          <i class="fa-solid fa-trophy text-emerald-600 text-sm"></i>
+      <div id="account-history-panel" class="hidden pt-1 border-t border-slate-800">
+        <div class="text-[9px] font-bold text-amber-300 mb-1.5 flex justify-between items-center px-0.5">
+          <span>HISTORIAL DE JUGADAS</span>
+          <span class="text-[8px] text-slate-400">Últimos registros</span>
         </div>
-        <div>
-          <div id="dash-balance" class="text-base font-black lime-gradient-text">0 GS</div>
-          <div class="text-[9px] text-slate-500 font-semibold mt-0.5">Saldo protegido (Retirable)</div>
-        </div>
+        <div id="history-list" class="flex flex-col gap-1.5 max-h-44 overflow-y-auto pr-1 custom-scrollbar"></div>
       </div>
     </div>
 
-    <button onclick="goToGame()" class="w-full py-3.5 rounded-xl font-extrabold text-white text-xs btn-lime-luxury shadow-xl hover:brightness-105 active:scale-[0.98] transition flex items-center justify-center gap-2 uppercase tracking-wider">
-      <i class="fa-solid fa-dice text-base text-white"></i>
-      <span>ENTRAR A LA MESA DE JUEGO</span>
-    </button>
-
-    <!-- HISTORIAL -->
-    <div class="bg-slate-50 rounded-2xl p-3 border border-slate-200 shadow-sm">
-      <div class="text-[11px] font-bold text-slate-800 mb-2.5 flex justify-between items-center px-1">
-        <span>HISTORIAL DE JUGADAS</span>
-        <i class="fa-solid fa-clock-rotate-left text-emerald-600"></i>
+    <!-- BARRA COMPACTA: SALDO DE JUEGO Y PREMIOS GANADOS -->
+    <div class="grid grid-cols-2 gap-2">
+      <div class="bg-slate-900/95 px-2.5 py-1.5 rounded-xl border border-amber-400/50 flex items-center justify-between shadow-sm">
+        <div class="min-w-0">
+          <div class="text-[8px] font-bold text-amber-200 uppercase tracking-wider truncate">Saldo Juego</div>
+          <div id="dash-tickets" class="text-xs font-black text-amber-300 leading-tight truncate">0 GS</div>
+        </div>
+        <i class="fa-solid fa-coins text-amber-300 text-xs shrink-0 ml-1"></i>
       </div>
-      <div id="history-list" class="flex flex-col gap-2 max-h-52 overflow-y-auto pr-1.5 custom-scrollbar"></div>
+
+      <div class="bg-slate-900/95 px-2.5 py-1.5 rounded-xl border border-emerald-400/50 flex items-center justify-between shadow-sm">
+        <div class="min-w-0">
+          <div class="text-[8px] font-bold text-emerald-200 uppercase tracking-wider truncate">Premios</div>
+          <div id="dash-balance" class="text-xs font-black text-emerald-300 leading-tight truncate">0 GS</div>
+        </div>
+        <i class="fa-solid fa-trophy text-emerald-300 text-xs shrink-0 ml-1"></i>
+      </div>
     </div>
 
-    <div class="pt-1 pb-1 text-center border-t border-slate-200 mt-1">
-      <button onclick="toggleTermsModal(true)" class="text-[10px] text-slate-500 hover:text-emerald-700 transition underline font-semibold">
+    <!-- CATÁLOGO DE JUEGOS -->
+    <div class="bg-slate-900/80 rounded-2xl p-3 border border-amber-400/35 shadow-md">
+      <div class="flex items-center justify-between mb-2.5 px-0.5">
+        <span class="text-[11px] font-black text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+          <i class="fa-solid fa-fire text-amber-300"></i>
+          <span>Juegos del Casino</span>
+        </span>
+        <span class="text-[9px] font-bold text-emerald-300 bg-emerald-950/90 border border-emerald-400/45 px-2 py-0.5 rounded-full shadow-sm">
+          EN VIVO
+        </span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2.5">
+        
+        <!-- JUEGO 1: RASPADITA REAL -->
+        <button type="button" data-game-key="raspada" onclick="selectCasinoGame('raspada')" class="casino-game-card group">
+          <div class="relative h-24 w-full bg-gradient-to-br from-emerald-800 via-slate-900 to-amber-900 flex items-center justify-center overflow-hidden">
+            <img src="img-raspada.png" alt="Raspadita Real VIP" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="hidden w-full h-full items-center justify-center flex-col gap-1">
+              <i class="fa-solid fa-clover text-2xl text-emerald-300"></i>
+              <span class="text-[8px] font-bold text-emerald-200 uppercase">3x3 Lucky</span>
+            </div>
+            <span class="absolute top-1.5 left-1.5 bg-amber-300 text-slate-950 text-[8px] font-black px-1.5 py-0.5 rounded-md shadow flex items-center gap-1">
+              <i class="fa-solid fa-crown text-[7px]"></i> TOP
+            </span>
+          </div>
+          <div class="p-2 border-t border-slate-800 flex flex-col gap-1">
+            <div class="flex items-center justify-between">
+              <div class="text-[10px] font-extrabold text-white leading-tight truncate" data-game-name>Raspadita Real</div>
+              <div class="text-[9px] text-amber-300 font-black shrink-0 ml-1" data-game-bet>0 GS</div>
+            </div>
+            <div class="flex items-center justify-between gap-1">
+              <div class="flex items-center gap-1 overflow-x-auto no-scrollbar" data-game-prizes-mini></div>
+              <span data-game-play-badge class="w-5 h-5 rounded-md bg-emerald-400/20 border border-emerald-300/50 flex items-center justify-center text-emerald-200 text-[9px] shrink-0">
+                <i class="fa-solid fa-play"></i>
+              </span>
+            </div>
+          </div>
+        </button>
+
+        <!-- JUEGO 2: FORTUNA 777 -->
+        <button type="button" data-game-key="777" onclick="selectCasinoGame('777')" class="casino-game-card group">
+          <div class="relative h-24 w-full bg-gradient-to-br from-amber-800 via-slate-900 to-red-900 flex items-center justify-center overflow-hidden">
+            <img src="img-777.png" alt="Fortuna 777 Gold" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="hidden w-full h-full items-center justify-center flex-col gap-1">
+              <i class="fa-solid fa-fire-flame-curved text-2xl text-amber-300"></i>
+              <span class="text-[8px] font-bold text-amber-200 uppercase">Jackpot 777</span>
+            </div>
+            <span class="absolute top-1.5 left-1.5 bg-red-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-md shadow flex items-center gap-1">
+              <i class="fa-solid fa-fire text-[7px]"></i> HOT
+            </span>
+          </div>
+          <div class="p-2 border-t border-slate-800 flex flex-col gap-1">
+            <div class="flex items-center justify-between">
+              <div class="text-[10px] font-extrabold text-white leading-tight truncate" data-game-name>Fortuna 777</div>
+              <div class="text-[9px] text-amber-300 font-black shrink-0 ml-1" data-game-bet>0 GS</div>
+            </div>
+            <div class="flex items-center justify-between gap-1">
+              <div class="flex items-center gap-1 overflow-x-auto no-scrollbar" data-game-prizes-mini></div>
+              <span data-game-play-badge class="w-5 h-5 rounded-md bg-emerald-400/20 border border-emerald-300/50 flex items-center justify-center text-emerald-200 text-[9px] shrink-0">
+                <i class="fa-solid fa-play"></i>
+              </span>
+            </div>
+          </div>
+        </button>
+
+        <!-- JUEGO 3: ESMERALDA VIP -->
+        <button type="button" data-game-key="esmeralda" onclick="selectCasinoGame('esmeralda')" class="casino-game-card group">
+          <div class="relative h-24 w-full bg-gradient-to-br from-teal-800 via-slate-900 to-emerald-900 flex items-center justify-center overflow-hidden">
+            <img src="img-esmeralda.png" alt="Esmeralda VIP" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="hidden w-full h-full items-center justify-center flex-col gap-1">
+              <i class="fa-regular fa-gem text-2xl text-emerald-300"></i>
+              <span class="text-[8px] font-bold text-emerald-200 uppercase">Emerald Vault</span>
+            </div>
+            <span class="absolute top-1.5 left-1.5 bg-emerald-400 text-slate-950 text-[8px] font-black px-1.5 py-0.5 rounded-md shadow flex items-center gap-1">
+              <i class="fa-solid fa-gem text-[7px]"></i> VIP
+            </span>
+          </div>
+          <div class="p-2 border-t border-slate-800 flex flex-col gap-1">
+            <div class="flex items-center justify-between">
+              <div class="text-[10px] font-extrabold text-white leading-tight truncate" data-game-name>Esmeralda VIP</div>
+              <div class="text-[9px] text-amber-300 font-black shrink-0 ml-1" data-game-bet>0 GS</div>
+            </div>
+            <div class="flex items-center justify-between gap-1">
+              <div class="flex items-center gap-1 overflow-x-auto no-scrollbar" data-game-prizes-mini></div>
+              <span data-game-play-badge class="w-5 h-5 rounded-md bg-emerald-400/20 border border-emerald-300/50 flex items-center justify-center text-emerald-200 text-[9px] shrink-0">
+                <i class="fa-solid fa-play"></i>
+              </span>
+            </div>
+          </div>
+        </button>
+
+        <!-- JUEGO 4: DIAMANTE GOLD -->
+        <button type="button" data-game-key="diamante" onclick="selectCasinoGame('diamante')" class="casino-game-card group">
+          <div class="relative h-24 w-full bg-gradient-to-br from-yellow-800 via-slate-900 to-indigo-900 flex items-center justify-center overflow-hidden">
+            <img src="img-diamante.png" alt="Diamante Gold Royale" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="hidden w-full h-full items-center justify-center flex-col gap-1">
+              <i class="fa-solid fa-bolt text-2xl text-yellow-300"></i>
+              <span class="text-[8px] font-bold text-yellow-200 uppercase">Royale Rush</span>
+            </div>
+            <span class="absolute top-1.5 left-1.5 bg-yellow-300 text-slate-950 text-[8px] font-black px-1.5 py-0.5 rounded-md shadow flex items-center gap-1">
+              <i class="fa-solid fa-bolt text-[7px]"></i> NEW
+            </span>
+          </div>
+          <div class="p-2 border-t border-slate-800 flex flex-col gap-1">
+            <div class="flex items-center justify-between">
+              <div class="text-[10px] font-extrabold text-white leading-tight truncate" data-game-name>Diamante Gold</div>
+              <div class="text-[9px] text-amber-300 font-black shrink-0 ml-1" data-game-bet>0 GS</div>
+            </div>
+            <div class="flex items-center justify-between gap-1">
+              <div class="flex items-center gap-1 overflow-x-auto no-scrollbar" data-game-prizes-mini></div>
+              <span data-game-play-badge class="w-5 h-5 rounded-md bg-emerald-400/20 border border-emerald-300/50 flex items-center justify-center text-emerald-200 text-[9px] shrink-0">
+                <i class="fa-solid fa-play"></i>
+              </span>
+            </div>
+          </div>
+        </button>
+
+      </div>
+    </div>
+
+    <div class="pt-1 pb-1 text-center border-t border-slate-800 mt-0.5">
+      <button type="button" onclick="toggleTermsModal(true)" class="text-[10px] text-slate-300 hover:text-amber-300 transition underline font-semibold">
         Términos y Condiciones y Política Antifraude
       </button>
       <div class="text-[9px] text-slate-400 mt-0.5 leading-relaxed">
@@ -292,22 +548,19 @@ body {
 
   <!-- VISTA 2: MESA DE CASINO -->
   <div id="view-game" class="hidden flex-col">
-    <div class="px-3.5 py-2.5 bg-slate-900 text-white flex justify-between items-center border-b border-slate-800">
-      <div class="flex items-center gap-3">
-        <div class="bg-slate-800 px-2.5 py-1 rounded-xl border border-amber-500/40">
-          <span class="text-[8px] text-amber-400 block font-bold uppercase">Saldo de Juego</span>
-          <span class="text-xs font-black text-white flex items-center gap-1">
-            <i class="fa-solid fa-wallet text-amber-400 text-[10px]"></i>
-            <span id="game-live-chips">0 GS</span>
-          </span>
+    <div class="px-3 py-2 bg-slate-950 text-white flex justify-between items-center border-b border-amber-400/40">
+      <div class="flex items-center gap-2">
+        <div class="bg-slate-900 px-2 py-1 rounded-lg border border-amber-400/50 flex items-center gap-1.5">
+          <i class="fa-solid fa-coins text-amber-300 text-[10px]"></i>
+          <span class="text-[10px] font-black text-amber-300" id="game-live-chips">0 GS</span>
         </div>
-        <div class="bg-slate-800 px-2.5 py-1 rounded-xl border border-emerald-500/40">
-          <span class="text-[8px] text-emerald-400 block font-bold uppercase">Premios Ganados</span>
-          <span class="text-xs font-black text-emerald-300" id="game-live-prizes">0 GS</span>
+        <div class="bg-slate-900 px-2 py-1 rounded-lg border border-emerald-400/50 flex items-center gap-1.5">
+          <i class="fa-solid fa-trophy text-emerald-300 text-[10px]"></i>
+          <span class="text-[10px] font-black text-emerald-300" id="game-live-prizes">0 GS</span>
         </div>
       </div>
 
-      <button onclick="goToDashboard()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl border border-slate-600 text-[10px] transition flex items-center gap-1 font-bold">
+      <button type="button" onclick="goToDashboard()" class="bg-slate-900 hover:bg-slate-800 text-amber-300 px-2.5 py-1 rounded-lg border border-amber-400/45 text-[10px] transition flex items-center gap-1 font-bold">
         <i class="fa-solid fa-arrow-left"></i> SALIR
       </button>
     </div>
@@ -315,17 +568,30 @@ body {
     <div class="p-3 flex-1 flex flex-col items-center gap-2.5">
       <div class="w-full card-luxury-light p-3 rounded-2xl relative">
         <div class="flex justify-between items-center mb-1">
-          <span class="bg-amber-100 text-amber-800 font-black text-[9px] px-2.5 py-0.5 rounded-lg border border-amber-300">
-            APUESTA POR JUEGO: 2.500 GS
+          <span id="table-bet-badge" class="bg-amber-400/20 text-amber-200 font-black text-[9px] px-2.5 py-0.5 rounded-lg border border-amber-400/55">
+            APUESTA: 0 GS
           </span>
-          <span class="text-[9px] font-bold text-slate-400">RONDA #<span id="fichas-num">1</span></span>
+          <span class="text-[9px] font-bold text-slate-300 bg-slate-900 px-2 py-0.5 rounded-md border border-slate-700">
+            RONDA #<span id="fichas-num" class="text-amber-300">1</span>
+          </span>
         </div>
         
-        <div class="text-center my-1">
-          <h1 class="text-lg font-black italic lime-gradient-text leading-tight" id="card-display-title">MESA VIP DE LA SUERTE</h1>
+        <div class="text-center my-1.5 flex items-center justify-center gap-2">
+          <img src="logo.png" alt="" class="w-6 h-6 rounded-md object-cover border border-amber-300/75" onerror="this.style.display='none'">
+          <h1 class="text-base font-black font-casino gold-gradient-text leading-tight uppercase tracking-wide" id="card-display-title">MESA VIP DE LA SUERTE</h1>
+        </div>
+
+        <!-- TABLERO DE PREMIOS PROPIOS DEL JUEGO ACTIVO -->
+        <div id="active-game-prizes-bar" class="hidden mb-2 bg-slate-950/90 border border-amber-400/35 rounded-xl px-2.5 py-1.5 flex flex-col gap-1">
+          <span class="text-[8px] font-black text-amber-300 uppercase tracking-wider">Premios de este juego:</span>
+          <div id="active-game-prizes-list" class="flex items-center gap-1.5 overflow-x-auto text-[9px] font-bold text-emerald-300 pb-0.5"></div>
+        </div>
+
+        <div id="no-prizes-banner" class="hidden mb-2 bg-slate-950/90 border border-slate-700 rounded-xl px-3 py-2 text-center text-[10px] font-bold text-slate-300">
+          Sin premios disponibles en este juego.
         </div>
         
-        <div class="bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 text-amber-400 text-center text-[10px] font-black py-1 rounded-lg mb-2.5 shadow uppercase tracking-wider border border-amber-500/30">
+        <div class="bg-gradient-to-r from-amber-500/25 via-yellow-400/35 to-amber-500/25 text-amber-200 text-center text-[10px] font-black py-1 rounded-lg mb-2.5 shadow uppercase tracking-wider border border-amber-400/55">
           ★ RASPA LAS 9 CASILLAS PARA GANAR ★
         </div>
 
@@ -333,37 +599,37 @@ body {
         <div class="game-grid" id="grid"></div>
 
         <!-- OVERLAY DE RESULTADO -->
-        <div id="game-stamp-overlay" class="absolute inset-0 z-30 flex items-center justify-center pointer-events-none hidden bg-slate-900/65 backdrop-blur-[2px] rounded-2xl">
+        <div id="game-stamp-overlay" class="absolute inset-0 z-30 flex items-center justify-center pointer-events-none hidden bg-slate-950/80 backdrop-blur-[3px] rounded-2xl">
           <div id="stamp-lose" class="hidden text-center animate-stamp px-4">
-            <div class="text-3xl mb-1">🎰</div>
-            <div class="bg-white text-slate-900 font-black text-xs px-3 py-1.5 rounded-xl border-2 border-slate-300 shadow-2xl tracking-wider">
+            <div class="text-4xl mb-1.5 drop-shadow">🎰</div>
+            <div class="bg-slate-900 text-slate-100 font-black text-xs px-4 py-2 rounded-xl border border-slate-500 shadow-2xl tracking-wider">
               SIN PREMIO ESTA RONDA
             </div>
           </div>
           <div id="stamp-win" class="hidden text-center animate-stamp px-4">
-            <div class="text-3xl mb-1">🏆</div>
-            <div class="bg-gradient-to-r from-emerald-500 to-green-400 text-white font-black text-xs px-3 py-1.5 rounded-xl border-2 border-white shadow-2xl tracking-wider uppercase">
+            <div class="text-4xl mb-1.5 drop-shadow">🏆</div>
+            <div class="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 text-slate-950 font-black text-xs px-4 py-1.5 rounded-xl border-2 border-white shadow-2xl tracking-wider uppercase">
               ¡PREMIO GANADO!
             </div>
-            <div id="stamp-win-amount" class="text-emerald-950 font-black text-xs bg-emerald-100 px-3 py-1 rounded-lg mt-1.5 shadow-lg border border-emerald-400 inline-block"></div>
-            <div class="text-[9px] text-white font-bold mt-1 drop-shadow">Acreditado en Premios Ganados</div>
+            <div id="stamp-win-amount" class="text-emerald-200 font-black text-sm bg-emerald-950/95 px-3.5 py-1 rounded-lg mt-2 shadow-lg border border-emerald-300 inline-block"></div>
+            <div class="text-[9px] text-amber-200 font-bold mt-1.5 drop-shadow">Acreditado en Premios Ganados</div>
           </div>
         </div>
       </div>
 
       <!-- PANEL DE JUEGO -->
-      <div id="result-card" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-2.5 text-center shadow-sm">
-        <div class="bg-white text-slate-800 px-3 py-1.5 rounded-xl mb-2 flex justify-between items-center shadow-inner border border-slate-200">
+      <div id="result-card" class="w-full bg-slate-900/95 border border-slate-700/80 rounded-2xl p-2.5 text-center shadow-lg">
+        <div class="bg-slate-950 text-slate-200 px-3 py-1.5 rounded-xl mb-2 flex justify-between items-center shadow-inner border border-slate-800">
           <div class="text-left">
-            <div class="text-[8px] font-black text-slate-400">JUGADA N°</div>
-            <div id="card-big-number" class="text-xs font-black text-slate-900">4777</div>
+            <div class="text-[8px] font-black text-slate-400 uppercase">JUGADA N°</div>
+            <div id="card-big-number" class="text-xs font-black text-amber-300 font-mono">0000</div>
           </div>
-          <div id="card-big-serie" class="text-[9px] font-black bg-slate-100 text-slate-700 px-2 py-0.5 rounded-lg border border-slate-300">SERIE A3606</div>
+          <div id="card-big-serie" class="text-[9px] font-black bg-slate-900 text-emerald-300 px-2.5 py-0.5 rounded-lg border border-emerald-400/40 font-mono">SERIE A0000</div>
         </div>
         
-        <button id="btn-spin-chips" class="w-full py-3 rounded-xl font-extrabold text-white btn-lime-luxury shadow-xl active:scale-[0.98] transition flex items-center justify-center gap-2 uppercase tracking-wider text-xs">
-          <i class="fa-solid fa-wallet text-amber-200"></i>
-          <span id="btn-spin-text">INICIAR NUEVA APUESTA (2.500 GS)</span>
+        <button type="button" id="btn-spin-chips" class="w-full py-3.5 rounded-xl font-extrabold text-white btn-lime-luxury shadow-xl active:scale-[0.98] transition flex items-center justify-center gap-2 uppercase tracking-wider text-xs">
+          <i class="fa-solid fa-coins text-amber-200"></i>
+          <span id="btn-spin-text">INICIAR NUEVA APUESTA</span>
         </button>
       </div>
 
@@ -374,34 +640,54 @@ body {
   </div>
 
   <!-- MODAL DE TÉRMINOS Y CONDICIONES -->
-  <div id="modal-terms" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden">
-    <div class="bg-white border border-slate-200 w-full max-w-sm rounded-2xl flex flex-col max-h-[85vh] shadow-2xl overflow-hidden">
-      <div class="p-3 bg-slate-100 border-b border-slate-200 flex justify-between items-center">
+  <div id="modal-terms" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden">
+    <div class="bg-slate-900 border border-amber-400/50 w-full max-w-sm rounded-2xl flex flex-col max-h-[85vh] shadow-2xl overflow-hidden">
+      <div class="p-3.5 bg-slate-950 border-b border-slate-800 flex justify-between items-center">
         <div class="flex items-center gap-2">
-          <i class="fa-solid fa-shield-halved text-emerald-600 text-sm"></i>
-          <h3 class="text-[11px] font-black text-slate-800 uppercase tracking-wide">Términos y Política Antifraude</h3>
+          <i class="fa-solid fa-shield-halved text-amber-300 text-sm"></i>
+          <h3 class="text-[11px] font-black text-amber-300 uppercase tracking-wide">Términos, Privacidad y Antifraude</h3>
         </div>
-        <button onclick="toggleTermsModal(false)" class="text-slate-500 hover:text-slate-800 p-1">
+        <button type="button" onclick="toggleTermsModal(false)" class="text-slate-400 hover:text-white p-1">
           <i class="fa-solid fa-xmark text-base"></i>
         </button>
       </div>
 
-      <div class="p-3.5 text-[10px] text-slate-600 space-y-2.5 overflow-y-auto custom-scrollbar leading-relaxed">
-        <p class="font-bold text-emerald-700">
-          Casino VIP De La Suerte es operado por Cordyline Ltd en Paraguay. Todos los derechos reservados.
+      <div class="p-3.5 text-[10px] text-slate-300 space-y-2.5 overflow-y-auto custom-scrollbar leading-relaxed">
+        <p class="font-bold text-amber-300">
+          FortunaJuegos VIP (Casino VIP De La Suerte) es operado por Cordyline Ltd en Paraguay. El acceso y uso de la plataforma implican la aceptación íntegra de estas condiciones.
         </p>
+
         <div>
-          <h4 class="font-bold text-slate-900 uppercase text-[9px] tracking-wider text-emerald-700">1. Saldo de Juego</h4>
-          <p class="text-slate-600">Cada ronda de juego tiene un costo fijo de 2.500 GS descontados del Saldo de Juego. Los premios obtenidos se acreditan en una bóveda independiente y no se mezclan.</p>
+          <h4 class="font-bold uppercase text-[9px] tracking-wider text-emerald-300">1. Privacidad y Uso de Datos del Cliente</h4>
+          <p class="text-slate-400">
+            Resguardamos la privacidad de cada usuario. Los datos proporcionados se utilizan <strong class="text-slate-200">exclusivamente</strong> para el registro, administración de la cuenta y la tramitación o retiro de premios. No se emplean con fines ajenos a dichos procesos ni se ceden indebidamente a terceros.
+          </p>
         </div>
+
         <div>
-          <h4 class="font-bold text-slate-900 uppercase text-[9px] tracking-wider text-emerald-700">2. Política Antifraude</h4>
-          <p class="text-slate-600">Cualquier intento de manipulación del software, uso de scripts o bots anulará inmediatamente las jugadas y el saldo correspondiente.</p>
+          <h4 class="font-bold uppercase text-[9px] tracking-wider text-emerald-300">2. Titularidad Obligatoria para Premios</h4>
+          <p class="text-slate-400">
+            Para solicitar, validar o retirar cualquier premio obtenido, el jugador deberá ser <strong class="text-amber-200">sí o sí el titular legítimo de la cuenta</strong>. No se admiten reclamos ni retiros de premios a nombre de terceros no titulares.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="font-bold uppercase text-[9px] tracking-wider text-emerald-300">3. Saldo de Juego, Apuestas y Premios</h4>
+          <p class="text-slate-400">
+            Cada juego opera bajo su propio monto de apuesta y tabla de premios configurada en la plataforma. Los premios acreditados quedan sujetos a verificación de titularidad y cumplimiento normativo.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="font-bold uppercase text-[9px] tracking-wider text-emerald-300">4. Política Antifraude y Uso Responsable</h4>
+          <p class="text-slate-400">
+            Cualquier intento de alteración del sistema, suplantación de identidad, uso de scripts, bots o automatizaciones facultará la anulación inmediata de jugadas, premios pendientes y el acceso a la cuenta.
+          </p>
         </div>
       </div>
 
-      <div class="p-2.5 bg-slate-100 border-t border-slate-200 text-center">
-        <button onclick="toggleTermsModal(false)" class="w-full py-2 rounded-xl font-bold text-white btn-lime-luxury text-[11px] uppercase tracking-wider">
+      <div class="p-2.5 bg-slate-950 border-t border-slate-800 text-center">
+        <button type="button" onclick="toggleTermsModal(false)" class="w-full py-2.5 rounded-xl font-bold text-white btn-lime-luxury text-[11px] uppercase tracking-wider">
           Comprendido y Acepto
         </button>
       </div>
@@ -410,22 +696,194 @@ body {
 
 </div>
 
-<script>
-  function toggleTermsModal(show) {
-    const modal = document.getElementById('modal-terms');
-    if (show) modal.classList.remove('hidden');
-    else modal.classList.add('hidden');
+<script type="module">
+  import { DEFAULT_GAMES_CATALOG, escapeHtml, isSafeMediaUrl, formatGs } from './firebase-config.js';
+
+  const UI_GAME_KEYS = Object.keys(DEFAULT_GAMES_CATALOG);
+  let uiSelectedGameKey = 'raspada';
+  let toastTimer = null;
+
+  function renderPrizeVisualHtml(prize, sizeClass = 'w-4 h-4') {
+    if (!prize || typeof prize !== 'object') return '<span>💎</span>';
+    const rawVal = String(prize.val ?? prize.icon ?? '').trim();
+    const label = escapeHtml(prize.label || prize.name || 'Premio');
+
+    if (prize.type === 'image' || isSafeMediaUrl(rawVal)) {
+      return `<img src="${escapeHtml(rawVal)}" alt="${label}" class="${sizeClass} object-contain rounded shrink-0" loading="lazy" onerror="this.style.display='none'">`;
+    }
+    if (prize.type === 'icon' || /^fa-[a-z0-9-]+$/i.test(rawVal)) {
+      const iconName = rawVal.startsWith('fa-') ? rawVal : `fa-${rawVal}`;
+      return `<i class="fa-solid ${escapeHtml(iconName)} text-amber-300 shrink-0"></i>`;
+    }
+    return `<span class="shrink-0 leading-none">${escapeHtml(rawVal || '💎')}</span>`;
   }
 
-  function handleLoginWithTerms(e) {
+  window.CasinoUI = {
+    getSelectedGameKey: () => uiSelectedGameKey,
+    setSelectedGameKey: (key) => {
+      if (UI_GAME_KEYS.includes(key)) uiSelectedGameKey = key;
+    },
+    formatGsAmount: formatGs,
+    renderPrizeVisualHtml,
+    renderLobbyGames: (gamesMap) => {
+      if (!gamesMap || typeof gamesMap !== 'object') return;
+      UI_GAME_KEYS.forEach((key) => {
+        const cfg = gamesMap[key];
+        const card = document.querySelector(`[data-game-key="${key}"]`);
+        if (!card || !cfg) return;
+
+        const nameEl = card.querySelector('[data-game-name]');
+        const betEl = card.querySelector('[data-game-bet]');
+        const miniEl = card.querySelector('[data-game-prizes-mini]');
+        const badgeEl = card.querySelector('[data-game-play-badge]');
+        const list = Array.isArray(cfg.prizes) ? cfg.prizes : [];
+        const hasWinnable = list.length > 0 && list.some((p) => !p.isVisual);
+
+        if (nameEl) nameEl.textContent = String(cfg.shortName || cfg.title || key);
+        if (betEl) betEl.textContent = formatGs(cfg.bet ?? cfg.price ?? 0);
+
+        if (!hasWinnable) {
+          card.classList.add('is-disabled');
+          if (miniEl) miniEl.innerHTML = `<span class="text-[8px] font-bold text-slate-400">Sin premios</span>`;
+          if (badgeEl) {
+            badgeEl.className = 'w-5 h-5 rounded-md bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 text-[9px] shrink-0';
+            badgeEl.innerHTML = '<i class="fa-solid fa-lock"></i>';
+          }
+          return;
+        }
+
+        card.classList.remove('is-disabled');
+        if (badgeEl) {
+          badgeEl.className = 'w-5 h-5 rounded-md bg-emerald-400/20 border border-emerald-300/50 flex items-center justify-center text-emerald-200 text-[9px] shrink-0';
+          badgeEl.innerHTML = '<i class="fa-solid fa-play"></i>';
+        }
+        if (miniEl) {
+          miniEl.innerHTML = list
+            .slice(0, 4)
+            .map((p) => {
+              const vis = renderPrizeVisualHtml(p, 'w-3.5 h-3.5');
+              const amt = formatGs(p.amount ?? p.prize ?? 0);
+              return `<span class="inline-flex items-center gap-0.5 bg-slate-950/90 border border-slate-700 text-emerald-300 px-1.5 py-0.5 rounded text-[8px] font-bold whitespace-nowrap">${vis}<span>${escapeHtml(amt)}</span></span>`;
+            })
+            .join('');
+        }
+      });
+    },
+    renderActiveGameHeader: (gameCfg) => {
+      if (!gameCfg || typeof gameCfg !== 'object') return;
+      const titleEl = document.getElementById('card-display-title');
+      const betBadge = document.getElementById('table-bet-badge');
+      const spinText = document.getElementById('btn-spin-text');
+      const prizesBar = document.getElementById('active-game-prizes-bar');
+      const noPrizesBanner = document.getElementById('no-prizes-banner');
+      const listEl = document.getElementById('active-game-prizes-list');
+
+      const betVal = Number(gameCfg.bet ?? gameCfg.price ?? 0);
+      const list = Array.isArray(gameCfg.prizes) ? gameCfg.prizes : [];
+      const hasWinnable = list.length > 0 && list.some((p) => !p.isVisual);
+
+      if (titleEl && gameCfg.title) titleEl.textContent = String(gameCfg.title);
+      if (betBadge) betBadge.textContent = `APUESTA: ${formatGs(betVal)}`;
+      if (spinText) {
+        spinText.textContent = hasWinnable
+          ? `INICIAR NUEVA APUESTA (${formatGs(betVal)})`
+          : 'SIN PREMIOS DISPONIBLES';
+      }
+
+      if (!hasWinnable) {
+        prizesBar?.classList.add('hidden');
+        noPrizesBanner?.classList.remove('hidden');
+        if (listEl) listEl.innerHTML = '';
+        return;
+      }
+
+      noPrizesBanner?.classList.add('hidden');
+      prizesBar?.classList.remove('hidden');
+      if (listEl) {
+        listEl.innerHTML = list
+          .map((p) => {
+            const vis = renderPrizeVisualHtml(p, 'w-4 h-4');
+            const amt = formatGs(p.amount ?? p.prize ?? 0);
+            return `<span class="inline-flex items-center gap-1 bg-emerald-950/95 border border-emerald-400/45 text-emerald-200 px-2 py-0.5 rounded-md whitespace-nowrap">${vis}<span>${escapeHtml(amt)}</span></span>`;
+          })
+          .join('');
+      }
+    }
+  };
+
+  if (typeof window.showToast !== 'function') {
+    window.showToast = function(message, type = 'info') {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toast-msg');
+      const iconEl = document.getElementById('toast-icon');
+      const badgeEl = document.getElementById('toast-badge');
+      if (!toast || !msgEl) return;
+
+      msgEl.textContent = String(message ?? '');
+      toast.classList.remove('toast-success', 'toast-error');
+
+      if (type === 'error' || type === 'danger') {
+        toast.classList.add('toast-error');
+        if (iconEl) iconEl.className = 'fa-solid fa-triangle-exclamation text-red-300 text-[10px]';
+        if (badgeEl) badgeEl.className = 'w-5 h-5 rounded-full bg-red-500/20 border border-red-400/50 flex items-center justify-center shrink-0';
+      } else if (type === 'success' || type === 'win') {
+        toast.classList.add('toast-success');
+        if (iconEl) iconEl.className = 'fa-solid fa-gem text-emerald-300 text-[10px]';
+        if (badgeEl) badgeEl.className = 'w-5 h-5 rounded-full bg-emerald-400/20 border border-emerald-300/50 flex items-center justify-center shrink-0';
+      } else {
+        if (iconEl) iconEl.className = 'fa-solid fa-crown text-amber-300 text-[10px]';
+        if (badgeEl) badgeEl.className = 'w-5 h-5 rounded-full bg-amber-400/20 border border-amber-300/50 flex items-center justify-center shrink-0';
+      }
+
+      toast.classList.remove('opacity-0', '-translate-y-2');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', '-translate-y-2');
+      }, 2800);
+    };
+  }
+
+  window.toggleTermsModal = function(show) {
+    document.getElementById('modal-terms')?.classList.toggle('hidden', !show);
+  };
+
+  window.handleLoginWithTerms = function(e) {
     e.preventDefault();
     const checkbox = document.getElementById('accept-terms');
-    if (!checkbox.checked) {
-      alert("Debes aceptar los Términos y Condiciones para continuar.");
+    if (!checkbox || !checkbox.checked) {
+      window.showToast?.("Debes aceptar los Términos y Condiciones para continuar.", "error");
       return;
     }
-    if (typeof handleLogin === 'function') handleLogin(e);
-  }
+    window.handleLogin?.(e);
+  };
+
+  window.selectCasinoGame = function(gameKey) {
+    if (!UI_GAME_KEYS.includes(gameKey)) return;
+    uiSelectedGameKey = gameKey;
+    window.onCasinoGameSelected?.(gameKey);
+  };
+
+  window.toggleAccountHistory = function() {
+    const panel = document.getElementById('account-history-panel');
+    const chevron = document.getElementById('history-chevron');
+    if (!panel) return;
+    const isHidden = panel.classList.contains('hidden');
+    panel.classList.toggle('hidden', !isHidden);
+    if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+  };
+
+  window.addEventListener('keydown', (e) => {
+    if (
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) ||
+      (e.ctrlKey && e.key.toUpperCase() === 'U')
+    ) {
+      e.preventDefault();
+    }
+  });
 </script>
 
 <script type="module" src="app.js"></script>
