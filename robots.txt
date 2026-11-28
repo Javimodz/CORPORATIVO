@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin
+Disallow: /admin.html
+Disallow: /app.js
+Disallow: /firebase-config.js
+Disallow: /img-raspada.png
+Disallow: /img-diamante.png
+Disallow: /img-esmeralda.png
+Disallow: /img-777.png
+Disallow: /logo.png
+
+Sitemap: https://raspaditadelasuerte.site/sitemap.xml
